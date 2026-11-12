@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="continuous-civ" version="19" xmlns="ModInfo">
+	<Properties>
+		<Name>Continuous Civilization (Antiquity + Exploration prototype)</Name>
+		<Description>One uninterrupted campaign: the Antiquity Age never ends, and the Exploration technology and civic trees, governments, units and buildings continue directly from Antiquity. Phase 2 prototype.</Description>
+		<Authors>Continuous Civilization</Authors>
+		<AffectsSavedGames>1</AffectsSavedGames>
+	</Properties>
+	<Dependencies>
+		<Mod id="base-standard" title="LOC_MODULE_BASE_STANDARD_NAME"/>
+		<Mod id="age-antiquity" title="Age - Antiquity"/>
+		<Mod id="age-exploration" title="Age - Exploration"/>
+		<Mod id="age-modern" title="Age - Modern"/>
+	</Dependencies>
+	<ActionCriteria>
+		<Criteria id="antiquity-age-current">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+		</Criteria>
+	</ActionCriteria>
+	<ActionGroups>
+		<!-- 1. Snapshot Antiquity state and remove primary-key collisions (generated). -->
+		<ActionGroup id="cc-pre" scope="game" criteria="antiquity-age-current">
+			<Properties><LoadOrder>400</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>data/00-snapshot.sql</Item>
+					<Item>data/00-pre-dedupe.sql</Item>
+					<Item>data/00-pre-park-ids.sql</Item>
+					<Item>data/01-park-modifiers.sql</Item>
+				</UpdateDatabase>
+				<UpdateText>
+					<Item>text/00-pre-dedupe-text.sql</Item>
+				</UpdateText>
+			</Actions>
+		</ActionGroup>
+		<!-- 2. Import Exploration content straight from the installed age module (no copied Firaxis data). -->
+		<ActionGroup id="cc-import-exploration" scope="game" criteria="antiquity-age-current">
+			<Properties><LoadOrder>500</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{age-exploration}data/constructibles.xml</Item>
+					<Item>{age-exploration}data/constructibles-gameeffects.xml</Item>
+					<Item>{age-exploration}data/constructibles-no-persist.xml</Item>
+					<Item>{age-exploration}data/units.xml</Item>
+					<Item>{age-exploration}data/units-gameeffects.xml</Item>
+					<Item>{age-exploration}data/progression-trees-tech.xml</Item>
+					<Item>{age-exploration}data/progression-trees-tech-gameeffects.xml</Item>
+					<Item>{age-exploration}data/progression-trees-culture-common.xml</Item>
+					<Item>{age-exploration}data/progression-trees-culture-common-gameeffects.xml</Item>
+					<Item>{age-exploration}data/golden-ages.xml</Item>
+					<Item>{age-exploration}data/golden-ages-gameeffects.xml</Item>
+					<Item>{age-exploration}data/governments.xml</Item>
+					<Item>{age-exploration}data/gamecapabilities.xml</Item>
+					<Item>{age-exploration}data/religion.xml</Item>
+					<Item>{age-exploration}data/religion-gameeffects.xml</Item>
+					<Item>{age-exploration}data/greatworks.xml</Item>
+					<Item>{age-exploration}data/greatpeople.xml</Item>
+					<Item>{age-exploration}data/greatpeople-gameeffects.xml</Item>
+					<Item>{age-exploration}data/projects.xml</Item>
+					<Item>{age-exploration}data/projects-gameeffects.xml</Item>
+					<Item>{age-exploration}data/independents.xml</Item>
+					<Item>{age-exploration}data/independents-gameeffects.xml</Item>
+					<Item>{age-exploration}data/ai-exploration.xml</Item>
+					<Item>{age-exploration}data/pseudoyields.xml</Item>
+					<Item>{age-exploration}data/narrative-stories-gameeffects.xml</Item>
+					<Item>{age-exploration}data/narrative-stories.xml</Item>
+					<Item>{age-exploration}data/discovery-stories-gameeffects.xml</Item>
+					<Item>{age-exploration}data/discovery-stories.xml</Item>
+					<Item>{age-exploration}data/tot-narrative-stories-gameeffects.xml</Item>
+					<Item>{age-exploration}data/tot-narrative-stories.xml</Item>
+					<Item>{age-exploration}data/narrative-display.xml</Item>
+					<Item>{age-exploration}data/narrative-sifting.xml</Item>
+					<Item>{age-exploration}data/civilizations-common-gameeffects.xml</Item>
+				</UpdateDatabase>
+				<UpdateText>
+					<Item>{age-exploration}text/en_us/TechnologiesText.xml</Item>
+					<Item>{age-exploration}text/en_us/ProjectsText.xml</Item>
+					<Item>{age-exploration}text/en_us/ResourcesText.xml</Item>
+					<Item>{age-exploration}text/en_us/ResourcesText-v2.xml</Item>
+				</UpdateText>
+			</Actions>
+		</ActionGroup>
+		<!-- 3. Import Modern content (Phase 3). 09-dedupe-* (generated) first removes rows the Exploration import
+		     already added that Modern re-defines, so the later Age's version wins. -->
+		<ActionGroup id="cc-import-modern" scope="game" criteria="antiquity-age-current">
+			<Properties><LoadOrder>600</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>data/08-pre-modern-import.sql</Item>
+					<Item>data/09-dedupe-cc-import-modern.sql</Item>
+					<Item>{age-modern}data/progression-trees-tech.xml</Item>
+					<Item>{age-modern}data/progression-trees-tech-gameeffects.xml</Item>
+					<Item>{age-modern}data/progression-trees-culture-common.xml</Item>
+					<Item>{age-modern}data/progression-trees-culture-common-gameeffects.xml</Item>
+					<Item>{age-modern}data/constructibles.xml</Item>
+					<Item>{age-modern}data/constructibles-gameeffects.xml</Item>
+					<Item>{age-modern}data/constructibles-no-persist.xml</Item>
+					<Item>{age-modern}data/constructible-modifiers.xml</Item>
+					<Item>{age-modern}data/constructible-modifiers-gameeffects.xml</Item>
+					<Item>{age-modern}data/units.xml</Item>
+					<Item>{age-modern}data/units-gameeffects.xml</Item>
+					<Item>{age-modern}data/civilizations-common-gameeffects.xml</Item>
+					<Item>{age-modern}data/governments.xml</Item>
+					<Item>{age-modern}data/golden-ages.xml</Item>
+					<Item>{age-modern}data/golden-ages-gameeffects.xml</Item>
+					<Item>{age-modern}data/gamecapabilities.xml</Item>
+					<Item>{age-modern}data/greatworks.xml</Item>
+					<Item>{age-modern}data/greatpeople.xml</Item>
+					<Item>{age-modern}data/greatpeople-gameeffects.xml</Item>
+					<Item>{age-modern}data/projects.xml</Item>
+					<Item>{age-modern}data/projects-gameeffects.xml</Item>
+					<Item>{age-modern}data/independents.xml</Item>
+					<Item>{age-modern}data/independents-gameeffects.xml</Item>
+					<Item>{age-modern}data/pseudoyields.xml</Item>
+					<Item>{age-modern}data/routes.xml</Item>
+					<Item>{age-modern}data/narrative-stories-gameeffects.xml</Item>
+					<Item>{age-modern}data/narrative-stories.xml</Item>
+					<Item>{age-modern}data/discovery-stories-gameeffects.xml</Item>
+					<Item>{age-modern}data/discovery-stories.xml</Item>
+					<Item>{age-modern}data/tot-narrative-stories-gameeffects.xml</Item>
+					<Item>{age-modern}data/tot-narrative-stories.xml</Item>
+					<Item>{age-modern}data/narrative-display.xml</Item>
+					<Item>{age-modern}data/victories.xml</Item>
+					<Item>{age-modern}data/victories-gameeffects.xml</Item>
+					<Item>{age-modern}data/legacy-path-gameeffects.xml</Item>
+					<Item>data/09-restore-cc-import-modern.sql</Item>
+				</UpdateDatabase>
+				<UpdateText>
+					<Item>text/09-dedupe-cc-import-modern-text.sql</Item>
+					<Item>{age-modern}text/en_us/TechnologiesText.xml</Item>
+					<Item>{age-modern}text/en_us/ProjectsText.xml</Item>
+				</UpdateText>
+			</Actions>
+		</ActionGroup>
+		<!-- 4. Resource effects last among the imports: 05 snapshots the modifier list, and 60 treats every
+		     modifier added after it as a resource effect, so every other import must load before this group. -->
+		<ActionGroup id="cc-import-resources" scope="game" criteria="antiquity-age-current">
+			<Properties><LoadOrder>700</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>data/09-dedupe-cc-import-resources.sql</Item>
+					<Item>data/05-pre-resource-import.sql</Item>
+					<Item>{age-exploration}data/resources-gameeffects.xml</Item>
+					<Item>{age-exploration}data/resources-gameeffects-v2.xml</Item>
+					<Item>data/09-restore-cc-import-resources.sql</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- 3. Merge into one continuous Antiquity game. -->
+		<ActionGroup id="cc-merge" scope="game" criteria="antiquity-age-current">
+			<Properties><LoadOrder>1000</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>data/06-restore-cascades.sql</Item>
+					<Item>data/10-age-clock.sql</Item>
+					<Item>data/20-tech-tree.sql</Item>
+					<Item>data/21-modern-tech-tree.sql</Item>
+					<Item>data/25-civic-tree.sql</Item>
+					<Item>data/26-modern-civic-tree.sql</Item>
+					<Item>data/30-buildings.sql</Item>
+					<Item>data/35-governments.sql</Item>
+					<Item>data/36-batch-a.sql</Item>
+					<Item>data/37-batch-b.sql</Item>
+					<Item>data/40-units.sql</Item>
+					<Item>data/50-restore-antiquity-globals.sql</Item>
+					<Item>data/55-restore-parked-modifiers.sql</Item>
+					<Item>data/60-resources.sql</Item>
+					<Item>data/64-modern-resource-data.sql</Item>
+					<Item>data/65-modern-resources.sql</Item>
+					<Item>data/70-personal-age.sql</Item>
+					<Item>data/72-exploration-rules.sql</Item>
+					<Item>data/74-modern-rules.sql</Item>
+					<Item>data/76-victories.sql</Item>
+					<Item>data/90-prune-dangling.sql</Item>
+					<Item>data/99-cleanup.sql</Item>
+				</UpdateDatabase>
+				<UpdateText>
+					<Item>text/35-governments-text.sql</Item>
+					<Item>text/55-restore-parked-text.sql</Item>
+					<Item>text/64-modern-resources-text.sql</Item>
+					<Item>text/65-modern-resources-text.sql</Item>
+				</UpdateText>
+				<!-- Hide Modern resource icons from a player until they research the activating tech. -->
+				<UIScripts>
+					<Item>ui/cc-hide-resources.js</Item>
+					<Item>ui/cc-governments.js</Item>
+					<Item>ui/cc-tree-links.js</Item>
+				</UIScripts>
+			</Actions>
+		</ActionGroup>
+	</ActionGroups>
+</Mod>
