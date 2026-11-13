@@ -1,0 +1,67 @@
+[h1]Continuous Civilization (Beta)[/h1]
+[b]One unbroken campaign from the first city to the space race.[/b] No Age resets, no civilization swap, and every civilization moves into the next Age on its own research.
+
+[b]BETA:[/b] start a [b]new game[/b] after every update. Saves from one beta version may not load in the next.
+
+[h2]Why play it[/h2]
+[list]
+[*][b]Keep what you build.[/b] The Antiquity Age never ends, so there's no transition, no new civilization and no reset of your empire.
+[*][b]One tech tree, one civic tree.[/b] Exploration continues straight on from Antiquity and Modern from Exploration, all the way to Future Tech.
+[*][b]Your own pace.[/b] Each player enters Exploration and Modern through their own research. A leader can be flying planes while a rival still fields knights.
+[*][b]Content from every Age.[/b] Units, buildings, governments, religion, resources, diplomacy and espionage from all three Ages, in one game.
+[*][b]Every main victory works:[/b] Science, Culture, Economic and Domination.
+[/list]
+
+[h2]Personal Ages[/h2]
+[list]
+[*][b]Exploration[/b] starts when you research Cartography, Astronomy or Machinery: deep-ocean travel, embarkation, a settlement cap of at least 8, higher base yields, more resource slots and envoys.
+[*][b]Modern[/b] starts when you research Academics, Steam Engine or Military Science: a settlement cap of at least 16, higher base yields, Modern resource slots and town focuses.
+[/list]
+
+[h2]Content from every Age[/h2]
+[list]
+[*][b]Units and buildings[/b] from all three Ages, with upgrades across Ages (Galleon to Frigate, Arquebusier to Line Infantry).
+[*][b]Governments[/b] unlock by civic, with a [b]Change Government[/b] button on the policies screen. AI civilizations change government too.
+[*][b]Religion[/b] from Exploration: Piety, Temples, founding a religion, beliefs, Missionaries and relics.
+[*][b]Later-Age resources[/b] are on the map from the start but stay inactive and hidden until you research them (Coal at Steam Engine, Oil at Combustion).
+[*][b]Diplomacy and espionage[/b] from later Ages: Demand Tribute, Treasure Fleets, and spy actions such as Open the Gates and Sabotage Space Program.
+[*][b]Ideologies:[/b] Democracy, Fascism and Communism open with Political Theory.
+[/list]
+
+[h2]Winning[/h2]
+[table]
+[tr][th]Victory[/th][th]How to win[/th][/tr]
+[tr][td]Science[/td][td]100 Science points and an undamaged Launch Pad, then a 5-turn countdown[/td][/tr]
+[tr][td]Culture[/td][td]150 Culture points, then a 5-turn countdown[/td][/tr]
+[tr][td]Economic[/td][td]12,000 Economic points, then a 5-turn countdown[/td][/tr]
+[tr][td]Domination[/td][td]Capture every rival's original capital[/td][/tr]
+[/table]
+Vanilla decides Culture and Economic by a 25% lead that the game only checks in a real Modern Age, so here they use fixed targets, as Science does. The targets will be tuned from beta feedback.
+
+[h2]How to play[/h2]
+[olist]
+[*]Subscribe.
+[*]In game, open [b]Additional Content[/b] and make sure [b]Continuous Civilization[/b] is enabled.
+[*]Start a [b]new[/b] game with an [b]Antiquity[/b] start.
+[/olist]
+Tested on Civilization VII 1.5.1, single player.
+
+[h2]Known limitations[/h2]
+[list]
+[*]The Military (points) and Score victories can't be won. Use Domination for a military win.
+[*]Legacy paths don't progress. Launch Rocket requires the three earlier space projects instead.
+[*]Diplomacy costs don't scale by Age.
+[*]Town houses, roads and bridges keep their Antiquity look; later-Age buildings, wonders and units use their own art.
+[*]Single player only so far. Other mods that change Ages, the trees or victories are likely to conflict.
+[/list]
+
+[h2]Feedback wanted[/h2]
+Balance notes from real games are what this beta needs most: the turn you entered Exploration and Modern, how close you got to the victory targets, and anything that felt off.
+[list]
+[*]Report bugs and balance on GitHub: [url=https://github.com/ElChapoJoe/Continuous-Civilization/issues]Continuous Civilization issues[/url]
+[*]For crashes, attach Modding.log, Database.log and UI.log from %LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Logs\
+[/list]
+
+Source code and changelog: [url=https://github.com/ElChapoJoe/Continuous-Civilization]github.com/ElChapoJoe/Continuous-Civilization[/url]
+
+[i]Unofficial fan modification, not affiliated with or endorsed by Firaxis Games or 2K. The mod includes no game files: it reads the game's own content from your installation.[/i]
