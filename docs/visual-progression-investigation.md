@@ -132,3 +132,32 @@ The user asked not to settle for overlays on top of Antiquity buildings, so the 
 ### Possible next steps
 - Use the art bins for individual later-Age buildings (`BIN_*`, for example `BIN_Museum`) per actual building on the tile, instead of one generic block, so tiles keep showing what was built.
 - Pick regional variants where the art data has them (`EAS_`, `MID_`, `NAF_` ... prefixes) by the civ's building culture.
+
+## Round 4 (2026-11-13): real buildings in the owner's style
+
+Both "next steps" above are done: replaced tiles now show the buildings actually on them, in the owner's regional style.
+
+### How the engine picks a building's model (verified by decoding the art packages)
+- **Building type to bin:** a dispatch bin pairs `[BUILDING:BUILDING_MUSEUM]` with `BIN_Museum_Scaled`, and so on for 95 building types.
+- **Bin to model:** each bin entry is a 32-byte record holding the FNV-1a hash of the model name and a condition index. The conditions (`[BUILDING_CULTURE:BUILDING_CULTURE_SAM_MOD]`, `[AGE:AGE_MODERN]`, `[CONSTRUCTIBLE_STATE:COMPLETED]` ...) follow the records; a new condition takes the next index, a reused one points back. Decoded examples:
+  - `BIN_Museum`: Modern cultures only (Mediterranean and South American Modern use the Mexican museum, East Asian Meiji, Northern European French ...).
+  - `BIN_University`: Exploration cultures only. `BIN_Library`: Antiquity cultures only. So a building keeps the style of the Age it belongs to, as in the base game.
+  - `BIN_Palace` and `BIN_Cityhall`: region plus `[AGE:...]`, the one place the game Age picks a building's look (Rome: Roman palace in Antiquity, Spanish in Exploration, Mexican in Modern).
+  - `BIN_MOD_T2_CityBld_*` and `BIN_EXP_T2_CityBld_*`: the Age's filler houses per culture.
+- **Each civ's cultures** come from `VisArt_CivilizationBuildingCultures` (Rome: `MED`, `MED_ANT`, `MED_EXP`, `SAM_MOD`, ...). Earlier rounds showed that editing this table doesn't change the engine's own art, but it is the right input for choosing models ourselves.
+- **Drawing a bin directly** with `addModelAtPlot("BIN_Museum", ...)` does **not** use the tile owner's culture (it gave the French museum on a Roman tile), so the overlay resolves bins itself. Sub-bins such as `BIN_SAM_MEX_Palace` draw correctly.
+
+### Drawing (verified)
+- `addModelAtPlot(asset, plot, offset, { placement: PlacementMode.TERRAIN, scale })`: `scale` works; `offset` is in tile units (x east, y north, ±0.5 is the tile edge). An `angle` key made the model disappear.
+- The urban road layouts (`LAYOUT_CTY_MOD_Section_AB_Road`, `LAYOUT_CTY_Hex_Section_AB_Road_EXP`) have the same lots in both Ages. The packed house layouts put houses on the west side of the tile, leaving room for two buildings at about (0.15, ±0.2) at scale 0.55. The palace layouts leave a plaza at about (0, -0.1).
+
+### Prototype results
+- Turn-451 Rome (personal Modern): every tile shows its own buildings: amphitheater (Roman) and museum (Mexican Modern) on (8,38); the Mexican Modern palace with the Spanish Exploration bank on the capital; Modern brick houses around them. Walls and wonders untouched.
+- Turn-42 game: granting Steam Engine rebuilt Rome's 4 city tiles at once; neighbouring Russia kept its Antiquity city.
+- After a full game restart the installed prototype rebuilt 241 tiles on load by itself.
+- Speculation, not checked on screen: other civs resolve to their own regional sets (the tables say so: Meiji Japan to `EAS_MJI_*`, Mughals to `MID_MUG_*` ...).
+
+### Still open
+- Lot positions are measured by eye, not read from the engine's building slots; all buildings face one way.
+- 28 building types (walls, monuments, observatories, some uniques) have no per-culture table and use one default look.
+- Ownership changes and multiplayer remain untested.
