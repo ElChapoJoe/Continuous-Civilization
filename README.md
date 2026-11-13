@@ -52,6 +52,7 @@ All of the following have been verified in game (see [`docs/`](docs) for test re
 - **Not imported yet:**
   - Modern diplomacy and espionage actions (they would change Antiquity's diplomacy values; planned with the balance pass);
   - Modern's AI file, which crashed the game.
+- **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look all game, because the game engine draws them from the single game-wide Age. Buildings, wonders and units from later Ages do use their own art, so cities look newer as players build them. See [the investigation](docs/visual-progression-investigation.md).
 - **Cosmetic:** one tech-tree link (Guilds to Education) is drawn with a small gap.
 - **Tested in single player only.** The UI scripts act for the local player, so multiplayer is untested.
 
@@ -91,7 +92,7 @@ Requires **Sid Meier's Civilization VII** (tested on version 1.5.1). No game fil
 
 - Culture and Economic victories (a lead-based rule that works without a Modern Age).
 - Balance pass: Exploration and Modern diplomacy and espionage, pacing, wonder scoring by Age.
-- Visual progression: city buildings, roads and bridges that develop with each player's research.
+- Visual progression, if the engine allows it: possibly a world-wide art step when most players enter a new Age, and per-player road art through railroads.
 - Playtesting of the Modern interface by human players; multiplayer.
 
 ## Disclaimer

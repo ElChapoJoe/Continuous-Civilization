@@ -76,4 +76,8 @@ What remains:
 - **B** is the only per-player visual route, best limited to empty or new tiles.
 - **D** would be a global, menu-chosen art era, not progression.
 
+**Decision (2026-11-12):** accepted as a known limitation for now (listed in the README). Ideas kept for later, both untested:
+- a world-wide "artificial Age change" for art only: change the game's Age value in a save and reload, triggered when most players reach a new personal Age;
+- per-player road art: roads that become railroads after a Modern tech, and possibly their bridges.
+
 Revisit if Firaxis exposes art Age per player or per city (for example in a future modding update or SDK), or if a later patch adds an art hook.
