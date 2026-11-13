@@ -188,3 +188,9 @@ The user still saw buildings inside each other and at odd angles, and suggested 
 - **Rotation:** `angle` turns counter-clockwise (x east, y north); rotating the lots by the same angle keeps buildings on their streets.
 - **Centres:** palace and city hall at (0, 0), full size, fill the plaza layouts exactly.
 - Result: Rome's tiles show buildings in their lots between streets and houses, with no overlaps seen from above or at an angle.
+
+## Round 7 (2026-11-13): sandbox game and the palace square
+
+- **Sandbox:** a new tiny-map game with Rome as the only player (no AI civs, no city-states), set up by script with `Configuration.editMap().setMaxMajorPlayers(1)`, the other slots closed and `Network.hostGame`. Buildings are placed with the debug `CREATE_ELEMENT` operation the Firaxis tuner's city panel uses (`experimental/cc-visual-prototype/tools/sandbox.js`); tiles are added with `city.purchasePlot`. Saves: `CC_Visual_Sandbox_Antiquity`, `CC_Visual_Sandbox_Modern`.
+- **Engine art coming back (verified):** the engine redraws a city's tiles when the city changes (a building added, a tile bought), which undoes `clipHexHeight`. The overlay only re-clipped changed tiles, so the engine's Antiquity palace (and other buildings) reappeared underneath the overlay's models. This was the main cause of buildings drawn inside each other. Fix: re-clip every replaced tile on each rebuild, listen to more city events, and re-clip all replaced tiles every 3 seconds as a safety net.
+- **Palace layout:** the `*_City_Center_Palace` layout is only the square, streets and houses; the palace at (0, 0), full size, fills it.

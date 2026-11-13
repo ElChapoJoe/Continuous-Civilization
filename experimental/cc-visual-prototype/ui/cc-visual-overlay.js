@@ -231,6 +231,9 @@
       for (const [key, parts] of want) {
         const old = current.get(key);
         if (!old || signature(old) !== signature(parts)) drawTile(key, parts);
+        // The engine redraws a city's tiles when the city changes (new building, new tile, growth), which undoes
+        // the clip: re-hide every replaced tile on each rebuild, or old engine art shows through underneath.
+        else WorldUI.clipHexHeight(loc(key), CLIP_HEIGHT);
       }
       current = want;
     } catch (e) {
@@ -253,9 +256,15 @@
 
   for (const event of ["PlayerTurnActivated", "TechNodeCompleted", "TechTreeChanged", "CityAddedToMap", "CityRemovedFromMap", "CityInitialized",
     "DistrictAddedToMap", "DistrictRemovedFromMap", "DistrictControlChanged", "PlotOwnershipChanged", "PlotVisibilityChanged",
-    "ConstructibleAddedToMap", "ConstructibleChanged", "ConstructibleRemovedFromMap", "LocalPlayerChanged"]) {
+    "ConstructibleAddedToMap", "ConstructibleChanged", "ConstructibleRemovedFromMap", "LocalPlayerChanged",
+    "CityPopulationChanged", "CityProductionCompleted", "UrbanReligionChanged", "CityStateBonusChosen"]) {
     engine.on(event, schedule);
   }
+  // Safety net: the engine can redraw a tile without an event we listen to, which undoes the clip. Re-hide the
+  // replaced tiles every few seconds (cheap: one call per tile, no models redrawn).
+  setInterval(() => {
+    try { for (const key of current.keys()) WorldUI.clipHexHeight(loc(key), CLIP_HEIGHT); } catch (e) { /* game unloading */ }
+  }, 3000);
   globalThis.CCVisualOverlay = {
     rebuild: () => { reset(); rebuild(); return current.size; },
     reset, personalAge, count: () => current.size,
