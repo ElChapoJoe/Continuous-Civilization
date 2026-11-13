@@ -94,7 +94,7 @@ Goal: two neighbouring civilizations with fully different architectural Ages, ch
 | Can a mod change it mid-game? | **No** | Assigning it from script is silently ignored. No effect type sets it (searched all `KIND_EFFECT` types; `EFFECT_PLAYER_ADJUST_AGE_PROGRESS` only moves the Age meter). The only per-player Age operation is `SET_AGE_TRANSITION_DATA`, the choice screen of a real Age transition |
 | Does architecture follow the civilization's own Age? | **No** | This game has Russia and the French Empire (Modern civs) and Abbasid, Inca, Normans (Exploration civs) since turn 1. Russia's Kazan is drawn in Eastern European **Antiquity** timber: the civilization picks the regional style, the game Age picks the era |
 | Is the per-civilization art table re-read? | **No** (third check) | Russia's style matches its `VisArt_CivilizationBuildingCultures` rows, so the table is used when cities are created, but changing it later had no effect (round 1) |
-| Can scripts hide or replace engine-drawn city art? | **No** | `WorldUI.setUnitVisibility` affects units only. `WorldUI.clipHexHeight` is used by no game script or tuner panel, and calling it **crashed the game** (`Argument conversion failed ... argument 1`, then a native crash). Unsafe; not retested. FireTuner's 38 panels have no city, district or building art commands. The Reflection panel inspects saved game state for desync debugging, not the renderer |
+| Can scripts hide or replace engine-drawn city art? | **Yes, per tile** (see round 3) | First try: `WorldUI.clipHexHeight(plot)` without a height crashed the game. With a height it works |
 | Do overlays on a whole city look like a later-Age city? | **No, mixed** | Modern city-block models on Rome's centre and both urban tiles draw at the right scale, but the Antiquity houses stay and the new blocks intersect them |
 | Per-player overlay prototype | Works as designed | `experimental/cc-visual-prototype`: Rome in personal Modern drew 4 models across 2 cities, its Antiquity neighbours none; after an interface reload the models were gone and the script rebuilt them |
 
@@ -111,3 +111,24 @@ Goal: two neighbouring civilizations with fully different architectural Ages, ch
 - **Kept (already in the mod):** later-Age buildings, wonders and units use their own art, so cities do modernize building by building, per player.
 - **Optional, experimental:** the overlay prototype gives each owner's cities later-Age blocks by personal Age, per player and without touching gameplay, at the cost of a mixed look. Not recommended for the main mod.
 - **Would need Firaxis:** a per-player or per-city art Age (for example, the renderer honouring a player Age that mods can set). Worth a feature request to Firaxis.
+
+## Round 3 (2026-11-13): hiding the engine's own city art
+
+The user asked not to settle for overlays on top of Antiquity buildings, so the crashed call was retried correctly.
+
+### Verified
+- **`WorldUI.clipHexHeight(plot, height)` hides engine art on a tile.** Everything the engine draws above `height` on that tile disappears: houses, temples, the palace, markets, walls on the tile. At `0` only ground-level paving stays; at `5` building stumps stay; at `30` most of the building stays. Terrain, units, unit flags, yield icons and city banners are unaffected. Called without the height it crashes the game.
+- **It is undone with `restoreHexHeight(plot)` or `restoreAllHexHeight()`.**
+- **It persists:** a clipped tile stayed clipped through a full AI turn while the engine added art elsewhere.
+- **Clip plus a later-Age city block is a real replacement.** On Rome's 16 city tiles (turn-451 save) the Antiquity city disappeared and Modern blocks stood in its place.
+- **Two neighbours in different Ages, same game Age.** Turn-42 game: Rome in personal Modern showed Modern blocks, neighbouring Russia (Antiquity) kept its timber city.
+- **Per-player prototype rebuilt** (`experimental/cc-visual-prototype`): uses clip plus blocks by personal Age, updates on research, applies automatically when a save loads (241 tiles on the turn-451 save) and is display only.
+
+### What still limits it
+- The `*_URBAN_*_Layout` blocks are one European style: every civ's later-Age city looks alike.
+- Replaced tiles show generic blocks instead of the player's actual buildings; walls on tile edges keep engine art; large cities look tiled.
+- Ownership changes and multiplayer are not tested.
+
+### Possible next steps
+- Use the art bins for individual later-Age buildings (`BIN_*`, for example `BIN_Museum`) per actual building on the tile, instead of one generic block, so tiles keep showing what was built.
+- Pick regional variants where the art data has them (`EAS_`, `MID_`, `NAF_` ... prefixes) by the civ's building culture.

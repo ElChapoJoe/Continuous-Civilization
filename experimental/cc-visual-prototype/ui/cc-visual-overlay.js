@@ -1,22 +1,26 @@
-// Continuous Civilization - EXPERIMENTAL per-player city architecture overlay (display only).
+// Continuous Civilization - EXPERIMENTAL per-player city architecture (display only).
 //
-// The engine draws city filler art (houses, streets) from one game-wide Age, and exposes no way to hide or
-// replace it (see docs/visual-progression-investigation.md). This prototype draws the matching later-Age
-// city-block models (EXP_URBAN_* / MOD_URBAN_*) on top of each city's city-centre and urban tiles, chosen by
-// the OWNER's personal Age:
-//   Antiquity   - nothing drawn (the engine's own art)
+// The engine draws a city's buildings and filler from the single game Age, and the mod can't change that Age per
+// player (see docs/visual-progression-investigation.md). This prototype instead replaces the picture tile by tile:
+//   1. WorldUI.clipHexHeight(plot, 0) hides everything the engine draws on the tile above ground level
+//      (buildings, houses, walls on the tile), leaving terrain, units and the UI.
+//   2. A later-Age city-block model (EXP_URBAN_* / MOD_URBAN_*) is drawn on the same tile.
+// Which Age is used comes from the OWNER's personal Age (the same techs as the main mod):
+//   Antiquity   - engine art, untouched
 //   Exploration - any of Cartography, Astronomy, Machinery researched
 //   Modern      - any of Academics, Steam Engine, Military Science researched
 //
-// It never changes the game simulation: it only reads game state and adds client-side models, so yields,
-// production, districts and multiplayer sync are untouched, and every client draws the same thing from the same
-// state. It only draws on tiles the local player has revealed, so it never shows hidden cities. It rebuilds
-// after loading a save (the script runs when the game UI loads) and whenever research, cities, districts,
-// ownership or visibility change.
+// Display only: it reads game state and changes nothing in the simulation, so yields, production, districts and
+// multiplayer sync are untouched, and every client draws the same picture from the same state. It only touches
+// tiles the local player has revealed. It rebuilds when the game UI loads (so after loading a save) and whenever
+// research, cities, districts, ownership or visibility change, and on each turn.
 //
-// Known limit: the engine's Antiquity houses stay underneath, so cities look mixed rather than replaced.
+// Known limits: replaced tiles show generic city blocks, so the player's actual buildings on those tiles
+// (including Modern ones such as factories) are not shown individually; walls on tile edges and wonders on their
+// own tiles keep their engine art. NEVER call clipHexHeight without the height argument: that crashes the game.
 (function () {
   const GROUP_NAME = "ccVisualOverlay";
+  const CLIP_HEIGHT = 0;
   const EXPLORATION = ["NODE_TECH_EX_CARTOGRAPHY", "NODE_TECH_EX_ASTRONOMY", "NODE_TECH_EX_MACHINERY"];
   const MODERN = ["NODE_TECH_MO_ACADEMICS", "NODE_TECH_MO_STEAM_ENGINE", "NODE_TECH_MO_MILITARY_SCIENCE"];
   const ASSETS = {
@@ -40,8 +44,8 @@
     return id >= 0 ? id : GameContext.localObserverID;
   }
 
-  /** "x,y" -> asset name for every tile that should carry a later-Age model. */
-  function desiredModels() {
+  /** "x,y" -> asset name for every tile that should be replaced. */
+  function desiredTiles() {
     const want = new Map();
     const me = viewer();
     const ids = Players.getAliveIds ? Players.getAliveIds() : Players.getAliveMajorIds();
@@ -67,23 +71,34 @@
     return want;
   }
 
-  let group = WorldUI.getModelGroupByName?.(GROUP_NAME) || WorldUI.createModelGroup(GROUP_NAME);
+  const group = WorldUI.getModelGroupByName?.(GROUP_NAME) || WorldUI.createModelGroup(GROUP_NAME);
   let current = new Map();
+  const loc = (key) => { const [x, y] = key.split(",").map(Number); return { x, y }; };
 
   function rebuild() {
     try {
-      const want = desiredModels();
+      const want = desiredTiles();
       const same = want.size === current.size && [...want].every(([k, v]) => current.get(k) === v);
       if (same) return;
+      for (const key of current.keys()) {
+        if (!want.has(key)) WorldUI.restoreHexHeight(loc(key));
+      }
       group.clear();
       for (const [key, asset] of want) {
-        const [x, y] = key.split(",").map(Number);
-        group.addModelAtPlot(asset, { x, y }, { x: 0, y: 0, z: 0 }, {});
+        const plot = loc(key);
+        WorldUI.clipHexHeight(plot, CLIP_HEIGHT);
+        group.addModelAtPlot(asset, plot, { x: 0, y: 0, z: 0 }, {});
       }
       current = want;
     } catch (e) {
       console.error("cc-visual-overlay: " + e);
     }
+  }
+
+  function reset() {
+    group.clear();
+    WorldUI.restoreAllHexHeight();
+    current = new Map();
   }
 
   let pending = 0;
@@ -92,11 +107,15 @@
     pending = setTimeout(() => { pending = 0; rebuild(); }, 250);
   }
 
-  for (const event of ["PlayerTurnActivated", "TechNodeCompleted", "CityAddedToMap", "CityRemovedFromMap", "CityInitialized",
+  for (const event of ["PlayerTurnActivated", "TechNodeCompleted", "TechTreeChanged", "CityAddedToMap", "CityRemovedFromMap", "CityInitialized",
     "DistrictAddedToMap", "DistrictRemovedFromMap", "DistrictControlChanged", "PlotOwnershipChanged", "PlotVisibilityChanged",
-    "LocalPlayerChanged"]) {
+    "ConstructibleAddedToMap", "LocalPlayerChanged"]) {
     engine.on(event, schedule);
   }
-  globalThis.CCVisualOverlay = { rebuild: () => { current = new Map(); rebuild(); return current.size; }, personalAge, count: () => current.size };
+  globalThis.CCVisualOverlay = {
+    rebuild: () => { reset(); rebuild(); return current.size; },
+    reset, personalAge, count: () => current.size,
+  };
+  reset();
   schedule();
 })();
