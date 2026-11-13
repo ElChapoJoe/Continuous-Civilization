@@ -161,3 +161,17 @@ Both "next steps" above are done: replaced tiles now show the buildings actually
 - Lot positions are measured by eye, not read from the engine's building slots; all buildings face one way.
 - 28 building types (walls, monuments, observatories, some uniques) have no per-culture table and use one default look.
 - Ownership changes and multiplayer remain untested.
+
+## Round 5 (2026-11-13): missing and mis-oriented buildings
+
+The user reported main buildings missing or facing the wrong way.
+
+### Causes found (verified)
+- **Missing:** the overlay used one model group and redrew all 241 tiles whenever any tile changed. A newly added model shows its paved base first and the building once its mesh loads, so during busy turns buildings kept restarting their load. 383 of 391 buildings were resolved, so resolution was not the main cause. Fix: one model group per tile, redraw only changed tiles. The 8 unresolved buildings (airfield, launch pad, rail station) now fall back to the game's own bin.
+- **Orientation:** every model faced south. `addModelAtPlot` honours `angle` in degrees (0 faces south, positive turns toward east). Earlier tests that "hid" models with `angle` were screenshots taken before the models had loaded. Buildings now face the tile centre.
+- **Wrong regional style for region-only conditions:** the decoder paired conditions such as `[BUILDING_CULTURE:BUILDING_CULTURE_MED]` with the model one place over (`MED` gave the Mughal Modern block, `EAS` the American one). Both indexes in a bin record point into the package's length-prefixed string table, which runs in order locally but skips entries; reading a condition index relative to the nearest model anchor (a model name whose hash matches exactly one table string) gives the correct pairs (`MED` to the Mexican set, `EAS` to the Japanese set, as the Age-specific rows already did).
+- **Unconditioned variants:** the game offers two generic variants for barracks, kilns, dungeons and granaries (Middle Eastern or Mediterranean). The overlay now prefers the owner's region when one matches.
+
+### Checked on screen
+- Rome (turn 451): buildings draw on every tile and face their tile's centre; kiln Spanish, library Roman, museum and palace Mexican Modern.
+- Mexico City: Mexican Modern palace square, Modern blocks, wonders untouched. A dark patch nearby was unexplored fog, not the overlay.

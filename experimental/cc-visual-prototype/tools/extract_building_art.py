@@ -9,9 +9,12 @@ to draw its own models; no art is copied.
 Format notes (found by inspection, 2026-11-13):
 - A bin entry is a 32-byte record: f32 weight (1.0), u32 kind, u32 FNV-1a hash of the model
   name, u32 0, u16 model index, 6 bytes 0, u16 condition index, 6 bytes 0.
+- Both indexes point into the package's string table. Each table string is stored as u32 length+1,
+  u32 length, the characters and a NUL. Indexes run in table order locally but skip some entries,
+  so a condition index is read relative to the nearest model index whose string is known for
+  certain (its FNV-1a hash matches exactly one table string).
 - A bin's records are contiguous, followed by its model names, its condition strings and then
-  its BIN_ name. A condition used for the first time gets the next condition index and its
-  string follows the records in index order; a reused condition points back to an earlier one.
+  its BIN_ name.
 
 Usage: python -I extract_building_art.py [Civ VII Base folder]
 """
@@ -60,26 +63,51 @@ BUILDING = re.compile(r"^\[BUILDING:([A-Z0-9_]+)\]$")
 AGE = re.compile(r"\[AGE:AGE_([A-Z]+)\]")
 
 
+ENTRY = re.compile(rb"[\x20-\x7e]+\x00")
+
+
+def string_table(data):
+    """The package's length-prefixed strings, in file order."""
+    tab = []
+    for m in ENTRY.finditer(data):
+        s, n = m.start(), m.end() - 1 - m.start()
+        if s >= 8 and struct.unpack_from("<II", data, s - 8) == (n + 1, n):
+            tab.append(data[s:s + n].decode())
+    return tab
+
+
 def parse(path, bins, dispatch, names):
     data = open(path, "rb").read()
     strings = [(m.start(), m.group().decode()) for m in STRING.finditer(data)]
-    for _, s in strings:
-        names.setdefault(fnv1a(s), s)
-    records = [(m.start(), struct.unpack("<I", m.group(2))[0], struct.unpack("<H", m.group(4))[0])
-               for m in RECORD.finditer(data)]
-    # A bin is a run of contiguous records, then its model names and condition strings, then
-    # its BIN_ name (the first BIN_ string after the last condition). Each record names its
-    # condition by index. A condition used for the first time gets the next index and its
-    # string follows the run, in index order; reused conditions point back to earlier ones.
+    tab = string_table(data)
+    byhash = {}
+    for i, nm in enumerate(tab):
+        byhash.setdefault(fnv1a(nm), []).append(i)
+    records = [(m.start(), struct.unpack("<I", m.group(2))[0], struct.unpack("<H", m.group(3))[0],
+                struct.unpack("<H", m.group(4))[0]) for m in RECORD.finditer(data)]
+    anchor = {}
+    for _, h, mi, _ in records:
+        c = byhash.get(h, [])
+        if len(c) == 1:
+            anchor.setdefault(mi, c[0])
+    keys = sorted(anchor)
+
+    def condition(ci):
+        k = bisect.bisect_right(keys, ci) - 1
+        if k < 0:
+            return None
+        p = anchor[keys[k]] + (ci - keys[k])
+        s = tab[p] if 0 <= p < len(tab) else None
+        return s if s and s.startswith("[") else None
+
     runs = []
-    for o, h, c in records:
+    for o, h, _, c in records:
         if runs and o - runs[-1][1] <= 32:
             runs[-1][1] = o
             runs[-1][2].append((h, c))
         else:
             runs.append([o, o, [(h, c)]])
     starts = [o for o, _ in strings]
-    known, top = {}, -1
     for i, (a, b, recs) in enumerate(runs):
         end = runs[i + 1][0] if i + 1 < len(runs) else len(data)
         j = bisect.bisect_right(starts, b + 32)
@@ -87,34 +115,28 @@ def parse(path, bins, dispatch, names):
         while j < len(strings) and strings[j][0] < end:
             region.append(strings[j][1])
             j += 1
-        conds = [s for s in region if s.startswith("[")]
-        new = sorted({c for _, c in recs if c > top})
-        for c, s in zip(new, conds):
-            known[c] = s
-        if new:
-            top = max(top, new[-1])
         last = max((k for k, s in enumerate(region) if s.startswith("[")), default=-1)
         name = next((s for s in region[last + 1:] if s.startswith("BIN_")), None)
         if not name:
             continue
         cult = []
-        for cond, model in ((known.get(c), names.get(h)) for h, c in recs):
-            if not cond:
+        for cond, model in ((condition(c), names.get(h)) for h, c in recs):
+            if not cond or not model:
                 continue
             bm = BUILDING.match(cond)
-            if bm and model:
+            if bm:
                 dispatch.setdefault(bm.group(1), [])
                 if model not in dispatch[bm.group(1)]:
                     dispatch[bm.group(1)].append(model)
                 continue
-            if not model or "CONSTRUCTION" in cond or "PILLAGED" in cond:
+            if "CONSTRUCTION" in cond or "PILLAGED" in cond:
                 continue
-            c = CULTURE.search(cond)
-            a = AGE.search(cond)
             # Only completed-building conditions made of culture, Age and state terms.
             rest = re.sub(r"\[(BUILDING_CULTURE|AGE|CONSTRUCTIBLE_STATE):[A-Z_]+\]|\band\b|\s", "", cond)
             if rest:
                 continue
+            c = CULTURE.search(cond)
+            a = AGE.search(cond)
             cult.append([c.group(1) if c else "*", a.group(1) if a else "*", model])
         if cult and name not in bins:
             bins[name] = cult

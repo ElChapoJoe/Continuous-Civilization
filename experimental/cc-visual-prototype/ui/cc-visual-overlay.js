@@ -50,7 +50,7 @@
     { x: 0.15, y: -0.2, scale: 0.55 },
   ];
   const CENTER_LOTS = [
-    { x: 0, y: -0.1, scale: 0.7 },
+    { x: 0, y: -0.1, scale: 0.7, angle: 0 },
     { x: -0.3, y: 0.3, scale: 0.3 },
     { x: 0.3, y: 0.3, scale: 0.3 },
   ];
@@ -101,17 +101,28 @@
     else {
       const any = fits.filter(([c]) => c === "*");
       if (!any.length) return null;
-      model = any[seed % any.length][2];
+      // Prefer a variant from the owner's own region (model names start with it: MED_ROM_Kiln for MED).
+      const own = any.filter(([, , m]) => owned.has(m.replace(/^BIN_/, "").slice(0, 3)));
+      const pool = own.length ? own : any;
+      model = pool[seed % pool.length][2];
     }
     return ART().art[model] ? resolve(model, owned, ageName, seed, depth + 1) : model;
   }
 
   function buildingModel(type, owned, ageName, seed) {
-    for (const bin of ART().bins[type] || []) {
+    const bins = ART().bins[type] || [];
+    for (const bin of bins) {
       const model = resolve(bin, owned, ageName, seed);
       if (model) return model;
     }
-    return null;
+    // No variant for the owner's cultures (airfield, launch pad ...): let the game pick from the bin itself.
+    return bins[0] || null;
+  }
+
+  /** Degrees for `angle` so a model at this lot faces the tile centre. 0 faces south; positive turns toward east. */
+  function facing(l) {
+    if (!l.x && !l.y) return 0;
+    return Math.round(Math.atan2(-l.x, l.y) * 180 / Math.PI);
   }
 
   function viewer() {
@@ -134,7 +145,7 @@
     return out;
   }
 
-  /** "x,y" -> list of [asset, offset, scale] for every tile that should be rebuilt. */
+  /** "x,y" -> list of [asset, offset, scale, angle] for every tile that should be rebuilt. */
   function desiredTiles() {
     const want = new Map();
     const me = viewer();
@@ -160,7 +171,7 @@
           const seed = (loc.x * 73856093) ^ (loc.y * 19349663);
           const parts = [];
           const kind = isCenter ? (buildings.includes("BUILDING_PALACE") ? "capital" : "center") : "urban";
-          for (const asset of layout[kind]) parts.push([asset, ZERO, 1]);
+          for (const asset of layout[kind]) parts.push([asset, ZERO, 1, 0]);
           const lots = isCenter ? CENTER_LOTS : URBAN_LOTS;
           // On a city center the palace or city hall takes the plaza.
           const order = isCenter
@@ -173,13 +184,13 @@
             const model = buildingModel(type, owned, ageName, Math.abs(seed));
             if (!model) continue;
             const l = lots[lot++];
-            parts.push([model, { x: l.x, y: l.y, z: 0 }, l.scale]);
+            parts.push([model, { x: l.x, y: l.y, z: 0 }, l.scale, l.angle ?? facing(l)]);
           }
           if (!isCenter) {
             for (; lot < lots.length; lot++) {
               const bin = layout.filler[(Math.abs(seed) + lot) % layout.filler.length];
               const model = resolve(bin, owned, ageName, Math.abs(seed) + lot);
-              if (model) parts.push([model, { x: lots[lot].x, y: lots[lot].y, z: 0 }, FILLER_SCALE]);
+              if (model) parts.push([model, { x: lots[lot].x, y: lots[lot].y, z: 0 }, FILLER_SCALE, facing(lots[lot])]);
             }
           }
           want.set(loc.x + "," + loc.y, parts);
@@ -189,26 +200,43 @@
     return want;
   }
 
-  const group = WorldUI.getModelGroupByName?.(GROUP_NAME) || WorldUI.createModelGroup(GROUP_NAME);
+  // One model group per tile, so a change on one tile redraws only that tile. Redrawing everything made models
+  // restart loading, and buildings often never finished appearing during busy turns.
+  const PREFIX = "ccVisualOverlay:";
+  const groups = new Map();
+  function groupFor(key) {
+    let g = groups.get(key);
+    if (!g) {
+      g = WorldUI.getModelGroupByName?.(PREFIX + key) || WorldUI.createModelGroup(PREFIX + key);
+      groups.set(key, g);
+    }
+    return g;
+  }
   let current = new Map();
   const loc = (key) => { const [x, y] = key.split(",").map(Number); return { x, y }; };
-  const signature = (parts) => parts.map((p) => p[0] + "@" + p[1].x + "," + p[1].y).join("|");
+  const signature = (parts) => parts.map((p) => p[0] + "@" + p[1].x + "," + p[1].y + "," + p[2] + "," + p[3]).join("|");
+
+  function drawTile(key, parts) {
+    const plot = loc(key);
+    const g = groupFor(key);
+    g.clear();
+    WorldUI.clipHexHeight(plot, CLIP_HEIGHT);
+    for (const [asset, offset, scale, angle] of parts) {
+      g.addModelAtPlot(asset, plot, offset, { placement: PlacementMode.TERRAIN, scale, angle });
+    }
+  }
 
   function rebuild() {
     try {
       const want = desiredTiles();
-      const same = want.size === current.size && [...want].every(([k, v]) => current.has(k) && signature(current.get(k)) === signature(v));
-      if (same) return;
       for (const key of current.keys()) {
-        if (!want.has(key)) WorldUI.restoreHexHeight(loc(key));
+        if (want.has(key)) continue;
+        groups.get(key)?.clear();
+        WorldUI.restoreHexHeight(loc(key));
       }
-      group.clear();
       for (const [key, parts] of want) {
-        const plot = loc(key);
-        WorldUI.clipHexHeight(plot, CLIP_HEIGHT);
-        for (const [asset, offset, scale] of parts) {
-          group.addModelAtPlot(asset, plot, offset, { placement: PlacementMode.TERRAIN, scale });
-        }
+        const old = current.get(key);
+        if (!old || signature(old) !== signature(parts)) drawTile(key, parts);
       }
       current = want;
     } catch (e) {
@@ -217,7 +245,8 @@
   }
 
   function reset() {
-    group.clear();
+    for (const g of groups.values()) g.clear();
+    WorldUI.getModelGroupByName?.("ccVisualOverlay")?.clear(); // the single group of earlier versions
     WorldUI.restoreAllHexHeight();
     current = new Map();
   }
