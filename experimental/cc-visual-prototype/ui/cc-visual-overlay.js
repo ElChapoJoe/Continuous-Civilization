@@ -186,6 +186,9 @@
           if (me >= 0 && GameplayMap.getRevealedState(me, loc.x, loc.y) === RevealedStates.HIDDEN) continue;
           const buildings = tileBuildings(loc);
           if (!buildings) continue;
+          // clipHexHeight can't hide the engine's riverside houses on a navigable-river tile, so redrawing there
+          // stacks new models on old ones. Leave those tiles to the engine (Antiquity art, wooden bridges).
+          if (GameplayMap.isNavigableRiver(loc.x, loc.y)) continue;
           const seed = (loc.x * 73856093) ^ (loc.y * 19349663);
           const parts = [];
           const civic = (b) => b === "BUILDING_PALACE" || b === "BUILDING_CITY_HALL";
@@ -201,7 +204,7 @@
             // places its houses piece by piece around the terrain; we can't), so draw only the streets there.
             const rough = edgeCosts(loc).some((c) => c > 0);
             for (const asset of rough ? layout.urban.slice(0, 1) : layout.urban) parts.push([asset, ZERO, 1, angle]);
-            const others = buildings.filter((b) => !civic(b));
+            const others = buildings.filter((b) => !civic(b) && !/BRIDGE/.test(b));
             URBAN_LOTS.forEach((lot, i) => {
               const at = rotate(lot, angle);
               const type = others[i];

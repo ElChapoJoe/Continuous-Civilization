@@ -202,3 +202,10 @@ The user still saw buildings inside each other and at odd angles, and suggested 
 - Measured at angle 0: the layout fills the NW, SW and SE edges with houses and puts building lots toward W and NE; only E stays open. `GameplayMap.isCliffCrossing(x, y, dir)` reports cliff edges.
 - The overlay now picks each urban tile's 60-degree turn to keep houses and buildings off edges facing water or mountains (weight 3) and cliffs (weight 1), buildings counting double, and on any shore, cliff or mountain tile draws only the street section and the two buildings, without the house rows.
 - Sandbox: the coastal factory and museum tile now stands on its streets with nothing on the beach or rocks.
+
+## Round 9 (2026-11-13): why redraws don't follow the engine's rules
+
+- The engine's city layout bins hold no terrain variants: `BIN_CTY_MOD_Layout_2HB_Full_A` is the packed houses plus a forest-only tree layer; `BIN_LAYOUT_CTY_*_Road` only switch by `[AGE:...]`. Fitting houses around rivers, coasts, cliffs and the central square happens in engine code (blocker and attachment points such as `*_BlockerAttachment_*`), which mods can't call or read. So a per-player redraw can only approximate it.
+- No per-player or per-city art Age exists in the executable (searched: only start Age, age transition data and the unit `setAgeStyle`).
+- `clipHexHeight` does not hide the engine's houses on navigable-river tiles. Redrawing them stacked new models on the old ones; the overlay now leaves navigable-river tiles to the engine.
+- Bridges: in the base game all three bridge buildings use one bin that picks wood or stone by the game Age, so in this mod bridges stay wooden. Since bridges sit on navigable rivers, they stay engine-drawn.
