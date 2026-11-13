@@ -220,3 +220,11 @@ The user still saw buildings inside each other and at odd angles, and suggested 
   - **River tiles:** the engine draws Modern buildings along the river; ours stay Antiquity (round 9).
   - **Countryside:** farms, woodcutters, rural houses and props are Modern in the engine's game (trucks, lumber yards); the prototype doesn't touch rural tiles, so they stay Antiquity.
 - **Next step that would fix the streets:** find the engine's per-tile turn. Since the engine's street decals stay visible under our models in every Age, reading the turn the engine chose (for example from a top-down screenshot per tile, or a rule if one can be found) and drawing ours at the same turn would make both layers line up.
+
+## Round 11 (2026-11-13): reading the engine's street turns
+
+- With every city tile clipped and no overlay drawn, the engine's ground shows one connected street network across the city (`sandbox-shots/11-engine-street-ground.png`). Streets run straight through several tiles, so the turn of a tile depends on its neighbours, not on the tile alone. The art data has road-style decal pieces chosen by connection shape (`BIN_TER_Decal_Route_Layout_Straight`, `Bend60`, `Bend120`, `YLeft`, `YRight`, `YSplit`, `Trident`, `X`, `Adjacent3` to `Adjacent6`), which fits a rule of "connect each city tile's streets to its neighbouring city tiles".
+- The capital's square was turned about 330 degrees both in the Antiquity sandbox and in the Modern reference game: the turn is stable across Ages.
+- Matching a single tile by drawing our street layout at each 60-degree turn over the engine's ground was inconclusive: the engine's ground streets are faint dirt paths that our paved model covers.
+- `WorldUI.hash` is a string hash (the same family as `Database.makeHash`), not a per-tile seed.
+- Not found: the rule itself. Next candidates: derive turns from which neighbours are city tiles (the road-network idea above), checked tile by tile against top-down shots of the engine's own buildings in the Modern reference game.
