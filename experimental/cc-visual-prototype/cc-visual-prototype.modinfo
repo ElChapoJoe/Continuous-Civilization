@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="cc-visual-prototype" version="1" xmlns="ModInfo">
+	<Properties>
+		<Name>Continuous Civilization - Visual Prototype (Experimental)</Name>
+		<Description>EXPERIMENTAL, display only. Draws Exploration or Modern city-block models over each city's tiles according to its owner's personal Age. The engine's own Antiquity houses stay underneath, so cities look mixed. Requires Continuous Civilization.</Description>
+		<Authors>ElChapoJoe</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
+	</Properties>
+	<Dependencies>
+		<Mod id="continuous-civ" title="Continuous Civilization"/>
+	</Dependencies>
+	<ActionCriteria>
+		<Criteria id="always">
+			<AlwaysMet></AlwaysMet>
+		</Criteria>
+	</ActionCriteria>
+	<ActionGroups>
+		<ActionGroup id="cc-visual-prototype-ui" scope="game" criteria="always">
+			<Actions>
+				<UIScripts>
+					<Item>ui/cc-visual-overlay.js</Item>
+				</UIScripts>
+			</Actions>
+		</ActionGroup>
+	</ActionGroups>
+</Mod>

@@ -81,3 +81,33 @@ What remains:
 - per-player road art: roads that become railroads after a Modern tech, and possibly their bridges.
 
 Revisit if Firaxis exposes art Age per player or per city (for example in a future modding update or SDK), or if a later patch adds an art hook.
+
+## Second round (2026-11-13): looking for a native per-player switch
+
+Goal: two neighbouring civilizations with fully different architectural Ages, chosen by their own research, while the game Age stays Antiquity. Tested on a turn-42 playtest save (not saved afterwards).
+
+### Verified
+
+| Question | Result | Evidence |
+|---|---|---|
+| Does a player have its own Age? | **Yes**: `Players.get(id).Ages.age` | All six players read `AGE_ANTIQUITY` (hash 2077444219). The object also has `getLastAge()` and `getNumStartCities()` |
+| Can a mod change it mid-game? | **No** | Assigning it from script is silently ignored. No effect type sets it (searched all `KIND_EFFECT` types; `EFFECT_PLAYER_ADJUST_AGE_PROGRESS` only moves the Age meter). The only per-player Age operation is `SET_AGE_TRANSITION_DATA`, the choice screen of a real Age transition |
+| Does architecture follow the civilization's own Age? | **No** | This game has Russia and the French Empire (Modern civs) and Abbasid, Inca, Normans (Exploration civs) since turn 1. Russia's Kazan is drawn in Eastern European **Antiquity** timber: the civilization picks the regional style, the game Age picks the era |
+| Is the per-civilization art table re-read? | **No** (third check) | Russia's style matches its `VisArt_CivilizationBuildingCultures` rows, so the table is used when cities are created, but changing it later had no effect (round 1) |
+| Can scripts hide or replace engine-drawn city art? | **No** | `WorldUI.setUnitVisibility` affects units only. `WorldUI.clipHexHeight` is used by no game script or tuner panel, and calling it **crashed the game** (`Argument conversion failed ... argument 1`, then a native crash). Unsafe; not retested. FireTuner's 38 panels have no city, district or building art commands. The Reflection panel inspects saved game state for desync debugging, not the renderer |
+| Do overlays on a whole city look like a later-Age city? | **No, mixed** | Modern city-block models on Rome's centre and both urban tiles draw at the right scale, but the Antiquity houses stay and the new blocks intersect them |
+| Per-player overlay prototype | Works as designed | `experimental/cc-visual-prototype`: Rome in personal Modern drew 4 models across 2 cities, its Antiquity neighbours none; after an interface reload the models were gone and the script rebuilt them |
+
+### Not verified (speculation)
+- Whether the renderer's `[AGE]` condition reads the player's Age or the game's Age. They are always equal, and neither can be changed mid-game, so this can't be tested.
+- What `clipHexHeight` does (likely terrain clipping for cinematics, by its name).
+
+### What blocks complete replacement
+1. The era of city filler, roads and bridges comes from an `[AGE:...]` condition in the art bins. Its value only changes with a real Age transition, which is game-wide.
+2. No script API removes, hides or swaps the art the engine draws for a plot. Scripts can only add models on top.
+3. The per-civilization art table is read when cities are created, and it chooses the regional style, not the era.
+
+### Best achievable
+- **Kept (already in the mod):** later-Age buildings, wonders and units use their own art, so cities do modernize building by building, per player.
+- **Optional, experimental:** the overlay prototype gives each owner's cities later-Age blocks by personal Age, per player and without touching gameplay, at the cost of a mixed look. Not recommended for the main mod.
+- **Would need Firaxis:** a per-player or per-city art Age (for example, the renderer honouring a player Age that mods can set). Worth a feature request to Firaxis.
