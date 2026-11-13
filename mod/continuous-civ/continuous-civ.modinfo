@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Mod id="continuous-civ" version="19" xmlns="ModInfo">
 	<Properties>
-		<Name>Continuous Civilization (Antiquity + Exploration prototype)</Name>
-		<Description>One uninterrupted campaign: the Antiquity Age never ends, and the Exploration technology and civic trees, governments, units and buildings continue directly from Antiquity. Phase 2 prototype.</Description>
+		<Name>Continuous Civilization</Name>
+		<Description>One uninterrupted campaign: the Antiquity Age never ends, and the Exploration technology and civic trees, governments, units and buildings continue directly from Antiquity, followed by Modern. Each player moves into the next Age on their own as they research.</Description>
 		<Authors>Continuous Civilization</Authors>
 		<AffectsSavedGames>1</AffectsSavedGames>
 	</Properties>
