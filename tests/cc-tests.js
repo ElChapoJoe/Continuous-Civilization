@@ -188,7 +188,7 @@
     const ungated = [...gm].filter((id) => !id.startsWith("CC_") && EX_ONLY.includes(resArg.get(id)));
     r.checks.exGated = { pass: EX_ONLY.every((x) => gates[x] > 0) && ungated.length === 0, ungated };
     r.checks.exBaseYieldsGated = { pass: !A(GameInfo.Resource_YieldChanges).some((y) => EX_ONLY.includes(y.ResourceType)) };
-    r.checks.modernTooltips = { pass: /Inactive until you research Metallurgy/.test(Locale.compose("LOC_MOD_RESOURCE_COAL_TOOLTIP")) };
+    r.checks.modernTooltips = { pass: /Inactive until you research Steam Engine/.test(Locale.compose("LOC_MOD_RESOURCE_COAL_TOOLTIP")) && /Inactive until you research Combustion/.test(Locale.compose("LOC_MOD_RESOURCE_OIL_TOOLTIP")) };
     r.checks.iconsHidden = { pass: typeof GameplayMap.__ccOriginalGetResourceType === "function" };
     const counts = CC.mapCounts();
     r.onMap = { exploration: EX_ONLY.filter((x) => counts[x]).map((x) => x + ":" + counts[x]), modern: MODERN_ONLY.filter((x) => counts[x]).map((x) => x + ":" + counts[x]) };

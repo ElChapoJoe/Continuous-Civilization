@@ -2,7 +2,7 @@
 
 **Date:** 2026-11-12
 **Mod:** `mod/continuous-civ/` (modinfo `version="2"`)
-**Build under test:** Civilization VII (Steam), install `G:\SteamLibrary\...\Sid Meier's Civilization VII`
+**Build under test:** Civilization VII (Steam)
 **Method:** FireTuner MCP against disposable single-player games (Rome, Tiny map, 4 majors). Test suite: `tests/cc-tests.js`. No game files modified.
 
 ## Verdict: **PASS.** All acceptance tests passed. Phase 3 may begin.

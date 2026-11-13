@@ -1,7 +1,7 @@
 # Continuous Civilization — Phase 1: Engine Investigation
 
 **Date:** 2026-11-12
-**Game build:** Civilization VII (Steam), install at `G:\SteamLibrary\steamapps\common\Sid Meier's Civilization VII`
+**Game build:** Civilization VII (Steam)
 **Method:** read-only inspection of the installed game data, then live checks through FireTuner MCP. Experiments ran in three throw-away single-player Antiquity games (Rome, small map). They used a diagnostic mod placed in the user Mods folder. The game install was **not modified** and no existing saves were touched.
 
 Legend: **CONFIRMED (live)** = checked in a running game. **CONFIRMED (files)** = read directly from shipped data or schema. **INFERRED** = a reasoned conclusion that was not tested directly.

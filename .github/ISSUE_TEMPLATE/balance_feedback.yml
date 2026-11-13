@@ -1,0 +1,50 @@
+name: Balance feedback
+description: Something feels too fast, too slow, too strong or too weak.
+labels: ["balance"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Balance notes from real games are what this beta needs most. Turn numbers help a lot.
+  - type: input
+    id: version
+    attributes:
+      label: Mod version
+      placeholder: 0.1.0-beta
+  - type: dropdown
+    id: area
+    attributes:
+      label: Area
+      options:
+        - Pacing (when Ages arrive, tech and civic costs)
+        - Victories (Science, Culture, Economic, Domination)
+        - Diplomacy and espionage
+        - Governments
+        - Units and combat
+        - Economy and resources
+        - AI behaviour
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: feedback
+    attributes:
+      label: What feels off?
+      description: What happened, and what you think would feel better.
+    validations:
+      required: true
+  - type: textarea
+    id: milestones
+    attributes:
+      label: Your game's milestones
+      description: Any you reached, with turn numbers.
+      value: |
+        - Entered Exploration (Cartography, Astronomy or Machinery): turn
+        - Entered Modern (Academics, Steam Engine or Military Science): turn
+        - Victory points at the end (Science / Culture / Economic):
+        - Game ended (who won, how, which turn):
+  - type: input
+    id: setup
+    attributes:
+      label: Game setup
+      description: Map size, game speed, difficulty, number of players.

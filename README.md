@@ -1,32 +1,68 @@
-# Continuous Civilization
+<p align="center">
+  <img src="docs/images/banner.svg" alt="Continuous Civilization" width="100%">
+</p>
 
-**One uninterrupted campaign for Sid Meier's Civilization VII.** The Antiquity Age never ends. Exploration and Modern content continues directly from it: one technology tree, one civic tree, and each player moves into the next Age on their own as they research, instead of the whole world transitioning at once.
+<p align="center">
+  <img src="https://img.shields.io/badge/status-beta-orange" alt="Status: beta">
+  <img src="https://img.shields.io/badge/Civilization%20VII-1.5.1-1f6feb" alt="Civilization VII 1.5.1">
+  <img src="https://img.shields.io/badge/mode-single%20player-555" alt="Single player">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"></a>
+  <!-- Add the Steam Workshop and Discord badges here once the links exist. -->
+</p>
 
-> **Status:** playable prototype (mod version 19). All three Ages are merged and a full 450-turn AI game has run to a Science victory without crashes. Some victory types are not available yet (see [Known limitations](#known-limitations)).
+<p align="center">
+  <b>No Age resets. No civ swap. One empire from the first city to the space race,<br>
+  and every civilization moves into the next Age on its own research.</b>
+</p>
 
----
+<p align="center">
+  <a href="#install">Install</a> ·
+  <a href="#how-it-plays">How it plays</a> ·
+  <a href="#winning">Winning</a> ·
+  <a href="#beta-testers">Beta testers</a> ·
+  <a href="#known-limitations">Known limitations</a> ·
+  <a href="#faq">FAQ</a>
+</p>
 
-## Features
+![The merged tech tree, where Exploration's Urban Planning and Gunpowder lead into Modern's Academics, Steam Engine and Military Science](docs/images/tech-tree.jpg)
 
-All of the following have been verified in game (see [`docs/`](docs) for test reports).
+## Why play it
 
-### One continuous game
-- **No Age transitions.** The Age clock is switched off, so there is no Age-end countdown, no civilization swap and no reset of your empire.
-- **Merged technology and civic trees.** Exploration techs and civics follow Antiquity's, and Modern's follow Exploration's, ending in Modern's Future Tech and Future Civic.
-- **Personal Ages.** Each player is in their own Age, based on research:
-  - **Exploration** begins with any of Cartography, Astronomy or Machinery.
-  - **Modern** begins with any of Academics, Steam Engine or Military Science.
+- 🏛️ **Keep what you build.** The Antiquity Age never ends, so there's no transition, no new civilization and no reset of your empire.
+- 🌳 **One tech tree, one civic tree.** Exploration continues straight on from Antiquity and Modern from Exploration, all the way to Future Tech.
+- 🧭 **Your own pace.** Each player enters Exploration and Modern through their own research. A leader can be flying planes while a rival still fields knights.
+- ⚔️ **Content from every Age.** Units, buildings, governments, religion, resources, diplomacy and espionage from all three Ages, in one game.
+- 🏆 **Every main victory works:** Science, Culture, Economic and Domination.
 
-  Game rules that depend on the Age follow the player's personal Age.
+![A Roman empire on turn 42](docs/images/empire.jpg)
+
+## Install
+
+> **Beta.** Expect rough edges, and start a **new game** after every update: saves from one version may not load in the next.
+
+**Steam Workshop:** coming soon.
+
+**Manual install:**
+1. Download `continuous-civ.zip` from the [latest release](../../releases/latest).
+2. Unzip it into your Civilization VII mods folder, so you get
+   `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Mods\continuous-civ\`.
+3. In game, enable **Continuous Civilization** under **Additional Content**.
+4. Start a **new** game with an **Antiquity** start.
+
+Requires Civilization VII (tested on 1.5.1). No game files are included or changed: the mod reads the Exploration and Modern content from your own installed game.
+
+## How it plays
+
+### Personal Ages
+| Age | You enter it by researching any of | What changes for you |
+|---|---|---|
+| Antiquity | (start) | Vanilla Antiquity rules |
+| Exploration | Cartography, Astronomy, Machinery | Deep-ocean travel, embarkation, settlement cap of at least 8, base yields +10 Gold / +20 Science, Culture and Influence, more resource slots and envoys |
+| Modern | Academics, Steam Engine, Military Science | Settlement cap of at least 16, base yields +15 Gold / +30 Science, Culture and Influence, Modern resource slots and town focuses |
 
 ### Content from every Age
-- **Units and buildings** from all three Ages, unlocked through research. Older units upgrade into newer ones (for example Galleon to Frigate, Arquebusier to Line Infantry).
-- **Age rules per player.** Entering a personal Age applies that Age's civilization rules:
-  - base yields: Antiquity +5 Gold / +10, Exploration +10 / +20, Modern +15 / +30 (Gold / Science, Culture, Influence);
-  - settlement caps of at least 8 (Exploration) and 16 (Modern);
-  - deep-ocean travel and embarkation;
-  - resource slots, envoys and town focuses.
-- **Governments** unlock by civic:
+- **Units and buildings** from all three Ages, unlocked through research, with upgrades across Ages (Galleon to Frigate, Arquebusier to Line Infantry).
+- **Governments** unlock by civic. The chooser opens when a new one unlocks, and a **Change Government** button is added to the policies screen. AI civilizations change government too.
 
   | Exploration | Modern |
   |---|---|
@@ -34,71 +70,77 @@ All of the following have been verified in game (see [`docs/`](docs) for test re
   | Plutocracy | Elective Republic |
   | Theocracy | Authoritarianism |
 
-  The government chooser opens when one unlocks, and a **Change Government** button is added to the policies screen. AI civilizations move along the same chain.
-- **Diplomacy and espionage** from Exploration and Modern: Demand Tribute, Treasure Fleets and spy actions such as Open the Gates, Sabotage Shipping and Sabotage Space Program. Each one unlocks with the tech, civic or city-state bonus that grants it.
-- **Religion** from the Exploration Age: Piety, Temples, founding a religion, beliefs, Missionaries and relics.
+- **Religion** from Exploration: Piety, Temples, founding a religion, beliefs, Missionaries, relics.
+- **Resources** from later Ages are on the map from the start, but stay inactive and hidden for each player until they research the matching tech (Coal at Steam Engine, Oil at Combustion).
+- **Diplomacy and espionage** from later Ages: Demand Tribute, Treasure Fleets, and spy actions such as Open the Gates and Sabotage Space Program, each unlocked by its tech, civic or city-state bonus.
 - **City-states, great people, projects, narratives and discoveries** from all three Ages share one pool.
-- **Resources from later Ages** are placed at map start but stay inactive and hidden for each player until they research the matching tech (for example Coal at Steam Engine, Oil at Combustion).
-- **Ideologies:** the Democracy, Fascism and Communism civic trees open with Political Theory.
+- **Ideologies:** Democracy, Fascism and Communism open with Political Theory.
 
-### Winning
-- **Science victory:** the space race. Reach 100 Science victory points with an undamaged Launch Pad, then hold through a 5-turn countdown. Verified: in a 450-turn AI game, Mexico won on turn 399.
-- **Culture victory:** reach 150 Culture victory points (wonders, great works, celebrations, city-states and more), then hold through a 5-turn countdown.
-- **Economic victory:** reach 12,000 Economic victory points (resources, trade and gold buildings), then hold through a 5-turn countdown.
-- **Domination victory:** capture every rival's original capital. Enabled by default; it doesn't depend on any Age.
+![The Exploration part of the tech tree](docs/images/tech-tree-exploration.jpg)
 
-In vanilla, Culture and Economic are won by staying 25% ahead of second place, a check the game engine only runs inside a real Modern Age. Here they use a fixed target instead, as Science does. The targets are set so AI leaders reach them late in the game, around the time of the Science win, and will be tuned after playtesting.
+## Winning
+
+| Victory | How to win |
+|---|---|
+| 🚀 **Science** | 100 Science victory points and an undamaged Launch Pad, then a 5-turn countdown |
+| 🎭 **Culture** | 150 Culture victory points, then a 5-turn countdown |
+| 💰 **Economic** | 12,000 Economic victory points, then a 5-turn countdown |
+| 🗡️ **Domination** | Capture every rival's original capital |
+
+In vanilla, Culture and Economic are won by staying 25% ahead of second place, a check the game only runs inside a real Modern Age. Here they use a fixed target, as Science does. The targets are set so AI leaders reach them late in the game, and will be tuned from beta feedback.
+
+## Beta testers
+
+Thank you for playing! Balance feedback from real games is what this beta needs most.
+
+**Worth noting as you play**
+- The turn you enter Exploration and Modern.
+- How far you are from the victory targets, and when the game ends (who won, how, which turn).
+- Anything that feels too fast, too slow, too strong or too weak.
+- Anything broken, missing or odd on screen.
+
+**How to send it:** open an issue here. There are forms for [bug reports](../../issues/new?template=bug_report.yml) and [balance feedback](../../issues/new?template=balance_feedback.yml).
+
+**For crashes and bugs**, attach these logs from `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Logs\`: `Modding.log`, `Database.log`, `UI.log`.
 
 ## Known limitations
 
-- **Military (points) victory cannot be won.** It uses the same 25%-lead check. For a military win, use Domination.
-- **Score victory** is decided when the final Age ends, which never happens in a continuous game.
-- **Legacy paths** do not progress, so their Modern rewards (World's Fair, Manhattan Project, John Maynard Keynes) are unavailable. Launch Rocket instead requires the three earlier space projects.
-- **Not imported:** Modern's AI file, which crashed the game.
-- **Diplomacy costs don't scale by Age.** Actions shared by all Ages keep Antiquity's Influence costs, which vanilla doubles in Exploration and triples in Modern.
-- **Ruins are Antiquity discoveries all game**, so Modern archaeology can't use them.
-- **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look all game, because the game engine draws them from the single game-wide Age. Buildings, wonders and units from later Ages do use their own art, so cities look newer as players build them. See [the investigation](docs/visual-progression-investigation.md).
-- **Tested in single player only.** The UI scripts act for the local player, so multiplayer is untested.
+- **Military (points) victory** can't be won: it uses the 25%-lead check that only runs in a real Modern Age. Use Domination for a military win.
+- **Score victory** is decided when the final Age ends, which never happens here.
+- **Legacy paths** don't progress, so their Modern rewards (World's Fair, Manhattan Project, John Maynard Keynes) are unavailable. Launch Rocket instead requires the three earlier space projects.
+- **Diplomacy costs don't scale by Age.** Shared actions keep Antiquity's Influence costs, which vanilla doubles in Exploration and triples in Modern.
+- **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look, because the engine draws them from a single game-wide Age. Buildings, wonders and units from later Ages use their own art. [Details](docs/visual-progression-investigation.md).
+- **Ruins** stay Antiquity discoveries all game, so Modern archaeology can't use them.
+- **Single player only** so far. Multiplayer is untested.
 
-## Installation
+## FAQ
 
-Requires **Sid Meier's Civilization VII** (tested on version 1.5.1). No game files are included or modified: the mod loads Exploration and Modern data from your installed game.
+**Can I add it to a game I already started?**
+No. The mod changes the game's rules when a game is created, so start a new game.
 
-1. Copy the `mod/continuous-civ` folder into your Civilization VII mods folder:
-   `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Mods\`
-   (or run `tools/deploy.ps1`, which does the same).
-2. Enable **Continuous Civilization** under **Additional Content** in game.
-3. Start a **new** game with an **Antiquity** start. The mod changes the game database, so it does not apply to existing saves.
+**Does it work with other mods?**
+Untested. Mods that change Ages, the tech or civic trees, or victories are likely to conflict.
 
-## Repository layout
+**Do I need the DLC?**
+It's built on the base game's three Ages and shouldn't need any DLC, but so far it has only been tested with DLC installed. DLC civilizations and leaders work as normal.
 
-| Path | Contents |
-|---|---|
-| `mod/continuous-civ/` | The mod: `.modinfo`, SQL data changes (`data/`), text (`text/`), UI scripts (`ui/`) and a technical [README](mod/continuous-civ/README.md) |
-| `tools/` | Generators and helpers: `gen_dedupe.py` (resolves clashes between Ages' data), `gen_modern_resources.py`, `survey_imports.py`, `age-audit.js`, `deploy.ps1` |
-| `tests/cc-tests.js` | In-game test suites, run on the game's debug console (`CC.db()`, `CC.modernTrees()`, `CC.parkLinks()`, `CC.victories()` and more) |
-| `docs/` | Engine investigation, phase plans and test reports, including the long-run results |
-| `research/` | Early probes and screenshots from the investigation phase |
+**Why does my city still look ancient in the Modern Age?**
+See [Known limitations](#known-limitations): the engine only draws city filler art from the game's single Age.
 
-## Development
-
-- After changing which game files are imported, regenerate the generated SQL:
-  ```
-  python -I tools/gen_dedupe.py
-  ```
-- Deploy with `tools/deploy.ps1`.
-  - A change to the `.modinfo` file needs a full game restart.
-  - SQL-only changes only need a new game.
-- Verify in game: load `tests/cc-tests.js` on the debug console and run the suites. Then run an AI autoplay long run and check expansion, Age progress and errors.
-- Branches: `main` is the stable, tested version; larger changes go on development branches.
+**A game update broke the mod.**
+Likely: Civ VII patches can change the data the mod builds on. Please open an issue with your logs.
 
 ## Roadmap
 
-- Tune the Culture and Economic victory targets from playtests.
-- Balance pass: pacing, diplomacy costs, wonder scoring by Age.
-- Visual progression, if the engine allows it: possibly a world-wide art step when most players enter a new Age, and per-player road art through railroads.
-- Playtesting of the Modern interface by human players; multiplayer.
+- Balance pass from beta feedback: pacing, diplomacy costs, victory targets.
+- Military points victory.
+- Steam Workshop release.
+- Multiplayer testing.
+
+## Contributing
+
+Bug reports and balance notes are the most useful contributions right now. For how the mod is built, the tools and the in-game tests, see [CONTRIBUTING.md](CONTRIBUTING.md) and [CHANGELOG.md](CHANGELOG.md).
 
 ## Disclaimer
 
-Continuous Civilization is an unofficial fan modification. It is not affiliated with or endorsed by Firaxis Games or 2K. Sid Meier's Civilization VII and its content are the property of their respective owners. This repository contains no game assets: it ships only mod scripts and data changes, and reads the game's own files from your installation at load time.
+Continuous Civilization is an unofficial fan modification, not affiliated with or endorsed by Firaxis Games or 2K. Sid Meier's Civilization VII and its content are the property of their respective owners. This repository contains no game assets: the mod reads the game's own files from your installation when it loads. Screenshots are from the author's own games.
