@@ -209,3 +209,14 @@ The user still saw buildings inside each other and at odd angles, and suggested 
 - No per-player or per-city art Age exists in the executable (searched: only start Age, age transition data and the unit `setAgeStyle`).
 - `clipHexHeight` does not hide the engine's houses on navigable-river tiles. Redrawing them stacked new models on the old ones; the overlay now leaves navigable-river tiles to the engine.
 - Bridges: in the base game all three bridge buildings use one bin that picks wood or stone by the game Age, so in this mod bridges stay wooden. Since bridges sit on navigable rivers, they stay engine-drawn.
+
+## Round 10 (2026-11-13): side by side with the engine's own Modern city
+
+- **Reference game:** same map seed (265426227, game seed 265426226, continents-voronoi, tiny), Modern start, Mexico (Rome's Modern art set is Mexico's), both mods disabled, city on the same tile (47,9), same districts and buildings placed (four tiles differ slightly: the Modern start pre-placed buildings there). Shots: `sandbox-shots/8-modern-prototype.png` (ours) and `9-modern-engine-reference.png`, `10-modern-engine-capital-top.png` (engine). The layout is in `tools/sandbox-city.json`.
+- **Matches:** the palace model, Modern houses, old buildings keeping their own Age's look (Antiquity granaries stay Antiquity in the engine's Modern city too).
+- **Differences:**
+  - **Street ground:** `clipHexHeight` hides only what stands above ground. The engine's street and paving decals stay, so every replaced tile shows the engine's streets plus ours. The engine turns each tile so its streets join the neighbouring tiles' streets into one network (the palace square was at about 330 degrees here); ours pick a turn per tile, so the two street layers cross. This is the "underlayment doesn't follow the street" problem, on every tile, not only the capital. No negative clip height removes the decals.
+  - **Palace:** the engine's square has hedge gardens in the corners and the palace turned with the square.
+  - **River tiles:** the engine draws Modern buildings along the river; ours stay Antiquity (round 9).
+  - **Countryside:** farms, woodcutters, rural houses and props are Modern in the engine's game (trucks, lumber yards); the prototype doesn't touch rural tiles, so they stay Antiquity.
+- **Next step that would fix the streets:** find the engine's per-tile turn. Since the engine's street decals stay visible under our models in every Age, reading the turn the engine chose (for example from a top-down screenshot per tile, or a rule if one can be found) and drawing ours at the same turn would make both layers line up.
