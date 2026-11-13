@@ -17,8 +17,8 @@ Branch: `feature/visual-progression`. Status: investigation in progress (started
 
 | Hook | What it does | Use for this goal |
 |---|---|---|
-| `WorldUnits.setAgeStyle(unit, style)` | Changes one **unit's** Age look (used by Firaxis's WorldUnits tuner panel) | Units could look like their owner's personal Age. Not tested yet. |
-| `WorldUI.createModelGroup(name)` and `group.addModelAtPlot(asset, plot, offset, params)` | Draws any named asset on a map plot, client-side (used by the WorldUI Models tuner panel and cinematics) | Newer-Age models could be drawn per city for the viewing player. Verified the call succeeds; the visual check is pending (camera would not zoom in the post-victory test game). Cannot hide the engine's own Antiquity art underneath. |
+| `WorldUnits.setAgeStyle(unit, style)` | Changes one **unit's** Age look (used by Firaxis's WorldUnits tuner panel) | Units could look like their owner's personal Age. Verified (see below). |
+| `WorldUI.createModelGroup(name)` and `group.addModelAtPlot(asset, plot, offset, params)` | Draws any named asset on a map plot, client-side (used by the WorldUI Models tuner panel and cinematics) | Newer-Age models could be drawn per city for the viewing player. Verified visually (see below). Cannot hide the engine's own Antiquity art underneath. |
 | `VisualRemaps` (`UpdateVisualRemaps`, `visual-remaps.xml`) | Swaps one unit, building or art bin for another. Toggled in Options, main menu only | Global and fixed for the whole game: not per player, not gradual. |
 | `Constructibles` | Only `setDamaged` among visual-related calls | No building art control. |
 
