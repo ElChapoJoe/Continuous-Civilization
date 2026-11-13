@@ -6,7 +6,7 @@ Everything the Workshop item needs, kept with the mod so updates stay consistent
 |---|---|
 | Mod folder to upload | `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Mods\continuous-civ` (run `tools/deploy.ps1` first so it matches `main`) |
 | Title | `Continuous Civilization (Beta)` |
-| Preview image | [`docs/images/workshop-preview.jpg`](../images/workshop-preview.jpg) (1024 x 1024, under Steam's 1 MB limit) |
+| Preview image | [`docs/images/workshop-preview.jpg`](../images/workshop-preview.jpg): the logo, a gold C in a laurel wreath (1024 x 1024, under Steam's 1 MB limit). Drawn by `tools/make_logo.py` and `tools/render_logo.ps1`; `docs/images/logo.svg` is the scalable version |
 | Description | [`description.txt`](description.txt), in Steam's formatting codes (paste it as is) |
 | Extra screenshots | `docs/images/tech-tree.jpg`, `docs/images/tech-tree-exploration.jpg`, `docs/images/empire.jpg` |
 | Visibility | The uploader offers Public, Friends Only and Private. **Friends Only** for a closed beta with Steam friends, **Public** to open it up (visibility can be changed later on the item's Steam page) |
