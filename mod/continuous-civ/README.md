@@ -23,7 +23,8 @@ Map generation, terrain, rivers, graphics and all Antiquity rules are vanilla, e
 
 ## Known limitations
 
-- **Culture, Economic and Military (points) victories cannot be won yet.** Points for them accumulate (shown on the victories screen), but vanilla decides them by dominance, a 25% lead over second place, and the engine only switches dominance on inside a real Modern Age. Planned for a later version. For Military, use Domination.
+- **Culture and Economic victories use fixed targets** (150 Culture, 12,000 Economic points, then a 5-turn countdown; `data/76-victories.sql`) instead of vanilla's 25% lead over second place, which the engine only checks inside a real Modern Age.
+- **Military (points) victory cannot be won** (same 25%-lead check). For Military, use Domination.
 - **Score victory** is decided when the final Age ends, which never happens here.
 - **Legacy paths** do not progress (their per-Age rewards normally pay out at Age transitions, which never happen). Their Modern rewards (World's Fair, Manhattan Project, John Maynard Keynes) are therefore not available.
 - **Modern AI file** (`ai-modern.xml`) is not imported: it crashed the game. The AI uses the base military/diplomatic components with Exploration's targets and lists.

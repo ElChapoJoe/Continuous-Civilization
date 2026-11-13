@@ -43,11 +43,15 @@ All of the following have been verified in game (see [`docs/`](docs) for test re
 
 ### Winning
 - **Science victory:** the space race. Reach 100 Science victory points with an undamaged Launch Pad, then hold through a 5-turn countdown. Verified: in a 450-turn AI game, Mexico won on turn 399.
+- **Culture victory:** reach 150 Culture victory points (wonders, great works, celebrations, city-states and more), then hold through a 5-turn countdown.
+- **Economic victory:** reach 12,000 Economic victory points (resources, trade and gold buildings), then hold through a 5-turn countdown.
 - **Domination victory:** capture every rival's original capital. Enabled by default; it doesn't depend on any Age.
+
+In vanilla, Culture and Economic are won by staying 25% ahead of second place, a check the game engine only runs inside a real Modern Age. Here they use a fixed target instead, as Science does. The targets are set so AI leaders reach them late in the game, around the time of the Science win, and will be tuned after playtesting.
 
 ## Known limitations
 
-- **Culture, Economic and Military (points) victories cannot be won yet.** Points for them build up and show on the victories screen. In vanilla these victories need a 25% lead over second place, and the game engine only turns that check on inside a real Modern Age. Planned for a later version. For a military win, use Domination.
+- **Military (points) victory cannot be won.** It uses the same 25%-lead check. For a military win, use Domination.
 - **Score victory** is decided when the final Age ends, which never happens in a continuous game.
 - **Legacy paths** do not progress, so their Modern rewards (World's Fair, Manhattan Project, John Maynard Keynes) are unavailable. Launch Rocket instead requires the three earlier space projects.
 - **Not imported:** Modern's AI file, which crashed the game.
@@ -90,7 +94,7 @@ Requires **Sid Meier's Civilization VII** (tested on version 1.5.1). No game fil
 
 ## Roadmap
 
-- Culture and Economic victories (a lead-based rule that works without a Modern Age).
+- Tune the Culture and Economic victory targets from playtests.
 - Balance pass: pacing, diplomacy costs, wonder scoring by Age.
 - Visual progression, if the engine allows it: possibly a world-wide art step when most players enter a new Age, and per-player road art through railroads.
 - Playtesting of the Modern interface by human players; multiplayer.

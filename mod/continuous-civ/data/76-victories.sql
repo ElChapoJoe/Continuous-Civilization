@@ -14,3 +14,13 @@ INSERT OR IGNORE INTO ProjectPrereqs (PrereqProjectType, ProjectType, MinimumPla
   SELECT p.ProjectType, 'PROJECT_LAUNCH_ROCKET', 1 FROM Projects p
   WHERE p.ProjectType IN ('PROJECT_TRANS_OCEANIC_FLIGHT', 'PROJECT_BREAK_SOUND_BARRIER', 'PROJECT_LAUNCH_SATELLITE')
     AND EXISTS (SELECT 1 FROM Projects WHERE ProjectType = 'PROJECT_LAUNCH_ROCKET');
+
+-- Culture and Economic victories: a fixed points target, like Science.
+-- Vanilla scores them by dominance (25% ahead of second place), which the engine only switches on inside a real
+-- Modern Age, so they could never be won here. With a fixed target the first player to reach it starts the usual
+-- 5-turn countdown. Targets are tuned to the long runs (AI leaders: Culture 78 / Economic 8,882 at turn 301,
+-- 239 / 16,847 at turn 451; Science was won on turn 399), aiming for a win in the same late-game window.
+UPDATE VictoryTypes SET ScoringType = 'COUNTDOWN_VICTORY_SCORING_TYPE_FIXED_SCORE', MinimumPoints = 150
+  WHERE VictoryType = 'VICTORY_CULTURE_MODERN';
+UPDATE VictoryTypes SET ScoringType = 'COUNTDOWN_VICTORY_SCORING_TYPE_FIXED_SCORE', MinimumPoints = 12000
+  WHERE VictoryType = 'VICTORY_ECONOMIC_MODERN';
