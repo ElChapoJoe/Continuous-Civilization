@@ -138,7 +138,6 @@ Likely: Civ VII patches can change the data the mod builds on. Please open an is
 
 - Balance pass from beta feedback: pacing, diplomacy costs, victory targets.
 - Military points victory.
-- Steam Workshop release.
 - Multiplayer testing.
 
 ## Contributing
