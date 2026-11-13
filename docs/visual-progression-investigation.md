@@ -2,44 +2,78 @@
 
 Goal: city art progresses gradually and per player as they research, instead of staying Antiquity's for the whole game. That covers buildings, town houses and filler, roads and bridges.
 
-Branch: `feature/visual-progression`. Status: investigation in progress (started 2026-11-12).
+Branch: `feature/visual-progression`. Status: investigation done (2026-11-12). Conclusion: the engine picks this art from one global Age, and no exposed hook changes it per player or at runtime. See [Conclusion](#conclusion).
 
 ## How the game chooses city art
 
-- **Art data exists for every Age, for every civilization.** `VisArt_CivilizationBuildingCultures` (in each Age's `civilizations-shared.xml`, loaded in every game) gives each civilization art cultures for all three Ages. Rome has `BUILDING_CULTURE_MED`, `_MED_ANT`, `_MED_EXP`, `_SAM_MOD` and `ANT_STONE`, `EXP_STONE`, `MOD_STONE`.
-- **The assets are all loaded.** The single art package (`Civ7`, loaded by base-standard) holds 25,908 named assets (`WorldUI.getAssetNames()`), with Age variants for the things this goal is about:
-  - city tile layouts: `ANT_URBAN_*` (7), `EXP_URBAN_*` (4), `MOD_URBAN_*` (5);
-  - bridges: `ANT_Bridge_Wooden_C`, `BIN_EXP_Bridge_Wooden_B`, a Modern one;
-  - road decals (`ANT_..._Road_*`) and railroad decals.
-- **No per-Age art loading in the modinfos.** The Age modules' art action groups only load icons. So which Age's variant gets drawn is decided inside the renderer, presumably from the game's current Age, which in this mod is always Antiquity.
+- **Art data exists for every Age.** The art packages (`Base/Platforms/Windows/BLPs/StandardAsset*.blp`) hold Antiquity, Exploration and Modern variants of city layouts (`ANT_URBAN_*`, `EXP_URBAN_*`, `MOD_URBAN_*`), buildings, bridges and roads. All are loaded in every game: `WorldUI.getAssetNames()` lists 25,908 assets.
+- **Variants are chosen by conditions inside art bins.** Each bin (`BIN_Kiln`, `BIN_Lighthouse`, the city layout bins and so on) lists variants with a condition such as:
+  - `[CONSTRUCTIBLE_STATE:COMPLETED] and [BUILDING_CULTURE:BUILDING_CULTURE_MED_ANT]`
+  - `[AGE:AGE_MODERN] and [CONSTRUCTIBLE_STATE:CONSTRUCTION]`
+
+  Condition keys found in the packages, by number of uses:
+
+  | Key | Uses | Notes |
+  |---|---|---|
+  | `BUILDING_CULTURE` | 944 | Region and Age art set (`MED`, `MED_ANT`, `EAS_MOD`, `ANT_STONE` ...) |
+  | `AGE` | 682 | `AGE_ANTIQUITY` 173, `AGE_EXPLORATION` 184, `AGE_MODERN` 297 |
+  | `CONSTRUCTIBLE_STATE` | 652 | Construction, completed, pillaged |
+  | `CIV` | 635 | Per civilization |
+  | `UNIT_CULTURE` | 495 | |
+  | `AGE_STYLE` | 136 | Unit cosmetics only (see below) |
+  | `ROUTE` | 105 | Road, railroad |
+  | others | | Feature, building, resource, district, terrain, improvement, biome, plot, wonder, river |
+
+- **`AGE` is the game's single Age.** There is no per-player or per-city Age for art. In this mod the game Age is always Antiquity, so city filler, roads and bridges always pick Antiquity variants.
+- **`AGE_STYLE` is a variant within an Age, not a later Age.** It appears only together with an Age, as in `[AGE:AGE_ANTIQUITY] and [AGE_STYLE:STYLE_2]`, and only in unit-related bins: hair, armor tints, backpacks, quivers, dogs and camp props. None of it is city art.
+- **The `VisArt_CivilizationBuildingCultures` table in the gameplay database does not drive the city art in a loaded game** (tests below).
 
 ## Runtime hooks found
 
+Everything the scripting side exposes for world art (searched in the executable and by listing every `World*`, `Visual*`, `Camera`, `Districts` and `Constructibles` object in game):
+
 | Hook | What it does | Use for this goal |
 |---|---|---|
-| `WorldUnits.setAgeStyle(unit, style)` | Changes one **unit's** Age look (used by Firaxis's WorldUnits tuner panel) | Units could look like their owner's personal Age. Verified (see below). |
-| `WorldUI.createModelGroup(name)` and `group.addModelAtPlot(asset, plot, offset, params)` | Draws any named asset on a map plot, client-side (used by the WorldUI Models tuner panel and cinematics) | Newer-Age models could be drawn per city for the viewing player. Verified visually (see below). Cannot hide the engine's own Antiquity art underneath. |
-| `VisualRemaps` (`UpdateVisualRemaps`, `visual-remaps.xml`) | Swaps one unit, building or art bin for another. Toggled in Options, main menu only | Global and fixed for the whole game: not per player, not gradual. |
-| `Constructibles` | Only `setDamaged` among visual-related calls | No building art control. |
+| `WorldUnits.setAgeStyle(unit, 1\|2\|3)` | Picks one of three cosmetic variants of a unit **within the current Age** | Not an Age change. In this mod it only varies Antiquity looks. |
+| `WorldUI.createModelGroup(name)` and `group.addModelAtPlot(asset, plot, offset, params)` | Draws any named asset on a map plot, client-side | Can add newer-Age models; cannot hide the engine's own art underneath |
+| `VisualRemaps` (`UpdateVisualRemaps` action) | Swaps a unit, building or art bin for another (`Kind` = `UNIT`, `BUILDING` or `ART_BIN`). A mod can add its own remap file. The player toggles remaps in Options, at the main menu | Global and fixed for the whole game: not per player, not gradual |
+| `Database.query('gameplay', sql)` | Runs SQL, including writes, on the live gameplay database | The renderer doesn't re-read the art tables (tests below) |
+| `Constructibles` | Only `setDamaged` among visual-related calls | No art control |
+| `WorldBuilder.MapPlots` | Map editing | No art functions |
 
-No hook was found for a building's, city's or route's Age style.
+No hook was found that sets the Age, culture or style of a city, district, building or route.
 
-## Visual tests (2026-11-12, fresh game, Rome, turn 1)
+## Tests (2026-11-12)
 
-- **Unit Age style: works at runtime.** `WorldUnits.setAgeStyle({owner: 0, id}, n)` on the Founder changed it immediately. Styles 1, 2 and 3 each gave a different cart and different clothing (style 3: dark cart, white robes; style 2: green-covered cart, robed figures). Not yet checked: whether a style survives the unit moving, a turn ending or a save/load, and whether military units have visible per-Age variants.
-- **Client-side models: work, but only add.** `addModelAtPlot("EXP_URBAN_Basic_City_Layout", ...)` on an empty tile drew a full Exploration-era city block (tiled roofs, plastered houses, a dome) at proper scale. On the capital's tile, `EXP_URBAN_City_Center_Palace_Layout` only mixed a few later buildings into the engine's own Antiquity city. The engine's art stays underneath and cannot be hidden.
+All on a turn-1 save, Rome, founding the capital at (59,14) and comparing the result with the normal Rome capital.
+
+| Test | Change | Result |
+|---|---|---|
+| Unit style | `WorldUnits.setAgeStyle` on the Founder, styles 1 to 3 | Changes live (cart and clothing differ). Per the art data, these are three Antiquity variants. |
+| Client-side models | `addModelAtPlot("EXP_URBAN_Basic_City_Layout", ...)` on an empty tile; `EXP_URBAN_City_Center_Palace_Layout` on the capital | Empty tile: a full Exploration city block at proper scale. Capital: a few later buildings mixed into the engine's Antiquity city, which stays visible. |
+| Runtime culture change | Deleted Rome's Antiquity and Exploration art cultures with `Database.query`, then founded the city | No change: Antiquity Mediterranean city. `GameInfo` also kept the cached rows. |
+| Load-time culture change (1) | A mod SQL file left Rome with only its Modern cultures (`BUILDING_CULTURE_SAM_MOD`, `MOD_STONE`). Full game restart, save loaded | No change |
+| Load-time culture change (2) | Rome given only East Asian Modern tags (`BUILDING_CULTURE_EAS_MOD`, `MOD_STONE`). Save reloaded; the new rows were confirmed in the database | No change: the same Mediterranean houses and palace ([screenshot](../research/screenshots/vis-rome-eastasian-tags-no-change.png)). The renderer takes building culture from somewhere else (stored in the save or loaded with the art) |
+
+Not tested: a brand-new game with changed culture rows. Even if that worked, it would set one fixed look per civilization at game start, which is not progression.
 
 ## Options
 
 | Option | Per player | Gradual | What it would look like | Feasibility |
 |---|---|---|---|---|
-| A. Units take their owner's personal Age style | Yes | By Age step | A civilization's units, including civilians, look Exploration-era once that civilization is in Exploration, Modern once in Modern | Works in test; needs a UI script that sets each unit's style on creation and when its owner changes Age |
-| B. Overlay newer models on cities | Visually yes (client side) | Yes | New houses drawn among the old ones; old Antiquity houses, roads and bridges stay visible | Technically works; looks cluttered on existing city tiles |
-| C. Replace city houses, roads and bridges per player | Yes | Yes | The goal as stated | No hook found: the renderer picks this art from the game's single Age |
-| D. Swap one building's art for another (`VisualRemaps`) | No (everyone) | No | A fixed art swap for the whole game, chosen at the main menu | Exists, but not what this goal is about |
+| A. Units take their owner's personal Age look | | | | **Not possible:** `setAgeStyle` only picks variants within the game's Age |
+| B. Overlay newer models on cities | Yes (drawn for the viewing player) | Yes | Newer city blocks drawn on empty or new tiles; the old Antiquity houses, roads and bridges stay | Works technically. Cluttered on existing city tiles; models are cosmetic only (no click or tooltip), must be redrawn on load, and add a UI script cost |
+| C. Replace city houses, roads and bridges per player | Yes | Yes | The goal as stated | **Not possible with the exposed engine:** art follows the single game Age |
+| D. Global art-era remap (`VisualRemaps`, `ART_BIN`) | No (everyone) | No | One art era for the whole game (for example Exploration city filler from turn 1), switched in Options | Possible in principle, if the Antiquity and later-Age variants sit in separate named bins. Needs a bin-by-bin check |
+| E. Do nothing extra | | | Later-Age buildings, wonders and units already use their own art, so a city that builds Exploration or Modern buildings looks newer where those stand | Already in the mod |
 
-Buildings, wonders and units from later Ages already have their own art, so a city that builds Exploration or Modern buildings does look newer where those stand.
+## Conclusion
 
-## Recommendation
+True per-player, gradual city art (C) needs engine support Firaxis hasn't exposed: the art system reads one global Age. The per-player unit idea (A) is also out, since unit styles are variants within an Age.
 
-Build A (per-player unit looks) as the first, achievable piece. Keep C open as an engine limitation unless a hook turns up; B could be tried for empty space (for example new outer districts) but not as a replacement for existing art.
+What remains:
+- **E** is what players get today, and it already shows progress building by building.
+- **B** is the only per-player visual route, best limited to empty or new tiles.
+- **D** would be a global, menu-chosen art era, not progression.
+
+Revisit if Firaxis exposes art Age per player or per city (for example in a future modding update or SDK), or if a later patch adds an art hook.
