@@ -21,5 +21,6 @@ Everything the Workshop item needs, kept with the mod so updates stay consistent
 
 ## Updates
 - Bump `version` in `continuous-civ.modinfo` and add a `CHANGELOG.md` entry.
+- Update the main `README.md` first (it is the source of truth), then bring `description.txt` in line: same tagline, features, victory targets and limitations, in Steam's formatting codes and kept shorter.
 - Deploy, then upload to the **same** Workshop item, with the changelog entry as the change note.
 - Subscribers get the update automatically; remind testers to start a new game.

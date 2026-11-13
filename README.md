@@ -10,9 +10,12 @@
   <!-- Add the Steam Workshop and Discord badges here once the links exist. -->
 </p>
 
+<h3 align="center">One Civilization. One Timeline. No Forced Age Transitions.</h3>
+
 <p align="center">
-  <b>No Age resets. No civ swap. One empire from the first city to the space race,<br>
-  and every civilization moves into the next Age on its own research.</b>
+  What if Civilization VII let you guide your empire through history without ever stopping to begin a new Age?<br>
+  Continuous Civilization turns the three Ages into one unbroken campaign, from the first city to the space race,<br>
+  and every civilization moves into the next Age on its own research.
 </p>
 
 <p align="center">
