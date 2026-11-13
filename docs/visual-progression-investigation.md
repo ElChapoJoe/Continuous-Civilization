@@ -175,3 +175,16 @@ The user reported main buildings missing or facing the wrong way.
 ### Checked on screen
 - Rome (turn 451): buildings draw on every tile and face their tile's centre; kiln Spanish, library Roman, museum and palace Mexican Modern.
 - Mexico City: Mexican Modern palace square, Modern blocks, wonders untouched. A dark patch nearby was unexplored fog, not the overlay.
+
+## Round 6 (2026-11-13): engine layout measured on a test bench
+
+The user still saw buildings inside each other and at odd angles, and suggested a sandbox instead of reading the live game.
+
+- **Test bench** (`experimental/cc-visual-prototype/tools/bench.js`): clears a row of tiles (`clipHexHeight`), hides units (`WorldUI.setUnitVisibility(false)`) and pushes a straight-down camera (`Camera.pushCamera(position, target)`), with a pip grid every 0.1 tile. `WorldUI.getScreenPos(worldPos)` converts positions to screen pixels.
+- **Units:** `addModelAtPlot` offsets are in tile spacings (1 = 64 world units), so 0.5 is the tile's inner edge.
+- **Engine tiles, from above:** a two-building urban tile puts its buildings about 0.25 tile from the centre on roughly opposite sides; two Rome tiles showed the same pair of lots turned 60 degrees apart, with the buildings turned to match.
+- **Engine layout parts:** the street section (`LAYOUT_CTY_MOD_Section_AB_Road`) plus the two-building house layout (`BIN_CTY_MOD_Layout_2HB_Full_A`), whose houses sit on the north-west, south and south-east edges. Lots: A (-0.19, -0.09), B (0.12, 0.25). The earlier overlay assumed houses on the west side and put buildings on top of them.
+- **Size:** `BIN_Museum_Scaled` draws the museum at about 0.46 tile across, the full model at 0.62, so buildings are drawn at 0.68. The previous 0.45-0.55 scales were guesses.
+- **Rotation:** `angle` turns counter-clockwise (x east, y north); rotating the lots by the same angle keeps buildings on their streets.
+- **Centres:** palace and city hall at (0, 0), full size, fill the plaza layouts exactly.
+- Result: Rome's tiles show buildings in their lots between streets and houses, with no overlaps seen from above or at an angle.

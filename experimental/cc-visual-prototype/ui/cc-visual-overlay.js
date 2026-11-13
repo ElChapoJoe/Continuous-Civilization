@@ -28,33 +28,32 @@
   const AGE_NAMES = ["ANTIQUITY", "EXPLORATION", "MODERN"];
   const ZERO = { x: 0, y: 0, z: 0 };
 
-  // Street and house layouts per personal Age. The urban layouts put houses on the west side of the tile and leave
-  // two lots on the east side for the tile's buildings, measured in tile units (x east, y north, +-0.5 is the tile
-  // edge). The city-center layouts leave one plaza for the palace or city hall.
+  // Layouts per personal Age, as the engine composes a city tile (measured on a test bench, tools/bench.js):
+  //   urban:   the street section plus the engine's "two hero building" house layout, leaving two lots A and B;
+  //   capital/center: the plaza layout, with the palace or city hall filling the plaza at full size.
+  // Offsets are in tile units (x east, y north; 0.5 = the tile's inner edge). The engine turns a whole urban section
+  // in 60-degree steps per tile; `angle` turns models counter-clockwise, so lots are rotated the same way.
   const LAYOUTS = {
     1: {
-      urban: ["LAYOUT_CTY_Hex_Section_AB_Road_EXP", "LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less", "LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less_FOL"],
+      urban: ["LAYOUT_CTY_Hex_Section_AB_Road_EXP", "BIN_CTY_EXP_Layout_2HB_Full_A"],
       capital: ["LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace", "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace_FOL"],
       center: ["LAYOUT_CTY_EXP_Hex_Section_AB_City_Center", "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Less_FOL"],
-      filler: ["BIN_EXP_T2_CityBld_4X4_A", "BIN_EXP_T2_CityBld_3x5_A", "BIN_EXP_T2_CityBld_2X4_A"],
+      filler: ["BIN_EXP_T2_CityBld_4X4_A", "BIN_EXP_T2_CityBld_3x5_A"],
     },
     2: {
-      urban: ["LAYOUT_CTY_MOD_Section_AB_Road", "LAYOUT_CTY_MOD_Section_AB_Small_Packed", "LAYOUT_CTY_MOD_Section_AB_Small_Packed_FOL"],
+      urban: ["LAYOUT_CTY_MOD_Section_AB_Road", "BIN_CTY_MOD_Layout_2HB_Full_A"],
       capital: ["LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace", "LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace_FOL"],
       center: ["LAYOUT_CTY_MOD_Section_AB_City_Center", "LAYOUT_CTY_MOD_Section_AB_City_Center_FOL"],
-      filler: ["BIN_MOD_T2_CityBld_4X4_A", "BIN_MOD_T2_CityBld_3x5_A", "BIN_MOD_T2_CityBld_5x6_A"],
+      filler: ["BIN_MOD_T2_CityBld_4X4_A", "BIN_MOD_T2_CityBld_3x5_A"],
     },
   };
-  const URBAN_LOTS = [
-    { x: 0.15, y: 0.2, scale: 0.55 },
-    { x: 0.15, y: -0.2, scale: 0.55 },
-  ];
-  const CENTER_LOTS = [
-    { x: 0, y: -0.1, scale: 0.7, angle: 0 },
-    { x: -0.3, y: 0.3, scale: 0.3 },
-    { x: 0.3, y: 0.3, scale: 0.3 },
-  ];
+  const URBAN_LOTS = [{ x: -0.19, y: -0.09 }, { x: 0.12, y: 0.25 }];
+  const BUILDING_SCALE = 0.68; // the engine's "_Scaled" building bins draw at about this size
   const FILLER_SCALE = 0.6;
+  const rotate = (p, deg) => {
+    const r = deg * Math.PI / 180;
+    return { x: p.x * Math.cos(r) - p.y * Math.sin(r), y: p.x * Math.sin(r) + p.y * Math.cos(r), z: 0 };
+  };
 
   // Loaded by ui/cc-building-art.js; read lazily so the load order of the two scripts does not matter.
   const ART = () => globalThis.CCBuildingArt || { bins: {}, art: {} };
@@ -119,11 +118,6 @@
     return bins[0] || null;
   }
 
-  /** Degrees for `angle` so a model at this lot faces the tile centre. 0 faces south; positive turns toward east. */
-  function facing(l) {
-    if (!l.x && !l.y) return 0;
-    return Math.round(Math.atan2(-l.x, l.y) * 180 / Math.PI);
-  }
 
   function viewer() {
     const id = GameContext.localPlayerID;
@@ -170,28 +164,28 @@
           if (!buildings) continue;
           const seed = (loc.x * 73856093) ^ (loc.y * 19349663);
           const parts = [];
-          const kind = isCenter ? (buildings.includes("BUILDING_PALACE") ? "capital" : "center") : "urban";
-          for (const asset of layout[kind]) parts.push([asset, ZERO, 1, 0]);
-          const lots = isCenter ? CENTER_LOTS : URBAN_LOTS;
-          // On a city center the palace or city hall takes the plaza.
-          const order = isCenter
-            ? [...buildings.filter((b) => b === "BUILDING_PALACE" || b === "BUILDING_CITY_HALL"),
-               ...buildings.filter((b) => b !== "BUILDING_PALACE" && b !== "BUILDING_CITY_HALL")]
-            : buildings;
-          let lot = 0;
-          for (const type of order) {
-            if (lot >= lots.length) break;
-            const model = buildingModel(type, owned, ageName, Math.abs(seed));
-            if (!model) continue;
-            const l = lots[lot++];
-            parts.push([model, { x: l.x, y: l.y, z: 0 }, l.scale, l.angle ?? facing(l)]);
-          }
-          if (!isCenter) {
-            for (; lot < lots.length; lot++) {
-              const bin = layout.filler[(Math.abs(seed) + lot) % layout.filler.length];
-              const model = resolve(bin, owned, ageName, Math.abs(seed) + lot);
-              if (model) parts.push([model, { x: lots[lot].x, y: lots[lot].y, z: 0 }, FILLER_SCALE, facing(lots[lot])]);
-            }
+          const civic = (b) => b === "BUILDING_PALACE" || b === "BUILDING_CITY_HALL";
+          if (isCenter) {
+            const kind = buildings.includes("BUILDING_PALACE") ? "capital" : "center";
+            for (const asset of layout[kind]) parts.push([asset, ZERO, 1, 0]);
+            const main = buildings.find(civic) || (kind === "capital" ? "BUILDING_PALACE" : "BUILDING_CITY_HALL");
+            const model = buildingModel(main, owned, ageName, Math.abs(seed));
+            if (model) parts.push([model, ZERO, 1, 0]);
+          } else {
+            const angle = 60 * (Math.abs(seed) % 6);
+            for (const asset of layout.urban) parts.push([asset, ZERO, 1, angle]);
+            const others = buildings.filter((b) => !civic(b));
+            URBAN_LOTS.forEach((lot, i) => {
+              const at = rotate(lot, angle);
+              const type = others[i];
+              let model = type && buildingModel(type, owned, ageName, Math.abs(seed));
+              let scale = model && /_Scaled$/.test(model) ? 1 : BUILDING_SCALE;
+              if (!model) {
+                model = resolve(layout.filler[(Math.abs(seed) + i) % layout.filler.length], owned, ageName, Math.abs(seed) + i);
+                scale = FILLER_SCALE;
+              }
+              if (model) parts.push([model, at, scale, angle]);
+            });
           }
           want.set(loc.x + "," + loc.y, parts);
         }

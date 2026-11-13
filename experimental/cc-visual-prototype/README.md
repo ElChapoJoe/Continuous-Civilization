@@ -41,8 +41,8 @@ Coverage today: 94 building types. Buildings with no variant for the owner fall 
 | Multiplayer | Not tested (each client draws from shared game state, so it should match) |
 
 ## Limits
-- **Lot positions are measured by eye**, in tile units: buildings at (0.15, ±0.2), the palace at (0, -0.1). They fit the street layouts but are not the engine's own building slots.
-- **Facing:** each building turns to face the tile centre (`angle` in degrees: 0 faces south, positive turns toward east). That is a stand-in for the engine's own street-facing rules, so some buildings show their back to the camera.
+- **Layout measured on a test bench, not read from the files.** `tools/bench.js` clears a few tiles, hides units and points a straight-down camera at them with a measuring grid. Measured there and against the engine's own tiles: an urban tile is the street section plus the engine's two-building house layout (`BIN_CTY_*_Layout_2HB_Full_A`) with lots A (-0.19, -0.09) and B (0.12, 0.25); the whole section turns in 60-degree steps per tile (`angle` turns counter-clockwise); buildings draw at about 0.68 of full size; the palace or city hall fills the centre plaza at full size. The engine picks each tile's turn from rules we can't see, so the overlay picks one per tile from its coordinates.
+- **City centres show only the palace or city hall**; any other building on a centre tile isn't drawn.
 - **Models need a moment to load.** A newly drawn building shows its paved base first and the building a second or two later. Each tile has its own model group and only changed tiles are redrawn; redrawing every tile on every change (the first version) kept buildings from ever finishing loading during busy turns.
 - **Changing modinfo needs a full game restart**: the game caches modinfo files, so `UI.reloadUI()` alone won't pick up a new script list.
 - **Never call `clipHexHeight` without its height argument** (`clipHexHeight(plot)` crashed the game). `clipHexHeight(plot, height)` is safe; `restoreHexHeight(plot)` and `restoreAllHexHeight()` undo it.
