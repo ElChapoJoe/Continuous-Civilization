@@ -24,8 +24,22 @@ Branch: `feature/visual-progression`. Status: investigation in progress (started
 
 No hook was found for a building's, city's or route's Age style.
 
-## Next steps
+## Visual tests (2026-11-12, fresh game, Rome, turn 1)
 
-1. In a fresh early game: test `WorldUnits.setAgeStyle` on a unit, and `addModelAtPlot` with a city layout and a bridge, with screenshots before and after.
-2. Check whether districts' or buildings' visual style follows the building's own Age (newer buildings already look newer) and whether filler or urban layouts react to anything per player.
-3. Write up the realistic options (per-player unit styles; client-side overlays; a global art step) with how each would look, before building anything.
+- **Unit Age style: works at runtime.** `WorldUnits.setAgeStyle({owner: 0, id}, n)` on the Founder changed it immediately. Styles 1, 2 and 3 each gave a different cart and different clothing (style 3: dark cart, white robes; style 2: green-covered cart, robed figures). Not yet checked: whether a style survives the unit moving, a turn ending or a save/load, and whether military units have visible per-Age variants.
+- **Client-side models: work, but only add.** `addModelAtPlot("EXP_URBAN_Basic_City_Layout", ...)` on an empty tile drew a full Exploration-era city block (tiled roofs, plastered houses, a dome) at proper scale. On the capital's tile, `EXP_URBAN_City_Center_Palace_Layout` only mixed a few later buildings into the engine's own Antiquity city. The engine's art stays underneath and cannot be hidden.
+
+## Options
+
+| Option | Per player | Gradual | What it would look like | Feasibility |
+|---|---|---|---|---|
+| A. Units take their owner's personal Age style | Yes | By Age step | A civilization's units, including civilians, look Exploration-era once that civilization is in Exploration, Modern once in Modern | Works in test; needs a UI script that sets each unit's style on creation and when its owner changes Age |
+| B. Overlay newer models on cities | Visually yes (client side) | Yes | New houses drawn among the old ones; old Antiquity houses, roads and bridges stay visible | Technically works; looks cluttered on existing city tiles |
+| C. Replace city houses, roads and bridges per player | Yes | Yes | The goal as stated | No hook found: the renderer picks this art from the game's single Age |
+| D. Swap one building's art for another (`VisualRemaps`) | No (everyone) | No | A fixed art swap for the whole game, chosen at the main menu | Exists, but not what this goal is about |
+
+Buildings, wonders and units from later Ages already have their own art, so a city that builds Exploration or Modern buildings does look newer where those stand.
+
+## Recommendation
+
+Build A (per-player unit looks) as the first, achievable piece. Keep C open as an engine limitation unless a hook turns up; B could be tried for empty space (for example new outer districts) but not as a replacement for existing art.
