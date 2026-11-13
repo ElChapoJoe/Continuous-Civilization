@@ -432,6 +432,27 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
+  // Diplomacy and espionage (00-snapshot, 50-restore, 78-diplomacy.sql): Exploration and Modern actions exist and need
+  // an unlock; shared actions keep Antiquity's Influence costs; ruins are Antiquity discoveries (30-buildings.sql).
+  CC.diplomacy = function () {
+    const r = { checks: {} };
+    const acts = ["DIPLOMACY_ACTION_ESPIONAGE_OPEN_THE_GATES", "DIPLOMACY_ACTION_ESPIONAGE_CONVERT_POPULATION", "DIPLOMACY_ACTION_ESPIONAGE_SABOTAGE_WORKERS",
+      "DIPLOMACY_ACTION_ESPIONAGE_STEAL_RICHES", "DIPLOMACY_ACTION_ESTABLISH_TREASURE_FLEET", "DIPLOMACY_ACTION_DEMAND_TRIBUTE",
+      "DIPLOMACY_ACTION_ESPIONAGE_SABOTAGE_SHIPPING", "DIPLOMACY_ACTION_ESPIONAGE_FAKE_ARTIFACTS", "DIPLOMACY_ACTION_ESPIONAGE_INFILTRATE_ENEMY_POSITIONS",
+      "DIPLOMACY_ACTION_ESPIONAGE_SABOTAGE_SPACE_PROGRAM", "DIPLOMACY_ACTION_ESPIONAGE_IDEOLOGICAL_REVOLT"];
+    const bad = acts.filter((a) => !GameInfo.DiplomacyActions.lookup(a)?.RequiresUnlock);
+    r.checks.newActionsNeedUnlock = { pass: bad.length === 0, bad };
+    const unlocked = new Set(A(GameInfo.ProgressionTreeNodeUnlocks).filter((u) => u.TargetKind === "KIND_DIPLOMATIC_ACTION").map((u) => u.TargetType));
+    const noTree = acts.filter((a) => !unlocked.has(a) && !/DEMAND_TRIBUTE|IDEOLOGICAL_REVOLT/.test(a));
+    r.checks.treeUnlocks = { pass: noTree.length === 0, noTree };
+    const cost = (a) => A(GameInfo.DiplomaticActionInfluenceCosts).find((c) => c.DiplomacyActionType === a);
+    const war = cost("DIPLOMACY_ACTION_DECLARE_WAR")?.InfCostNeutral, spy = cost("DIPLOMACY_ACTION_COUNTER_SPY")?.InfCostNeutral;
+    r.checks.antiquityCosts = { pass: war === 60 && spy === 40, war, spy };
+    const ruins = GameInfo.Constructibles.lookup("IMPROVEMENT_RUINS"), ri = GameInfo.Improvements.lookup("IMPROVEMENT_RUINS");
+    r.checks.ruinsAreDiscoveries = { pass: !!ruins?.Discovery && !ruins?.Archaeology && !!ruins?.CanBeHidden && !!ri?.RemoveOnEntry };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
   CC.gov = function (pid = 0) {
     const cur = Players.get(pid).Culture.getGovernmentType();
     return A(GameInfo.Governments).find((g) => g.$hash === cur || g.$index === cur)?.GovernmentType ?? cur;

@@ -19,3 +19,15 @@ CREATE TABLE cc_pre_adjacency      AS SELECT ID FROM Adjacency_YieldChanges;
 CREATE TABLE cc_bak_worker_yields      AS SELECT * FROM WorkerYields;
 CREATE TABLE cc_bak_worker_yields_age  AS SELECT * FROM WorkerYields_AgeModifier;
 CREATE TABLE cc_bak_constructible_yields AS SELECT * FROM Constructible_YieldChanges;
+
+-- 3) Back up Antiquity's diplomacy balance rows. Exploration's and Modern's diplomacy-actions.xml re-define the
+--    shared actions with doubled / tripled Influence costs; 50-restore-antiquity-globals.sql puts Antiquity's back
+--    and keeps only the actions new to those Ages.
+DROP TABLE IF EXISTS cc_bak_dip_costs;
+DROP TABLE IF EXISTS cc_bak_dip_responses;
+DROP TABLE IF EXISTS cc_bak_dip_response_mods;
+DROP TABLE IF EXISTS cc_bak_dip_grievances;
+CREATE TABLE cc_bak_dip_costs         AS SELECT * FROM DiplomaticActionInfluenceCosts;
+CREATE TABLE cc_bak_dip_responses     AS SELECT * FROM DiplomaticActionResponses;
+CREATE TABLE cc_bak_dip_response_mods AS SELECT * FROM DiplomaticActionResponseModifiers;
+CREATE TABLE cc_bak_dip_grievances    AS SELECT * FROM DiplomacyFavorsGrievancesEventsData;

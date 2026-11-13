@@ -66,3 +66,9 @@ INSERT OR IGNORE INTO ProgressionTreeNodeUnlocks
   WHERE c.ConstructibleType NOT IN (SELECT ConstructibleType FROM cc_pre_modern_constructibles)
     AND c.RequiresUnlock = 0
     AND c.ConstructibleType NOT IN (SELECT TargetType FROM ProgressionTreeNodeUnlocks);
+
+-- Ruins: Modern's constructibles file turns them into always-visible archaeology sites that stay after entry.
+-- Restore Antiquity's discovery behaviour (hidden until seen, a goody site removed when a unit enters).
+-- Modern archaeology on ruins is therefore unavailable; Culture victory is a known limitation anyway.
+UPDATE Constructibles SET CanBeHidden = 1, Archaeology = 0, Discovery = 1 WHERE ConstructibleType = 'IMPROVEMENT_RUINS';
+UPDATE Improvements SET RemoveOnEntry = 1 WHERE ConstructibleType = 'IMPROVEMENT_RUINS';
