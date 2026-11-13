@@ -50,6 +50,30 @@
   const URBAN_LOTS = [{ x: -0.19, y: -0.09 }, { x: 0.12, y: 0.25 }];
   const BUILDING_SCALE = 0.68; // the engine's "_Scaled" building bins draw at about this size
   const FILLER_SCALE = 0.6;
+  // Edges (DirectionTypes: 0 NE, 1 E, 2 SE, 3 SW, 4 W, 5 NW) the urban layout fills at angle 0, measured on the
+  // bench: houses on NW, SW and SE, building lot A toward W and lot B toward NE (only E stays open). Turning by 60
+  // degrees counter-clockwise moves an edge from direction d to d - 1.
+  const FILLED_EDGES = [[5, 1], [3, 1], [2, 1], [4, 2], [0, 2]]; // [edge, weight: buildings count double]
+  /** Per edge: 3 if it faces water or a mountain, 1 if it is a cliff, else 0. */
+  function edgeCosts(loc) {
+    const cost = [];
+    for (let d = 0; d < 6; d++) {
+      const a = GameplayMap.getAdjacentPlotLocation(loc, d);
+      cost[d] = !a ? 3 : GameplayMap.isWater(a.x, a.y) || GameplayMap.isMountain(a.x, a.y) ? 3
+        : GameplayMap.isCliffCrossing(loc.x, loc.y, d) ? 1 : 0;
+    }
+    return cost;
+  }
+  /** The 60-degree turn that puts the least on edges facing water or mountains (heavy) or cliffs (light). */
+  function urbanAngle(loc, seed) {
+    const cost = edgeCosts(loc);
+    let best = [], least = Infinity;
+    for (let k = 0; k < 6; k++) {
+      const c = FILLED_EDGES.reduce((sum, [e, w]) => sum + w * cost[(e - k + 6) % 6], 0);
+      if (c < least) { least = c; best = [k]; } else if (c === least) best.push(k);
+    }
+    return 60 * best[seed % best.length];
+  }
   const rotate = (p, deg) => {
     const r = deg * Math.PI / 180;
     return { x: p.x * Math.cos(r) - p.y * Math.sin(r), y: p.x * Math.sin(r) + p.y * Math.cos(r), z: 0 };
@@ -172,8 +196,11 @@
             const model = buildingModel(main, owned, ageName, Math.abs(seed));
             if (model) parts.push([model, ZERO, 1, 0]);
           } else {
-            const angle = 60 * (Math.abs(seed) % 6);
-            for (const asset of layout.urban) parts.push([asset, ZERO, 1, angle]);
+            const angle = urbanAngle(loc, Math.abs(seed));
+            // On shore, cliff or mountain tiles the fixed house rows would spill onto rocks or beach (the engine
+            // places its houses piece by piece around the terrain; we can't), so draw only the streets there.
+            const rough = edgeCosts(loc).some((c) => c > 0);
+            for (const asset of rough ? layout.urban.slice(0, 1) : layout.urban) parts.push([asset, ZERO, 1, angle]);
             const others = buildings.filter((b) => !civic(b));
             URBAN_LOTS.forEach((lot, i) => {
               const at = rotate(lot, angle);

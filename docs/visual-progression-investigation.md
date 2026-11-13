@@ -194,3 +194,11 @@ The user still saw buildings inside each other and at odd angles, and suggested 
 - **Sandbox:** a new tiny-map game with Rome as the only player (no AI civs, no city-states), set up by script with `Configuration.editMap().setMaxMajorPlayers(1)`, the other slots closed and `Network.hostGame`. Buildings are placed with the debug `CREATE_ELEMENT` operation the Firaxis tuner's city panel uses (`experimental/cc-visual-prototype/tools/sandbox.js`); tiles are added with `city.purchasePlot`. Saves: `CC_Visual_Sandbox_Antiquity`, `CC_Visual_Sandbox_Modern`.
 - **Engine art coming back (verified):** the engine redraws a city's tiles when the city changes (a building added, a tile bought), which undoes `clipHexHeight`. The overlay only re-clipped changed tiles, so the engine's Antiquity palace (and other buildings) reappeared underneath the overlay's models. This was the main cause of buildings drawn inside each other. Fix: re-clip every replaced tile on each rebuild, listen to more city events, and re-clip all replaced tiles every 3 seconds as a safety net.
 - **Palace layout:** the `*_City_Center_Palace` layout is only the square, streets and houses; the palace at (0, 0), full size, fills it.
+
+## Round 8 (2026-11-13): shore and cliff tiles
+
+- The engine keeps its houses off rocks and beaches by placing them piece by piece; the overlay's two-building layout is one fixed model and spilled onto them.
+- `LAYOUT_CTY_Coastal_1Shore` is a dock and waterfront piece, not a city block; the engine did not draw it on the sandbox shore tile, so it isn't used.
+- Measured at angle 0: the layout fills the NW, SW and SE edges with houses and puts building lots toward W and NE; only E stays open. `GameplayMap.isCliffCrossing(x, y, dir)` reports cliff edges.
+- The overlay now picks each urban tile's 60-degree turn to keep houses and buildings off edges facing water or mountains (weight 3) and cliffs (weight 1), buildings counting double, and on any shore, cliff or mountain tile draws only the street section and the two buildings, without the house rows.
+- Sandbox: the coastal factory and museum tile now stands on its streets with nothing on the beach or rocks.
