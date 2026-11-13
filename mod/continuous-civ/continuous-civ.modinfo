@@ -193,6 +193,7 @@
 					<Item>ui/cc-hide-resources.js</Item>
 					<Item>ui/cc-governments.js</Item>
 					<Item>ui/cc-tree-links.js</Item>
+					<Item>ui/cc-city-state-bonuses.js</Item>
 				</UIScripts>
 			</Actions>
 		</ActionGroup>
