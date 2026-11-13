@@ -1,3 +1,5 @@
+[img]https://raw.githubusercontent.com/ElChapoJoe/Continuous-Civilization/main/docs/images/workshop-title-card.jpg[/img]
+
 [h1]Continuous Civilization (Beta)[/h1]
 [b]One Civilization. One Timeline. No Forced Age Transitions.[/b]
 

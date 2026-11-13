@@ -10,7 +10,8 @@ Workshop item: [https://steamcommunity.com/sharedfiles/filedetails/?id=383877774
 | Title | `Continuous Civilization (Beta)` |
 | Preview image | [`docs/images/workshop-preview.jpg`](../images/workshop-preview.jpg): the logo, a gold C in a laurel wreath (1024 x 1024, under Steam's 1 MB limit). Drawn by `tools/make_logo.py` and `tools/render_logo.ps1`; `docs/images/logo.svg` is the scalable version |
 | Description | [`description.txt`](description.txt), in Steam's formatting codes (paste it as is) |
-| Extra screenshots | `docs/images/tech-tree.jpg`, `docs/images/tech-tree-exploration.jpg`, `docs/images/empire.jpg` |
+| Gallery images | `docs/images/workshop-title-card.jpg` first (title card, from `tools/render_title_card.ps1`), then `tech-tree.jpg`, `tech-tree-exploration.jpg`, `empire.jpg` |
+| Banner in the description | `description.txt` starts with the title card, loaded from the public GitHub repo (it only shows once the repo is public) |
 | Visibility | The uploader offers Public, Friends Only and Private. **Friends Only** for a closed beta with Steam friends, **Public** to open it up (visibility can be changed later on the item's Steam page) |
 | Change note (first upload) | `0.1.0-beta: first public beta.` |
 
