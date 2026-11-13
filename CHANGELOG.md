@@ -4,6 +4,11 @@ Versions follow `MAJOR.MINOR.PATCH`. The number in brackets is the mod's interna
 
 Saves from one beta version may not load in the next. Start a new game after updating.
 
+## Unreleased
+
+### Fixed
+- City-state bonus choices now only list the bonuses of your personal Age (Antiquity, Exploration or Modern), as in vanilla, instead of all three Ages at once. If every bonus of your Age is already taken, the other Ages' bonuses are offered so the choice is never empty. The AI's own picks are unchanged. ([#2](https://github.com/ElChapoJoe/Continuous-Civilization/issues/2))
+
 ## 0.1.0-beta (20) - first public beta
 
 First release for playtesters.
