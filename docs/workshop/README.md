@@ -15,12 +15,13 @@ Everything the Workshop item needs, kept with the mod so updates stay consistent
 ## First upload
 1. In Steam, open **Library**, switch the filter to **Tools**, and install **Sid Meier's Civilization VII Development Tools**.
 2. Run `tools/deploy.ps1` so the Mods folder copy matches `main`.
-3. Start the **Mod Uploader** from the development tools.
-4. Point it at the mod folder above, then fill in the title, description, preview image and visibility from the table.
-5. Upload, then open the item's page on Steam to check the description and add the extra screenshots.
+3. Run `python -I tools/workshop_placeholders.py`. The uploader checks that every file the `.modinfo` lists exists inside the mod folder, but it doesn't understand references to the game's own files (`{age-exploration}data/...`), so it reports "Mod references files that are missing". The script adds empty placeholders at those paths; the game ignores them and still loads the real files from the player's install (verified: all test suites pass with them in place). `deploy.ps1` removes them again, so run this after every deploy.
+4. Start the **Mod Uploader** from the development tools.
+5. Point it at the mod folder above, then fill in the title, description, preview image and visibility from the table.
+6. Upload, then open the item's page on Steam to check the description and add the extra screenshots.
 
 ## Updates
 - Bump `version` in `continuous-civ.modinfo` and add a `CHANGELOG.md` entry.
 - Update the main `README.md` first (it is the source of truth), then bring `description.txt` in line: same tagline, features, victory targets and limitations, in Steam's formatting codes and kept shorter.
-- Deploy, then upload to the **same** Workshop item, with the changelog entry as the change note.
+- Deploy, run `tools/workshop_placeholders.py`, then upload to the **same** Workshop item, with the changelog entry as the change note.
 - Subscribers get the update automatically; remind testers to start a new game.
