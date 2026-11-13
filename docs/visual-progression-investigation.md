@@ -53,7 +53,7 @@ All on a turn-1 save, Rome, founding the capital at (59,14) and comparing the re
 | Client-side models | `addModelAtPlot("EXP_URBAN_Basic_City_Layout", ...)` on an empty tile; `EXP_URBAN_City_Center_Palace_Layout` on the capital | Empty tile: a full Exploration city block at proper scale. Capital: a few later buildings mixed into the engine's Antiquity city, which stays visible. |
 | Runtime culture change | Deleted Rome's Antiquity and Exploration art cultures with `Database.query`, then founded the city | No change: Antiquity Mediterranean city. `GameInfo` also kept the cached rows. |
 | Load-time culture change (1) | A mod SQL file left Rome with only its Modern cultures (`BUILDING_CULTURE_SAM_MOD`, `MOD_STONE`). Full game restart, save loaded | No change |
-| Load-time culture change (2) | Rome given only East Asian Modern tags (`BUILDING_CULTURE_EAS_MOD`, `MOD_STONE`). Save reloaded; the new rows were confirmed in the database | No change: the same Mediterranean houses and palace ([screenshot](../research/screenshots/vis-rome-eastasian-tags-no-change.png)). The renderer takes building culture from somewhere else (stored in the save or loaded with the art) |
+| Load-time culture change (2) | Rome given only East Asian Modern tags (`BUILDING_CULTURE_EAS_MOD`, `MOD_STONE`). Save reloaded; the new rows were confirmed in the database | No change: the same Mediterranean houses and palace. The renderer takes building culture from somewhere else (stored in the save or loaded with the art) |
 
 Not tested: a brand-new game with changed culture rows. Even if that worked, it would set one fixed look per civilization at game start, which is not progression.
 

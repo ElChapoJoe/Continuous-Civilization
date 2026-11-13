@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Mod id="continuous-civ" version="19" xmlns="ModInfo">
+<Mod id="continuous-civ" version="20" xmlns="ModInfo">
 	<Properties>
 		<Name>Continuous Civilization</Name>
 		<Description>One uninterrupted campaign: the Antiquity Age never ends, and the Exploration technology and civic trees, governments, units and buildings continue directly from Antiquity, followed by Modern. Each player moves into the next Age on their own as they research.</Description>
-		<Authors>Continuous Civilization</Authors>
+		<Authors>ElChapoJoe</Authors>
 		<AffectsSavedGames>1</AffectsSavedGames>
 	</Properties>
 	<Dependencies>
@@ -130,9 +130,13 @@
 					<Item>data/09-restore-cc-import-modern.sql</Item>
 				</UpdateDatabase>
 				<UpdateText>
+					<Item>text/08-pre-modern-text.sql</Item>
 					<Item>text/09-dedupe-cc-import-modern-text.sql</Item>
 					<Item>{age-modern}text/en_us/TechnologiesText.xml</Item>
 					<Item>{age-modern}text/en_us/ProjectsText.xml</Item>
+					<Item>{age-modern}text/en_us/ResourcesText.xml</Item>
+					<Item>{age-modern}text/en_us/ResourcesText-v2.xml</Item>
+					<Item>text/09-restore-modern-resources-text.sql</Item>
 				</UpdateText>
 			</Actions>
 		</ActionGroup>
@@ -182,7 +186,6 @@
 				<UpdateText>
 					<Item>text/35-governments-text.sql</Item>
 					<Item>text/55-restore-parked-text.sql</Item>
-					<Item>text/64-modern-resources-text.sql</Item>
 					<Item>text/65-modern-resources-text.sql</Item>
 				</UpdateText>
 				<!-- Hide Modern resource icons from a player until they research the activating tech. -->

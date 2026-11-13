@@ -1,0 +1,53 @@
+name: Bug report
+description: Something is broken, missing, or crashes.
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for testing Continuous Civilization! The more of this you fill in, the faster it gets fixed.
+  - type: input
+    id: version
+    attributes:
+      label: Mod version
+      description: Shown in Additional Content in game, or the Workshop / release you installed.
+      placeholder: 0.1.0-beta
+    validations:
+      required: true
+  - type: input
+    id: turn
+    attributes:
+      label: Turn number
+      placeholder: "Turn 142"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected, and what happened instead.
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots
+      description: Drag images here.
+  - type: textarea
+    id: logs
+    attributes:
+      label: Logs
+      description: |
+        Attach these files from `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Logs\`:
+        `Modding.log`, `Database.log`, `UI.log` (and `Scripting.log` if the game crashed).
+  - type: input
+    id: setup
+    attributes:
+      label: Game setup
+      description: Civilization and leader, map type and size, difficulty, other mods.
+  - type: checkboxes
+    id: newgame
+    attributes:
+      label: New game
+      options:
+        - label: I started a new game with this mod version (not an older save).

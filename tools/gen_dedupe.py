@@ -15,9 +15,30 @@ Re-run after every game patch:  python -I tools/gen_dedupe.py "<Civ7 install>/Ba
 import os, re, sys, collections
 import xml.etree.ElementTree as ET
 
+def find_civ7_base():
+    """The game's Base folder: first argument, else CIV7_DIR, else the Steam libraries on this machine."""
+    if len(sys.argv) > 1 and sys.argv[1]:
+        return sys.argv[1]
+    env = os.environ.get("CIV7_DIR")
+    if env:
+        return env if os.path.basename(os.path.normpath(env)) == "Base" else os.path.join(env, "Base")
+    roots = []
+    for steam in (os.path.join(os.environ.get("ProgramFiles(x86)", r"C:\Program Files (x86)"), "Steam"),
+                  os.path.expanduser("~/.steam/steam"), os.path.expanduser("~/Library/Application Support/Steam")):
+        vdf = os.path.join(steam, "steamapps", "libraryfolders.vdf")
+        if os.path.isfile(vdf):
+            roots += [p.replace("\\\\", "\\") for p in re.findall(r'"path"\s+"([^"]+)"', open(vdf, encoding="utf-8").read())]
+        roots.append(steam)
+    for root in roots:
+        base = os.path.join(root, "steamapps", "common", "Sid Meier's Civilization VII", "Base")
+        if os.path.isdir(base):
+            return base
+    sys.exit("Civilization VII not found: pass its Base folder as the first argument or set CIV7_DIR.")
+
+
 HERE = os.path.dirname(os.path.abspath(__file__))
 MOD = os.path.join(HERE, "..", "mod", "continuous-civ")
-BASE = sys.argv[1] if len(sys.argv) > 1 else r"G:\SteamLibrary\steamapps\common\Sid Meier's Civilization VII\Base"
+BASE = find_civ7_base()
 MODULES = os.path.join(BASE, "modules")
 SCHEMA = os.path.join(BASE, "Assets", "schema", "gameplay", "01_GameplaySchema.sql")
 CHRONO = {"AGE_ANTIQUITY": 0, "AGE_EXPLORATION": 1, "AGE_MODERN": 2}
