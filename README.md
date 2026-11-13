@@ -35,6 +35,7 @@ All of the following have been verified in game (see [`docs/`](docs) for test re
   | Theocracy | Authoritarianism |
 
   The government chooser opens when one unlocks, and a **Change Government** button is added to the policies screen. AI civilizations move along the same chain.
+- **Diplomacy and espionage** from Exploration and Modern: Demand Tribute, Treasure Fleets and spy actions such as Open the Gates, Sabotage Shipping and Sabotage Space Program. Each one unlocks with the tech, civic or city-state bonus that grants it.
 - **Religion** from the Exploration Age: Piety, Temples, founding a religion, beliefs, Missionaries and relics.
 - **City-states, great people, projects, narratives and discoveries** from all three Ages share one pool.
 - **Resources from later Ages** are placed at map start but stay inactive and hidden for each player until they research the matching tech (for example Coal at Steam Engine, Oil at Combustion).
@@ -49,11 +50,10 @@ All of the following have been verified in game (see [`docs/`](docs) for test re
 - **Culture, Economic and Military (points) victories cannot be won yet.** Points for them build up and show on the victories screen. In vanilla these victories need a 25% lead over second place, and the game engine only turns that check on inside a real Modern Age. Planned for a later version. For a military win, use Domination.
 - **Score victory** is decided when the final Age ends, which never happens in a continuous game.
 - **Legacy paths** do not progress, so their Modern rewards (World's Fair, Manhattan Project, John Maynard Keynes) are unavailable. Launch Rocket instead requires the three earlier space projects.
-- **Not imported yet:**
-  - Modern diplomacy and espionage actions (they would change Antiquity's diplomacy values; planned with the balance pass);
-  - Modern's AI file, which crashed the game.
+- **Not imported:** Modern's AI file, which crashed the game.
+- **Diplomacy costs don't scale by Age.** Actions shared by all Ages keep Antiquity's Influence costs, which vanilla doubles in Exploration and triples in Modern.
+- **Ruins are Antiquity discoveries all game**, so Modern archaeology can't use them.
 - **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look all game, because the game engine draws them from the single game-wide Age. Buildings, wonders and units from later Ages do use their own art, so cities look newer as players build them. See [the investigation](docs/visual-progression-investigation.md).
-- **Cosmetic:** one tech-tree link (Guilds to Education) is drawn with a small gap.
 - **Tested in single player only.** The UI scripts act for the local player, so multiplayer is untested.
 
 ## Installation
@@ -91,7 +91,7 @@ Requires **Sid Meier's Civilization VII** (tested on version 1.5.1). No game fil
 ## Roadmap
 
 - Culture and Economic victories (a lead-based rule that works without a Modern Age).
-- Balance pass: Exploration and Modern diplomacy and espionage, pacing, wonder scoring by Age.
+- Balance pass: pacing, diplomacy costs, wonder scoring by Age.
 - Visual progression, if the engine allows it: possibly a world-wide art step when most players enter a new Age, and per-player road art through railroads.
 - Playtesting of the Modern interface by human players; multiplayer.
 

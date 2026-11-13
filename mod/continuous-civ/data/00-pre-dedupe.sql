@@ -9,6 +9,12 @@ DROP TABLE IF EXISTS cc_casc_root_AgeProgressionEvents;
 CREATE TABLE cc_casc_root_AgeProgressionEvents AS SELECT * FROM AgeProgressionEvents WHERE 0;
 DROP TABLE IF EXISTS cc_casc_root_AgeProgressionTurns;
 CREATE TABLE cc_casc_root_AgeProgressionTurns AS SELECT * FROM AgeProgressionTurns WHERE 0;
+DROP TABLE IF EXISTS cc_casc_root_DiplomacyFavorsGrievancesEventsData;
+CREATE TABLE cc_casc_root_DiplomacyFavorsGrievancesEventsData AS SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE 0;
+DROP TABLE IF EXISTS cc_casc_root_DiplomaticActionInfluenceCosts;
+CREATE TABLE cc_casc_root_DiplomaticActionInfluenceCosts AS SELECT * FROM DiplomaticActionInfluenceCosts WHERE 0;
+DROP TABLE IF EXISTS cc_casc_root_DiplomaticActionResponses;
+CREATE TABLE cc_casc_root_DiplomaticActionResponses AS SELECT * FROM DiplomaticActionResponses WHERE 0;
 DROP TABLE IF EXISTS cc_casc_root_Governments;
 CREATE TABLE cc_casc_root_Governments AS SELECT * FROM Governments WHERE 0;
 DROP TABLE IF EXISTS cc_casc_root_ProjectModifiers;
@@ -59,6 +65,105 @@ INSERT INTO cc_casc_root_Project_YieldConversions SELECT * FROM Project_YieldCon
 INSERT INTO cc_casc_root_Affinities SELECT * FROM Affinities WHERE Affinity = 'AFFINITY_FRIENDLY';
 INSERT INTO cc_casc_root_Affinities SELECT * FROM Affinities WHERE Affinity = 'AFFINITY_NEUTRAL';
 INSERT INTO cc_casc_root_Affinities SELECT * FROM Affinities WHERE Affinity = 'AFFINITY_HOSTILE';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GIVE_INFLUENCE_TOKEN';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RECEIVE_GIFT';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DECLARE_WAR';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DECLARE_FORMAL_WAR';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_OPEN_BORDERS';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RESEARCH_COLLABORATION';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CULTURAL_EXCHANGE';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MINOR_TRADE';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_LOCAL_FESTIVALS';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_TRADE_MAP';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FARMERS_MARKET';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MILITARY_AID';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_TREASURY';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MORALE';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_RESEARCH';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_CIVIC_STUDY';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MILITARY_PRODUCTION';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_FOOD_PRODUCTION';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SEND_DELEGATION';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_INCITE_RAID';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CS_PROMOTE_GROWTH';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CS_BOLSTER_MILITARY';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CS_ORDER_ATTACK';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_IMPROVE_TRADE_RELATIONS';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GINSING_AGREEMENT';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FRIEND_OF_WA';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_ESPIONAGE_MILITARY_SABOTAGE';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_ESPIONAGE_STEAL_TECH';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_ESPIONAGE_STEAL_CIVIC';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_ESPIONAGE_MILITARY_INFILTRATION';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_COUNTER_SPY';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CS_INCORPORATE';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GRANT_POLICY_SLOT';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE_MILITARY_PRESENCE';
+INSERT INTO cc_casc_root_DiplomaticActionInfluenceCosts SELECT * FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_BECOME_SUZERAIN';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_OPEN_BORDERS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_OPEN_BORDERS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RESEARCH_COLLABORATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RESEARCH_COLLABORATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RESEARCH_COLLABORATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CULTURAL_EXCHANGE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CULTURAL_EXCHANGE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CULTURAL_EXCHANGE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MINOR_TRADE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MINOR_TRADE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MINOR_TRADE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_LOCAL_FESTIVALS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_LOCAL_FESTIVALS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_LOCAL_FESTIVALS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_TRADE_MAP' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_TRADE_MAP' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_TRADE_MAP' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FARMERS_MARKET' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FARMERS_MARKET' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FARMERS_MARKET' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MILITARY_AID' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MILITARY_AID' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MILITARY_AID' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_TREASURY' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_TREASURY' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MORALE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MORALE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_RESEARCH' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_RESEARCH' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_CIVIC_STUDY' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_CIVIC_STUDY' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MILITARY_PRODUCTION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MILITARY_PRODUCTION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_FOOD_PRODUCTION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_FOOD_PRODUCTION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SEND_DELEGATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SEND_DELEGATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SEND_DELEGATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_IMPROVE_TRADE_RELATIONS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_IMPROVE_TRADE_RELATIONS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GINSING_AGREEMENT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GINSING_AGREEMENT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GINSING_AGREEMENT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FRIEND_OF_WA' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FRIEND_OF_WA' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GRANT_POLICY_SLOT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GRANT_POLICY_SLOT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GRANT_POLICY_SLOT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE_MILITARY_PRESENCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE_MILITARY_PRESENCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';
+INSERT INTO cc_casc_root_DiplomaticActionResponses SELECT * FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE_MILITARY_PRESENCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_CLOSE_LAND_CLAIM';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_RAZING_SETTLEMENT';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_CAPTURE_SETTLEMENT';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_WINNING_SUZERAIN';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_DISPERSING_IP';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_END_ALLIANCE';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_BREAK_ALLIANCE';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_UNEVEN_PEACE_DEAL';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_REVEALED_ESPIONAGE';
+INSERT INTO cc_casc_root_DiplomacyFavorsGrievancesEventsData SELECT * FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_REVEALED_TS_ESPIONAGE';
 INSERT INTO cc_casc_root_AgeProgressionTurns SELECT * FROM AgeProgressionTurns WHERE AgeProgressionTurnType = 'AGE_PROGRESSION_PER_TURN_BASE';
 INSERT INTO cc_casc_root_AgeProgressionEvents SELECT * FROM AgeProgressionEvents WHERE AgeProgressionEventType = 'AGE_PROGRESSION_PLAYER_MILESTONE_1';
 INSERT INTO cc_casc_root_AgeProgressionEvents SELECT * FROM AgeProgressionEvents WHERE AgeProgressionEventType = 'AGE_PROGRESSION_PLAYER_MILESTONE_2';
@@ -1089,6 +1194,105 @@ DELETE FROM Project_YieldConversions WHERE ProjectType = 'PROJECT_CITY_CULTURE_P
 DELETE FROM Affinities WHERE Affinity = 'AFFINITY_FRIENDLY';  -- age-modern\data\independents.xml
 DELETE FROM Affinities WHERE Affinity = 'AFFINITY_NEUTRAL';  -- age-modern\data\independents.xml
 DELETE FROM Affinities WHERE Affinity = 'AFFINITY_HOSTILE';  -- age-modern\data\independents.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GIVE_INFLUENCE_TOKEN';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RECEIVE_GIFT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DECLARE_WAR';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DECLARE_FORMAL_WAR';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_OPEN_BORDERS';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RESEARCH_COLLABORATION';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CULTURAL_EXCHANGE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MINOR_TRADE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_LOCAL_FESTIVALS';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_TRADE_MAP';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FARMERS_MARKET';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MILITARY_AID';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_TREASURY';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MORALE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_RESEARCH';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_CIVIC_STUDY';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MILITARY_PRODUCTION';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_FOOD_PRODUCTION';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SEND_DELEGATION';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_INCITE_RAID';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CS_PROMOTE_GROWTH';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CS_BOLSTER_MILITARY';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CS_ORDER_ATTACK';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_IMPROVE_TRADE_RELATIONS';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GINSING_AGREEMENT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FRIEND_OF_WA';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_ESPIONAGE_MILITARY_SABOTAGE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_ESPIONAGE_STEAL_TECH';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_ESPIONAGE_STEAL_CIVIC';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_ESPIONAGE_MILITARY_INFILTRATION';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_COUNTER_SPY';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CS_INCORPORATE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GRANT_POLICY_SLOT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE_MILITARY_PRESENCE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionInfluenceCosts WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_BECOME_SUZERAIN';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_OPEN_BORDERS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_OPEN_BORDERS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RESEARCH_COLLABORATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RESEARCH_COLLABORATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_RESEARCH_COLLABORATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CULTURAL_EXCHANGE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CULTURAL_EXCHANGE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_CULTURAL_EXCHANGE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MINOR_TRADE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MINOR_TRADE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MINOR_TRADE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_LOCAL_FESTIVALS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_LOCAL_FESTIVALS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_LOCAL_FESTIVALS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_TRADE_MAP' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_TRADE_MAP' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_TRADE_MAP' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FARMERS_MARKET' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FARMERS_MARKET' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FARMERS_MARKET' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MILITARY_AID' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MILITARY_AID' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_MILITARY_AID' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_TREASURY' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_TREASURY' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MORALE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MORALE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_RESEARCH' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_RESEARCH' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_CIVIC_STUDY' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_CIVIC_STUDY' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MILITARY_PRODUCTION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_MILITARY_PRODUCTION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_FOOD_PRODUCTION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SABOTAGE_FOOD_PRODUCTION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SEND_DELEGATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SEND_DELEGATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_SEND_DELEGATION' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_IMPROVE_TRADE_RELATIONS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_IMPROVE_TRADE_RELATIONS' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GINSING_AGREEMENT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GINSING_AGREEMENT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GINSING_AGREEMENT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FRIEND_OF_WA' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_FRIEND_OF_WA' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GRANT_POLICY_SLOT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GRANT_POLICY_SLOT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_GRANT_POLICY_SLOT' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE_MILITARY_PRESENCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_SUPPORT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE_MILITARY_PRESENCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_ACCEPT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomaticActionResponses WHERE DiplomacyActionType = 'DIPLOMACY_ACTION_DENOUNCE_MILITARY_PRESENCE' AND DiplomaticResponseType = 'DIPLOMACY_RESPONSE_REJECT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_CLOSE_LAND_CLAIM';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_RAZING_SETTLEMENT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_CAPTURE_SETTLEMENT';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_WINNING_SUZERAIN';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_DISPERSING_IP';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_END_ALLIANCE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_BREAK_ALLIANCE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_UNEVEN_PEACE_DEAL';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_REVEALED_ESPIONAGE';  -- age-modern\data\diplomacy-actions.xml
+DELETE FROM DiplomacyFavorsGrievancesEventsData WHERE DiplomacyFavorGrievanceEventType = 'GRIEVANCE_FROM_REVEALED_TS_ESPIONAGE';  -- age-modern\data\diplomacy-actions.xml
 DELETE FROM AgeProgressionTurns WHERE AgeProgressionTurnType = 'AGE_PROGRESSION_PER_TURN_BASE';  -- age-modern\data\victories.xml
 DELETE FROM AgeProgressionEvents WHERE AgeProgressionEventType = 'AGE_PROGRESSION_PLAYER_MILESTONE_1';  -- age-modern\data\victories.xml
 DELETE FROM AgeProgressionEvents WHERE AgeProgressionEventType = 'AGE_PROGRESSION_PLAYER_MILESTONE_2';  -- age-modern\data\victories.xml

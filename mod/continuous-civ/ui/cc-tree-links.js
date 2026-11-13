@@ -11,8 +11,10 @@
 //     down when that cell is free.
 //  3. tree-line draws a straight leg between two waypoints starting at about half its length (a link skipping
 //     two or more columns stops halfway). Fix: start that leg at 0 and draw its full length.
+//  4. A level leg from a waypoint into a card is shifted off the card's height (Guilds -> Education). Fix: below.
 import { TreeGrid } from '/base-standard/ui/tree-grid/tree-grid.js';
 import '/base-standard/ui/tree-grid/tree-line.js';
+import { Layout } from '/core/ui/utilities/utilities-layout.js';
 
 if (!TreeGrid.prototype.__ccLinksPatched) {
   const originalLayout = TreeGrid.prototype.generateLayoutData;
@@ -56,6 +58,29 @@ if (TreeLine && !TreeLine.prototype.__ccLinksPatched) {
           line.style.leftPX = 0;
           line.style.widthPX = horizontalLength;
         }
+      } else if (this.isFromNodeDummy && !this.isToNodeDummy && this.Root.children.length === 1) {
+        // 4. A level leg from a waypoint into a card is drawn at a slightly different height from the leg coming
+        //    into that waypoint (cards and waypoints are centred differently), so the two run parallel instead of
+        //    joining (Guilds -> Education). Once both legs exist, move this one to the incoming leg's height.
+        const root = this.Root;
+        requestAnimationFrame(() => {
+          try {
+            const line = root.children[0];
+            // The incoming leg sits in another container of the same tree: search up from this line.
+            let incoming = null;
+            for (let p = root.parentElement, i = 0; p && !incoming && i < 8; p = p.parentElement, i++) {
+              incoming = [...p.querySelectorAll("tree-line")]
+                .find((x) => x !== root && x.getAttribute("to") === root.getAttribute("from")) || null;
+            }
+            if (!line || !incoming || incoming.children.length !== 1) return;
+            const dy = incoming.children[0].getBoundingClientRect().top - line.getBoundingClientRect().top;
+            if (Math.abs(dy) >= 1 && Math.abs(dy) < Layout.pixelsToScreenPixels(40)) {
+              line.style.topPX = (parseFloat(line.style.top) || 0) + dy;
+            }
+          } catch (e) {
+            console.error("cc-tree-links (join): " + e);
+          }
+        });
       }
     } catch (e) {
       console.error("cc-tree-links (line): " + e);

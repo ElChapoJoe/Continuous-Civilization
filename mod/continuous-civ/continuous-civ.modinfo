@@ -71,6 +71,8 @@
 					<Item>{age-exploration}data/narrative-display.xml</Item>
 					<Item>{age-exploration}data/narrative-sifting.xml</Item>
 					<Item>{age-exploration}data/civilizations-common-gameeffects.xml</Item>
+					<Item>{age-exploration}data/diplomacy-actions.xml</Item>
+					<Item>{age-exploration}data/diplomacy-gameeffects.xml</Item>
 				</UpdateDatabase>
 				<UpdateText>
 					<Item>{age-exploration}text/en_us/TechnologiesText.xml</Item>
@@ -123,6 +125,8 @@
 					<Item>{age-modern}data/victories.xml</Item>
 					<Item>{age-modern}data/victories-gameeffects.xml</Item>
 					<Item>{age-modern}data/legacy-path-gameeffects.xml</Item>
+					<Item>{age-modern}data/diplomacy-actions.xml</Item>
+					<Item>{age-modern}data/diplomacy-gameeffects.xml</Item>
 					<Item>data/09-restore-cc-import-modern.sql</Item>
 				</UpdateDatabase>
 				<UpdateText>
@@ -171,6 +175,7 @@
 					<Item>data/72-exploration-rules.sql</Item>
 					<Item>data/74-modern-rules.sql</Item>
 					<Item>data/76-victories.sql</Item>
+					<Item>data/78-diplomacy.sql</Item>
 					<Item>data/90-prune-dangling.sql</Item>
 					<Item>data/99-cleanup.sql</Item>
 				</UpdateDatabase>

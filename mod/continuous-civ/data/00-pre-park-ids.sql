@@ -81,6 +81,10 @@ INSERT INTO cc_park_ids VALUES ('TRAIT_MOD_CITY_RESOURCE_CAP');  -- age-modern\d
 INSERT INTO cc_park_ids VALUES ('TRAIT_INITIAL_SETTLEMENT_CAP');  -- age-modern\data\civilizations-common-gameeffects.xml
 INSERT INTO cc_park_ids VALUES ('TRAIT_MOD_GOLD_UNASSIGNED_RESOURCE');  -- age-modern\data\civilizations-common-gameeffects.xml
 INSERT INTO cc_park_ids VALUES ('TRAIT_MOD_HAPPINESS_UNASSIGNED_RESOURCE');  -- age-modern\data\civilizations-common-gameeffects.xml
+INSERT INTO cc_park_ids VALUES ('PLAYER_DIPLOMACY_RESEARCH_COLLABORATION_COMPLETE');  -- age-modern\data\diplomacy-gameeffects.xml
+INSERT INTO cc_park_ids VALUES ('PLAYER_DIPLOMACY_CULTURAL_EXCHANGE_COMPLETE');  -- age-modern\data\diplomacy-gameeffects.xml
+INSERT INTO cc_park_ids VALUES ('PLAYER_DIPLOMACY_MINOR_TRADE_COMPLETE');  -- age-modern\data\diplomacy-gameeffects.xml
+INSERT INTO cc_park_ids VALUES ('PLAYER_DIPLOMACY_FRIEND_OF_WA_COMPLETE');  -- age-modern\data\diplomacy-gameeffects.xml
 INSERT INTO cc_park_ids VALUES ('GREATPERSON_GOLD');  -- age-modern\data\greatpeople-gameeffects.xml
 INSERT INTO cc_park_ids VALUES ('GREATPERSON_GOLDEN_AGE');  -- age-modern\data\greatpeople-gameeffects.xml
 INSERT INTO cc_park_ids VALUES ('ATTACH_FISHING_WAREHOUSE_FOOD_FROM_PROJECT');  -- age-modern\data\projects-gameeffects.xml
