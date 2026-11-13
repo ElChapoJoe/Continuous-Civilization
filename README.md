@@ -7,7 +7,8 @@
   <img src="https://img.shields.io/badge/Civilization%20VII-1.5.1-1f6feb" alt="Civilization VII 1.5.1">
   <img src="https://img.shields.io/badge/mode-single%20player-555" alt="Single player">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="License: MIT"></a>
-  <!-- Add the Steam Workshop and Discord badges here once the links exist. -->
+  <a href="https://steamcommunity.com/sharedfiles/filedetails/?id=3838777743"><img src="https://img.shields.io/badge/Steam%20Workshop-subscribe-171a21?logo=steam" alt="Steam Workshop"></a>
+  <!-- Add the Discord badge here once there is an invite link. -->
 </p>
 
 <h3 align="center">One Civilization. One Timeline. No Forced Age Transitions.</h3>
@@ -43,7 +44,7 @@
 
 > **Beta.** Expect rough edges, and start a **new game** after every update: saves from one version may not load in the next.
 
-**Steam Workshop:** coming soon.
+**Steam Workshop (easiest):** [subscribe here](https://steamcommunity.com/sharedfiles/filedetails/?id=3838777743), then start a new game. Steam keeps it updated.
 
 **Manual install:**
 1. Download `continuous-civ.zip` from the newest release on the [Releases page](../../releases).

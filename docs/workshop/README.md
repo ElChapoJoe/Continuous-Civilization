@@ -2,6 +2,8 @@
 
 Everything the Workshop item needs, kept with the mod so updates stay consistent.
 
+Workshop item: [https://steamcommunity.com/sharedfiles/filedetails/?id=3838777743](https://steamcommunity.com/sharedfiles/filedetails/?id=3838777743) (ID 3838777743). Always upload updates to this item.
+
 | Field | Value |
 |---|---|
 | Mod folder to upload | `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Mods\continuous-civ` (run `tools/deploy.ps1` first so it matches `main`) |
