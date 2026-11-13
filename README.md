@@ -43,7 +43,7 @@
 **Steam Workshop:** coming soon.
 
 **Manual install:**
-1. Download `continuous-civ.zip` from the [latest release](../../releases/latest).
+1. Download `continuous-civ.zip` from the newest release on the [Releases page](../../releases).
 2. Unzip it into your Civilization VII mods folder, so you get
    `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Mods\continuous-civ\`.
 3. In game, enable **Continuous Civilization** under **Additional Content**.
