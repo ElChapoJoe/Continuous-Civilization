@@ -57,6 +57,7 @@ Tested on Civilization VII 1.5.1, single player.
 [*]The Score victory can't be won: it's decided when the final Age ends, which never happens here.
 [*]Dedications are chosen in a Choose Dedications window (3 per new personal Age) instead of on the Age-transition screen. Launch Rocket requires the three earlier space projects instead of the Science legacy path.
 [*]Diplomacy costs don't scale by Age.
+[*]Later-Age resources do nothing until you research them and their icons are hidden, but their 3D models and their own improvements (an Oil Rig on Oil) can be seen on the map early.
 [*]Town houses, roads and bridges keep their Antiquity look; later-Age buildings, wonders and units use their own art.
 [*]A few numbers stay at Antiquity's values, because the game has only one Age: the Happiness needed for celebrations and for Joyous/Ecstatic settlements, and war weariness.
 [*]Older buildings never become obsolete, and no crises happen.
