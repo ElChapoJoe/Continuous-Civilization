@@ -1,0 +1,99 @@
+# Audit: vanilla mechanics tied to the global Age
+
+Date: 2026-11-14. Code-and-data review only (the game was not run). Base: `main` at 42b87d4, which already has the
+beta fixes for Ocean crossing and the Distant Lands.
+
+## Why this audit
+
+Four beta reports shared one cause: vanilla switches something on or off at the global Age transition, which never
+happens here because the game Age stays Antiquity and each player only has a personal Age. This audit looks for more
+of the same before players find them.
+
+Sources read:
+
+- The mod: `continuous-civ.modinfo`, every `data/*.sql`, the four UI scripts, the READMEs, `CHANGELOG.md`, the
+  `docs/phase*` notes and `tools/age-audit.js`.
+- The game's data and UI (paths below are relative to `<Civ7>/Base/modules/`): the modinfo of each Age module
+  (which files load only while an Age is current), every table with an Age column or an Age foreign key in
+  `Assets/schema/gameplay/01_GameplaySchema.sql`, the `Ages` table, `GlobalParameters` per Age, the civ common
+  traits, and every UI script that reads `Game.age` (74 places in `base-standard/ui`, `ui-next` and `core/ui`).
+- The DLC modinfos under `<Civ7>/DLC/` (files that load only in Exploration or Modern).
+- `tools/survey_imports.py` for both Ages (lists the Exploration and Modern files the mod does not import).
+
+## Findings, by likely player impact
+
+"Global" means the engine reads one game-wide value with no per-player form, so a fix has to pick one value for
+everyone. Effort is a rough guess.
+
+| # | What a player sees | Cause and evidence | Handled? | Suggested fix | Effort |
+|---|---|---|---|---|---|
+| 1 | **No Treasure Fleets and no Factory resources, ever.** Distant Lands settlements never send Treasure Fleets; the Resources screen has no Treasure tab and no Factory slots; Economic victory never gets the points for them. | Both systems hang off one `GameSystemPrereqs` row (`GAME_SYSTEM_PREREQ_TREASURE_FLEET`) that only exists in `age-exploration/data/gameplay-systems.xml:4-8` (resource class Treasure) and `age-modern/data/gameplay-systems.xml:4-8` (Factory + resource class Factory). The classes themselves (`RESOURCECLASS_TREASURE`, `RESOURCECLASS_FACTORY`) are only defined in `age-exploration/data/resources.xml:5,58-61` and `age-modern/data/resources.xml:5,78-81`. The mod imports none of these files (`continuous-civ.modinfo`, `cc-import-*` groups). The UI also checks the global Age: Treasure tab `base-standard/ui-next/screens/commerce/commerce-screen.js:91`, Factory slots `commerce-screen-model.js:2046,2212`, treasure timer `ui/city-details/model-city-details.js:435`. Victory points lost: `base-standard/data/victories.xml:113` (3 per slotted Factory resource), `:117` (Treasure convoys). `78-diplomacy.sql` already unlocks Establish Treasure Fleet at Cartography, without the system behind it. | No | Needs a design choice: `GameSystemType` is the primary key, so only one of the two systems can be on (pick Exploration's Treasure Fleets or Modern's Factories). Import the class rows and the chosen prereq row, then a UI script that shows the Treasure/Factory tabs by personal Age. Treasure resources in vanilla only appear in Distant Lands at Exploration map generation (`base-standard/data/maps.xml:109-124`, `MapIslandBehavior`), so the map may also need checking. | Hard |
+| 2 | **Leader abilities, attribute-tree nodes, mementos and many narrative rewards never grow.** A bonus that vanilla doubles or triples in later Ages stays at its Antiquity size all game. | About 380 modifier amounts use the argument type `ScaleByGameAge` (`extra="100"`), which scales by the global Age. Leaders (21 modifiers, e.g. Hatshepsut `base-standard/data/leaders-gameeffects.xml:435`, Himiko `:471`, Isabella `:542`; also Amina, Catherine, Franklin, Friedrich, Lafayette, Machiavelli, Rizal, Xerxes), attribute trees `base-standard/data/progression-trees-common-gameeffects.xml` (27), mementos `base-standard/data/mementos-gameeffects.xml` (29), diplomacy `base-standard/data/diplomacy-gameeffects.xml` (13), narratives in all three Ages (about 300). | No | Global. Options: document it, or generate `CC_` copies with fixed Exploration and Modern amounts gated by personal Age (a generator like `tools/gen_modern_resources.py`). Confirm the scaling rule in game first (see the test list). | Hard (or document: easy) |
+| 3 | **The Religion button always opens the pantheon screen.** After founding a religion there is no button to view it or add beliefs; only the notification opens the religion and belief pickers. | `base-standard/ui/sub-system-dock/panel-sub-system-dock.js:798-840` (`getReligionScreenName`) and `ui/radial-menu/radial-menu-items.js:241-276` choose the pantheon screens when `Game.age` is Antiquity and the religion/belief pickers only when it is Exploration. The notifications open the pickers with no Age check (`ui/notification-train/notification-handlers.js:407-418`). `docs/phase2-test-results.md:173,177`: the human pick-a-religion screen was never exercised. | No | UI script (like `ui/cc-governments.js`) that patches `getReligionScreenName` and the radial item: religion picker if `canCreateReligion()`, belief picker once the player has a religion, pantheon screens otherwise. | Easy-medium |
+| 4 | **DLC wonders from Exploration and Modern never appear.** Owners of the wonder packs and civ packs never see them in the production list. | DLC packs load their Exploration and Modern wonders only from that Age on (criteria `AgeAtOrBefore` Exploration/Modern) and their tree unlocks only in that Age, e.g. `<Civ7>/DLC/asia-wonders/modules/asia-wonders.modinfo:88-122`. The mod only imports base-game files. Missing: Grand Bazaar, Wat Xieng Thong (asia-wonders), Nan Madol (water-wonders), Rila Monastery (bulgaria), Thanh Hue (dai-viet), Globe Theatre (england), Buseoksa (goryeo), Reykholt (iceland), Havana Harbor (pirate-republic), Himeji Castle (sengoku), Serpent Mound (shawnee-tecumseh); Modern: Ubudiah Mosque (asia-wonders), Nirayama Reverberatory Furnace (japan-korea-wonders), Battersea Power Station (great-britain), Hwaseong (joseon), Boudhanath (nepal), Sultanahmet Camii (ottomans), Eram Garden (qajar). | No | One optional action group per DLC with criteria `ModInUse` + Antiquity, importing its `constructibles-*` files and tree unlocks; then let `30-buildings.sql` re-tag and gate them. DLC files collide less, but `gen_dedupe.py` would need to know about them. | Medium |
+| 5 | **Trade routes keep Antiquity's range and Gold.** Merchants cannot reach partners across the Ocean (now that the Distant Lands are open); trade income does not grow. | `base-standard/data/ages.xml:12-14` (`Ages.TradeSystemParameterSet`) and `:23-25`: land/sea range 10/30 (Antiquity), 15/45 (Exploration), 20/60 and routes started at a distance (Modern). `TradeYields` Gold per route: `age-antiquity/data/resources.xml:41` (2-6 land, 4-12 sea), Exploration `:118` (x1.5), Modern `age-modern/data/resources.xml:139` (x2). The trade chooser's Modern mode (`ui/trade-route-chooser/trade-route-chooser.js:21`) never applies. | No | Range can be per player: wrappers on personal Exploration/Modern with `EFFECT_CITY_ADJUST_TRADE_ROUTE_RANGE` (already used 23 times, e.g. sea range by city-state bonus in `age-antiquity/data/independents-gameeffects.xml:285-288`). `TradeYields` is global (pick one table or leave it). | Easy |
+| 6 | **Embarked land units defend at strength 5 for the whole game.** Troops crossing the Ocean in the Modern era die to almost anything. | `base-standard/data/ages.xml:12-14`: `EmbarkedUnitStrength` 5 / 20 / 50 by Age. Matters more now that land units can cross the Ocean. | No | Global: raise Antiquity's value (for example to 20), or look for a per-player embarked-combat effect. | Easy |
+| 7 | **Leader attribute points for each new Age never arrive**, including Ibn Battuta's 4 Wildcard points in Exploration and 6 in Modern that his ability text promises. | `age-antiquity/data/attributes-gameeffects.xml:3-10` defines `MOD_TRAIT_LEADER_ATTRIBUTE_*` as `EFFECT_DO_NOTHING` placeholders; Exploration's and Modern's `attributes-gameeffects.xml:3-10` grant +1 per favoured attribute (`REQUIREMENT_IS_AGE_COUNT` 1); hooked to the leader traits in `base-standard/data/attributes.xml:139` and next rows. Ibn Battuta: `age-antiquity/data/leaders-gameeffects.xml:3` (placeholder) vs `age-exploration/data/leaders-gameeffects.xml:3` (+4) and `age-modern/data/leaders-gameeffects.xml:3-10` (+6). Same ids, so the Antiquity placeholders win; survey: "modifier-collisions 7". | No | Add `CC_` copies (Exploration +1, Modern +1, Ibn Battuta +4 / +6), attach them to the same leader traits, gate on `CC_REQSET_PERSONAL_AGE_EXPLORATION_ONLY` / `..._MODERN`, run once. | Easy-medium |
+| 8 | **Old buildings never become obsolete.** Antiquity buildings can't be overbuilt with later ones, keep their adjacency bonuses, and form Quarters with Exploration or Modern buildings. Cities have to grow outward for every new building. | The UI and engine compare a building's `Constructibles.Age` with the current Age: Quarter rule `base-standard/ui/building-placement/building-placement-manager.js:553-569` (same Age as the game, or `AGELESS`), overbuild and obsolete display `ui-next/tooltips/plot-tooltip/helpers.js:6-8,149`. `30-buildings.sql:5-11` re-tags every imported building to `AGE_ANTIQUITY`, so all buildings are "current Age". | Side effect of a deliberate choice; not documented | Decide whether this is wanted; at least add it to the README's known limitations. A per-player obsolescence has no engine hook that I found. | Document: easy |
+| 9 | **Late-game city balance stays at Antiquity settings.** Growth stays cheap, settlements reach Joyous/Ecstatic easily, the celebration threshold curve, town-to-city cost, starting specialist cap and war weariness keep Antiquity's values. | Global tables loaded per Age: `AgeGrowthBalances` `age-antiquity/data/constructibles.xml:100-103` (5/20/400) vs Exploration `:82-85` (30/50/600) vs Modern `:96-99` (60/100/850); `HappinessStages` `age-antiquity/data/gameplay-systems.xml:7-13` (Joyous 20, Ecstatic 40) vs Exploration `:46-52` (40/80) vs Modern (60/120); `GlobalParameters` only set in Exploration/Modern `gameplay-systems.xml` (`GOLDEN_AGE_HAPPINESS_CURVE_*` `:13-16`, `TOWN_UPGRADE_*` `:24-26`, `CITY_WORKER_STARTING_CAP` `:28`, Modern 3), plus `WarWearinessEffects`. | Known to the developer (`docs/phase2-test-results.md:185`: "global settings like happiness stages keep Antiquity values"); not in the README | Global: pick in-between values (for example Exploration's) in a merge file after a long run, or document. | Easy (data) + balance run |
+| 10 | **AI difficulty adjustments stop at Antiquity's.** The per-difficulty AI yield and production adjustments and free Medieval/Modern walls that vanilla adds in Exploration and Modern never apply, so on high difficulties the AI may fall behind late. | `age-exploration/data/difficulties.xml:3-12` (`EX_HANDICAP_*_SCALING`, `EX_HANDICAP_CITY_WALLS` = Medieval Walls) and `age-modern/data/difficulties.xml` (`MO_HANDICAP_*`), Exploration/Modern only, not imported. Antiquity's only adds walls (`age-antiquity/data/difficulties.xml`). Survey: no key collisions. | No | Import both files and attach their modifiers per personal Age (same wrapper as `72`/`74`). | Medium |
+| 11 | **AIs may not expand overseas.** The Distant Lands are now open, but the Exploration AI components tuned for them were removed. | `36-batch-a.sql:18-26` puts back the base Military/Diplomatic/Tactical components (Exploration's made AIs stop settling in Phase 3). | Deliberate, untested since the Distant Lands opened | Watch a long run for AI settlements across the Ocean; consider an AI list bias for Distant Lands settling. | Unknown |
+| 12 | **Culture victory screen undercounts later wonders and celebrations.** Exploration and Modern wonders score as Antiquity wonders (4 points, not 8 or 12); the Exploration and Modern wonder lines read 0. | Scoring by the wonder's Age: `base-standard/data/victories.xml:95-100` (`Data="AGE_*"`); `30-buildings.sql:5-7` re-tags imported wonders to Antiquity. Celebrations likewise score by the game Age (`:98-100`). | Partly: the fixed 150-point target (`76-victories.sql`) was tuned on long runs with this scoring | Document, or add `CC_` scoring rows by building list. | Easy (document) |
+| 13 | **Exploration and Modern civilizations played from the start keep their Antiquity "Test of Time" kit all game.** Their own civ ability and unique civic tree never load. | Off-Age civs get `TRAIT_ANACHRONISTIC_CIV` (`base-standard/data/ages-post-process.sql`); in Antiquity they load `civilizations-antiquity.xml` and `progression-trees-culture-unique-aq.xml` (`age-exploration/age-exploration.modinfo`, group `tot-ex-civs-antiquity-age`), while `civilizations-exploration.xml` (their real traits) loads only in Exploration. `docs/phase1-engine-investigation.md:176`: AIs played Russia, Hawaii, Abbasid, America and Buganda in Antiquity. | No | Import each later civ's traits per personal Age, or keep later-Age civs out of setup. | Hard |
+| 14 | **DLC leaders' and civs' Exploration and Modern story events never happen.** | `narrative-stories-*-exploration.xml` / `-modern.xml` load with `AgeInUse` Exploration/Modern in ada-lovelace, alexander, edward-teach, napoleon, tonga, washington, yi-sun-sin and the civ packs (`<Civ7>/DLC/*/modules/*.modinfo`). The mod imports only the base narratives (`37-batch-b.sql`). | No | Same per-DLC action groups as #4, then the `37` re-tag. | Medium |
+| 15 | **Narrative and discovery rewards stay at Antiquity size.** | Per-Age reward tables `NarrativeStory_Yield_Rewards` / `DiscoveryStory_Yield_Rewards`; `37-batch-b.sql:7-8` notes the engine uses Antiquity's values. | Known (code comment only) | Document. | Easy |
+| 16 | **Crises never happen**, in any Age, and the Policies screen never shows crisis slots. | `10-age-clock.sql` keeps the Age meter near 0%, so `%`-triggered `AgeCrises` (Antiquity's `crisis-stages.xml`) never start; Exploration's and Modern's `crisis-stages.xml` are not imported. Crisis tab: `base-standard/ui/policies/model-government.js:197`. | Intended (`10-age-clock.sql`), not in the README | Add to known limitations. | Easy |
+| 17 | **Interface details stay in Antiquity mode.** The diplomacy ribbon never shows religions or ideologies; the continent lens never shows its Distant Lands subtitle; naval units don't open the discovery lens; the trade chooser keeps Antiquity wording; the Unlocks screen still tracks next-Age civilizations. | `ui/diplo-ribbon/model-diplo-ribbon.js:331-336,377-383`; `ui/lenses/panel-continents.js:48`, `ui/lenses/layer/continent-layer.js:44-48`; `ui/interface-modes/interface-mode-unit-selected.js:153`; `ui/trade-route-chooser/trade-routes-model.js:5`; `ui/unlocks/screen-unlocks.js:61`. | No | One UI script that overrides these getters with the local player's personal Age. | Medium |
+| 18 | **Ocean movement is looser than vanilla Exploration.** Entering Ocean does not end a unit's move. | `age-exploration/data/unit-movement.xml:3-10` (Ocean ends the turn for every movement class) is not imported. | No | Import it if vanilla's pace is wanted (it would also apply to players still in Antiquity, who can't enter Ocean anyway). | Easy |
+| 19 | **Five feature yields keep Antiquity's values** (Oasis and Watering Hole +1 Production instead of +2; Marsh, Mangrove, Tundra Bog no Production). | `age-exploration/data/terrain.xml` vs `age-antiquity/data/terrain.xml` (`TerrainBiomeFeature_YieldChanges`, 5 of 102 rows differ). | No | Ignore, or apply globally. | Easy |
+
+### Already handled (checked, no action)
+
+| Mechanic | Where |
+|---|---|
+| Ocean invalid for all units, Distant Lands closed (meeting, entering, settling) | `72-exploration-rules.sql` (beta fixes, merged) |
+| Settlers below 5 Population | Vanilla rule (`UNIT_SETTLER` `PrereqPopulation` 5), not Age-related |
+| "Age is X" and "N transitions" conditions | `70-personal-age.sql` rewrites both for everything loaded, DLC included |
+| Exploration and Modern civ common rules (deep ocean, embarkation, resource slots, envoys, base yields, settlement cap, Economic trackers) | `72-exploration-rules.sql`, `74-modern-rules.sql`. Flanking needs no rule: Antiquity's tech grants it (`age-antiquity/data/progression-trees-tech-gameeffects.xml:95`) |
+| Buildings, wonders and units only buildable in their Age | `30-buildings.sql`, `40-units.sql` (re-tag and gate) |
+| Trees offered only in their Age (main, Theology, ideologies) | `20`, `21`, `25`, `26` |
+| Governments, city-state bonuses, great people, narratives, resources, diplomacy actions | `35`, `ui/cc-city-state-bonuses.js` (#2), `36`, `37`, `60`/`65`, `78` |
+| Age-start policies (`StartingPolicies`) | All 13 are unlocked by civics already in the merged tree (Antiquity's for Exploration's set, Exploration's for Modern's) |
+| Religion and pantheon capabilities | Both loaded (`age-antiquity`/`age-exploration` `gamecapabilities.xml`) |
+| Exploration-only belief chooser script (`age-exploration/ui/belief-chooser`) | Not used by anything; the real pickers are in base-standard |
+| Victories, legacy paths, Modern archaeology, diplomacy costs | `76-victories.sql`; README known limitations |
+
+## Could not decide without playing
+
+1. **How `ScaleByGameAge` scales** (#2): by the global Age (assumed) or the player's, and by how much. Read a leader
+   tooltip (Isabella, Hatshepsut) for a player in personal Modern.
+2. **Ocean attrition for embarked units.** Exploration sets `PLOT_WATER_DAMAGE_BASE` 11 / `_RAND` 10
+   (`age-exploration/data/gameplay-systems.xml:19-20`); Antiquity uses the engine default, unknown. Now that land
+   units can cross the Ocean, check the damage per turn on Ocean.
+3. **Overbuilding** (#8): whether the engine refuses to place a building on a tile with an Antiquity building, as
+   the UI code suggests.
+4. **Treasure Fleet action** (#1): what Establish Treasure Fleet (unlocked at Cartography by `78`) does without the
+   Treasure Fleet system.
+5. **Railroads.** `ROUTE_RAILROAD` has no Age prerequisite (`age-modern/data/routes.xml`), but the Resources
+   screen hides "rail connected" outside Modern (`commerce-screen-model.js:487`). Check that Rail Stations build
+   rail and connect cities.
+6. **Ideology choice.** The three ideology trees are re-tagged to Antiquity (`26`), but picking one has never been
+   tried (`docs/phase3-test-results.md:53`).
+7. **Rewritten Age conditions on subjects without an owner** (unowned plots, independents, game-wide modifiers):
+   what `REQUIREMENT_REQUIREMENTSET_IS_MET` on a per-player set returns there.
+8. **AI overseas settling** (#11) now that the Distant Lands are open.
+9. **Celebration frequency late game** (#9): the Antiquity default of `GOLDEN_AGE_HAPPINESS_CURVE_*` is compiled
+   into the engine, so whether celebrations get more or less frequent is unknown.
+10. **`AgeConstructibleDefaultYields` / `AgeConstructibleDefaultMaintenances`** (Exploration 2, Modern 3, none
+    for Antiquity; `age-exploration/data/constructibles.xml` near line 435): what they change for later-Age
+    buildings in an Antiquity game.
+11. **`Ages.NumDefenders`** (0 / 6 / 9): meaning unknown, probably Age-transition defenders.
+12. **Founding a religion as a human** through the notification (#3), never exercised.
+
+## Suggested follow-up for the tooling
+
+`tools/age-audit.js` lists Age columns, but none of the switches found here. Worth adding to it or to
+`tools/survey_imports.py`: the `Ages` row columns (`EmbarkedUnitStrength`, `TradeSystemParameterSet`,
+`NoVictoriesSecondaryHemisphere`), `GameSystemPrereqs`, `GlobalParameters` set per Age, `PlayerModifiers` /
+`GameModifiers` from Antiquity-only files, modifiers with `ScaleByGameAge` arguments, and DLC files with Age-only
+criteria.
