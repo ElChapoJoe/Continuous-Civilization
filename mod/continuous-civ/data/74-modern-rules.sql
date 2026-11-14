@@ -44,6 +44,11 @@ INSERT INTO ModifierStrings (ModifierId, Context, Text) VALUES
   ('CC_MO_EMBARKED_STRENGTH', 'Preview', 'LOC_CC_MO_EMBARKED_STRENGTH_PREVIEW');
 INSERT INTO cc_modern_rules VALUES ('CC_MO_TRADE_RANGE_LAND'), ('CC_MO_TRADE_RANGE_SEA'), ('CC_MO_EMBARKED_STRENGTH');
 
+-- AI difficulty bonuses of Modern (age-modern/data/difficulties.xml): +20% yields and production for the AI, and
+-- free Defensive Fortifications (after Military Science, by difficulty), by personal Modern Age (see 72).
+DELETE FROM TraitModifiers WHERE ModifierId LIKE 'MO_HANDICAP_%' AND TraitType = 'TRAIT_LEADER_MAJOR_CIV';
+INSERT INTO cc_modern_rules SELECT ModifierId FROM Modifiers WHERE ModifierId LIKE 'MO_HANDICAP_%';
+
 DELETE FROM cc_modern_rules WHERE ModifierId NOT IN (SELECT ModifierId FROM Modifiers);
 
 -- Wrappers: game-wide, attach each rule to every major player in their personal Modern Age.
