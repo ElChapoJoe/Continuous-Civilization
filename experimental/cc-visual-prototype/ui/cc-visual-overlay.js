@@ -8,7 +8,8 @@
 //      - the street layout of the owner's personal Age (Exploration or Modern),
 //      - each completed building actually on the tile, resolved through the game's art bins with the owner's
 //        building cultures and personal Age (ui/cc-building-art.js, extracted from the installed game),
-//      - filler houses of that Age in the owner's regional style in the free lots.
+//      - the engine's house layout of that Age, placed and chosen from its own layout data (ui/cc-layout-slots.js,
+//        drawn slot by slot next to cliffs, water and mountains), and its vacant-plot piece in empty lots.
 // Personal Age uses the same techs as the main mod:
 //   Antiquity   - engine art, untouched
 //   Exploration - any of Cartography, Astronomy, Machinery researched
@@ -46,14 +47,12 @@
       capital: { plain: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace", fol: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace_FOL" },
       center: { plain: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center", less: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Less",
         fol: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Less_FOL" },
-      filler: ["BIN_EXP_T2_CityBld_4X4_A", "BIN_EXP_T2_CityBld_3x5_A"],
     },
     2: {
       street: "LAYOUT_CTY_MOD_Section_AB_Road",
       houses: { plain: ["LAYOUT_CTY_MOD_Section_AB_Small_Packed"], fol: ["LAYOUT_CTY_MOD_Section_AB_Small_Packed_FOL"] },
       capital: { plain: "LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace", fol: "LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace_FOL" },
       center: { plain: "LAYOUT_CTY_MOD_Section_AB_City_Center", fol: "LAYOUT_CTY_MOD_Section_AB_City_Center_FOL" },
-      filler: ["BIN_MOD_T2_CityBld_4X4_A", "BIN_MOD_T2_CityBld_3x5_A"],
     },
   };
   const WOODED = new Set(["FEATURE_FOREST", "FEATURE_SAGEBRUSH_STEPPE", "FEATURE_SAVANNA_WOODLAND", "FEATURE_TAIGA", "FEATURE_RAINFOREST"]);
@@ -126,7 +125,13 @@
   const HARBOUR_PIER = "LAYOUT_CTY_Coastal_2Shore"; // the engine's coastal pier piece
   const HARBOUR_OFFSET = 0.2; // tile units from the centre toward the shore
   const BUILDING_SCALE = 0.68; // the engine's "_Scaled" building bins draw at about this size
-  const FILLER_SCALE = 0.6;
+  // Empty building lot: rows of BIN_Vacant_Building (decoded): Modern picks MOD_01/02, other Ages one of 01-05.
+  // Drawn at the scaled bin's size, which matched the engine's own on the reference game.
+  const VACANT = {
+    1: ["Vacant_Hero_Building_Plot_01", "Vacant_Hero_Building_Plot_02", "Vacant_Hero_Building_Plot_03",
+      "Vacant_Hero_Building_Plot_04", "Vacant_Hero_Building_Plot_05"],
+    2: ["Vacant_Hero_Building_Plot_MOD_01", "Vacant_Hero_Building_Plot_MOD_02"],
+  };
   // Street eraser. The engine picks one of five Antiquity street patterns per urban tile (A or B, some turned
   // 60 degrees) in compiled code we can't read, so on most tiles its ground streets don't match ours, and the
   // clip doesn't hide ground decals. This high-priority dirt patch paints over every lower decal: three copies
@@ -346,8 +351,10 @@
               let model = type && buildingModel(type, owned, ageName, Math.abs(seed));
               let scale = model && /_Scaled$/.test(model) ? 1 : BUILDING_SCALE;
               if (!model) {
-                model = resolve(layout.filler[(Math.abs(seed) + i) % layout.filler.length], owned, ageName, Math.abs(seed) + i);
-                scale = FILLER_SCALE;
+                // An empty lot gets the engine's vacant-plot piece (BIN_Vacant_Building_Scaled), named directly
+                // because the bin itself would pick by the game's Age.
+                model = VACANT[age][(Math.abs(seed) + i) % VACANT[age].length];
+                scale = BUILDING_SCALE;
               }
               if (model) parts.push([model, at, scale, lot.turn]);
             });
