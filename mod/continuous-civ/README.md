@@ -24,8 +24,7 @@ Map generation, terrain, rivers, graphics and all Antiquity rules are vanilla, e
 
 ## Known limitations
 
-- **Culture and Economic victories use fixed targets** (150 Culture, 12,000 Economic points, then a 5-turn countdown; `data/76-victories.sql`) instead of vanilla's 25% lead over second place, which the engine only checks inside a real Modern Age.
-- **Military (points) victory cannot be won** (same 25%-lead check). For Military, use Domination.
+- **Culture, Economic and Military victories use fixed targets** (150 Culture, 12,000 Economic, 100 Military points, then a 5-turn countdown; `data/76-victories.sql`) instead of vanilla's 25% lead over second place, which the engine only checks inside a real Modern Age.
 - **Score victory** is decided when the final Age ends, which never happens here.
 - **Legacy paths** do not progress (their per-Age rewards normally pay out at Age transitions, which never happen). Their Modern rewards (World's Fair, Manhattan Project, John Maynard Keynes) are therefore not available.
 - **Some numbers stay at Antiquity's values** because the engine reads them from the one game Age, with no per-player version: city growth costs and happiness thresholds (Joyous, Ecstatic), town upgrade costs, war weariness, narrative and discovery rewards, and leader, memento and attribute-tree bonuses that vanilla scales up by Age. See `docs/audit-age-gated-mechanics.md` (#2, #9, #15).
