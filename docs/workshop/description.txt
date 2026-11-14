@@ -55,7 +55,7 @@ Tested on Civilization VII 1.5.1, single player.
 [h2]Known limitations[/h2]
 [list]
 [*]The Score victory can't be won: it's decided when the final Age ends, which never happens here.
-[*]Triumphs from all three Ages work, but Major Triumphs' Dedications aren't applied yet (there is no Age transition). Launch Rocket requires the three earlier space projects instead of the Science legacy path.
+[*]Dedications are chosen on a Dedications tab of the attribute screen (3 points per new personal Age) instead of at an Age transition. Launch Rocket requires the three earlier space projects instead of the Science legacy path.
 [*]Diplomacy costs don't scale by Age.
 [*]Town houses, roads and bridges keep their Antiquity look; later-Age buildings, wonders and units use their own art.
 [*]A few numbers stay at Antiquity's values, because the game has only one Age: the Happiness needed for celebrations and for Joyous/Ecstatic settlements, and war weariness.

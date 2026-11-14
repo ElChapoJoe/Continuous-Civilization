@@ -79,6 +79,7 @@ The **Distant Lands** across the Ocean are open from the start: you can meet the
 - **Religion** from Exploration: Piety, Temples, founding a religion, beliefs, Missionaries, relics.
 - **Resources** from later Ages are on the map from the start, but stay inactive and hidden for each player until they research the matching tech (Coal at Steam Engine, Oil at Combustion).
 - **Triumphs** from all three Ages on the Triumphs screen. Exploration and Modern Triumphs count once you reach that personal Age, with vanilla's rewards.
+- **Dedications:** Major Triumphs unlock Dedications as in vanilla. Instead of an Age transition, you get 3 Dedication points when you enter your personal Exploration and 3 more in Modern, and spend them on the new **Dedications** tab of the attribute screen. Antiquity Triumphs' Dedications open from Exploration, Exploration Triumphs' from Modern. AI civilizations receive the Dedications they earn automatically.
 - **Diplomacy and espionage** from later Ages: Demand Tribute and spy actions such as Open the Gates and Sabotage Space Program, each unlocked by its tech, civic or city-state bonus.
 - **City-states, great people, projects, narratives and discoveries** from all three Ages share one pool.
 - **Ideologies:** Democracy, Fascism and Communism open with Political Theory.
@@ -114,7 +115,7 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 ## Known limitations
 
 - **Score victory** is decided when the final Age ends, which never happens here.
-- **Triumphs (legacy paths):** all three Ages' Triumphs are in the game, each counting from your personal Age. Major Triumphs' Dedications (the bonuses picked at the next Age) aren't applied yet, because there is no Age transition. Two Triumphs can't be completed: one needs Treasure Fleets and the Modern one that grants John Maynard Keynes needs Factory resources, both not yet included. Launch Rocket requires the three earlier space projects instead of the Science legacy path.
+- **Triumphs (legacy paths):** two Triumphs can't be completed: one needs Treasure Fleets and the Modern one that grants John Maynard Keynes needs Factory resources, both not yet included. Launch Rocket requires the three earlier space projects instead of the Science legacy path.
 - **Diplomacy costs don't scale by Age.** Shared actions keep Antiquity's Influence costs, which vanilla doubles in Exploration and triples in Modern.
 - **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look, because the engine draws them from a single game-wide Age. Buildings, wonders and units from later Ages use their own art. [Details](docs/visual-progression-investigation.md).
 - **Ruins** stay Antiquity discoveries all game, so Modern archaeology can't use them.

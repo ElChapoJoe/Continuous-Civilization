@@ -17,7 +17,7 @@ The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game 
 | Path | Contents |
 |---|---|
 | `mod/continuous-civ/` | The mod: `.modinfo`, SQL data changes (`data/`), text (`text/`), UI scripts (`ui/`) |
-| `tools/` | `gen_dedupe.py` (resolves clashes between Ages' data), `gen_modern_resources.py`, `survey_imports.py`, `age-audit.js`, `deploy.ps1` |
+| `tools/` | `gen_dedupe.py` (resolves clashes between Ages' data), `gen_modern_resources.py`, `gen_dedications.py` (Dedication cards), `survey_imports.py`, `age-audit.js`, `deploy.ps1` |
 | `tests/cc-tests.js` | In-game test suites for the game's debug console (`CC.db()`, `CC.modernTrees()`, `CC.victories()`, `CC.diplomacy()` and more) |
 | `docs/` | Engine investigation, phase plans, test reports and README images |
 
@@ -27,6 +27,7 @@ The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game 
   ```
   python -I tools/gen_dedupe.py
   python -I tools/gen_modern_resources.py
+  python -I tools/gen_dedications.py
   ```
 - Deploy to your Mods folder with `tools/deploy.ps1`. A `.modinfo` change needs a full game restart; SQL-only changes need a new game (or a reload).
 - Test in game: load `tests/cc-tests.js` on the debug console (FireTuner) and run the suites, then run an AI autoplay and check expansion, Age progress and the logs.

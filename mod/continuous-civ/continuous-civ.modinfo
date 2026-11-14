@@ -322,6 +322,8 @@
 					<Item>data/79-leader-attributes.sql</Item>
 					<Item>data/80-triumphs.sql</Item>
 					<Item>data/81-age-scaled-bonuses.sql</Item>
+					<Item>data/82-dedication-cards.sql</Item>
+					<Item>data/83-dedications.sql</Item>
 					<Item>data/90-prune-dangling.sql</Item>
 					<Item>data/99-cleanup.sql</Item>
 				</UpdateDatabase>
@@ -330,6 +332,7 @@
 					<Item>text/55-restore-parked-text.sql</Item>
 					<Item>text/65-modern-resources-text.sql</Item>
 					<Item>text/72-age-rules-text.sql</Item>
+					<Item>text/83-dedications-text.sql</Item>
 				</UpdateText>
 				<!-- Hide Modern resource icons from a player until they research the activating tech. -->
 				<UIScripts>
@@ -339,6 +342,7 @@
 					<Item>ui/cc-city-state-bonuses.js</Item>
 					<Item>ui/cc-religion.js</Item>
 					<Item>ui/cc-triumphs.js</Item>
+					<Item>ui/cc-dedications.js</Item>
 				</UIScripts>
 			</Actions>
 		</ActionGroup>
