@@ -8,7 +8,7 @@ Workshop item: [https://steamcommunity.com/sharedfiles/filedetails/?id=383877774
 |---|---|
 | Mod folder to upload | `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Mods\continuous-civ` (run `tools/deploy.ps1` first so it matches `main`) |
 | Title | `Continuous Civilization (Beta)` |
-| Preview image | [`docs/images/workshop-preview.jpg`](../images/workshop-preview.jpg): the logo, a gold C in a laurel wreath (1024 x 1024, under Steam's 1 MB limit). Drawn by `tools/make_logo.py` and `tools/render_logo.ps1`; `docs/images/logo.svg` is the scalable version |
+| Preview image | [`docs/images/workshop-preview.jpg`](../images/workshop-preview.jpg): the "C of the Ages" logo (temple, castle, dome, factories and skyscrapers in a marble C), 512 x 512 as the uploader recommends, about 75 KB. Chosen by the author on 2026-11-14 to replace the simple gold C (`tools/make_logo.py`, `docs/images/logo.svg`, still used elsewhere) |
 | Description | [`description.txt`](description.txt), in Steam's formatting codes (paste it as is) |
 | Gallery images | `docs/images/workshop-title-card.jpg` first (title card, from `tools/render_title_card.ps1`), then `tech-tree.jpg`, `tech-tree-exploration.jpg`, `empire.jpg` |
 | Banner in the description | `description.txt` starts with the title card, loaded from the public GitHub repo (it only shows once the repo is public) |
