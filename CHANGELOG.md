@@ -4,7 +4,7 @@ Versions follow `MAJOR.MINOR.PATCH`. The number in brackets is the mod's interna
 
 Saves from one beta version may not load in the next. Start a new game after updating.
 
-## Unreleased
+## 0.1.1-beta (21) - fixes from beta feedback
 
 ### Fixed
 - Land units can cross the Ocean once you are in your personal Exploration: civilians and commanders after Cartography, all land units after Shipbuilding mastery, as in vanilla. Antiquity's rule that makes the Ocean impassable now ends for each player at their personal Exploration; before, it never ended. (Reported by beta testers.)
