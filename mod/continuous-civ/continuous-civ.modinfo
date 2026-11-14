@@ -90,6 +90,8 @@
 					<Item>{age-exploration}data/independents-gameeffects.xml</Item>
 					<Item>{age-exploration}data/ai-exploration.xml</Item>
 					<Item>{age-exploration}data/pseudoyields.xml</Item>
+					<Item>{age-exploration}data/legacies-gameeffects.xml</Item>
+					<Item>{age-exploration}data/legacies.xml</Item>
 					<Item>{age-exploration}data/narrative-stories-gameeffects.xml</Item>
 					<Item>{age-exploration}data/narrative-stories.xml</Item>
 					<Item>{age-exploration}data/discovery-stories-gameeffects.xml</Item>
@@ -143,6 +145,8 @@
 					<Item>{age-modern}data/independents-gameeffects.xml</Item>
 					<Item>{age-modern}data/pseudoyields.xml</Item>
 					<Item>{age-modern}data/routes.xml</Item>
+					<Item>{age-modern}data/legacies-gameeffects.xml</Item>
+					<Item>{age-modern}data/legacies.xml</Item>
 					<Item>{age-modern}data/narrative-stories-gameeffects.xml</Item>
 					<Item>{age-modern}data/narrative-stories.xml</Item>
 					<Item>{age-modern}data/discovery-stories-gameeffects.xml</Item>
@@ -316,6 +320,7 @@
 					<Item>data/76-victories.sql</Item>
 					<Item>data/78-diplomacy.sql</Item>
 					<Item>data/79-leader-attributes.sql</Item>
+					<Item>data/80-triumphs.sql</Item>
 					<Item>data/81-age-scaled-bonuses.sql</Item>
 					<Item>data/90-prune-dangling.sql</Item>
 					<Item>data/99-cleanup.sql</Item>
@@ -333,6 +338,7 @@
 					<Item>ui/cc-tree-links.js</Item>
 					<Item>ui/cc-city-state-bonuses.js</Item>
 					<Item>ui/cc-religion.js</Item>
+					<Item>ui/cc-triumphs.js</Item>
 				</UIScripts>
 			</Actions>
 		</ActionGroup>

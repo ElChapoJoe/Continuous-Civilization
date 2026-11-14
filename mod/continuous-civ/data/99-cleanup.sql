@@ -15,6 +15,8 @@ DROP TABLE IF EXISTS cc_dlc_wonder_unlocks;
 DROP TABLE IF EXISTS cc_story_modifier_age;
 DROP TABLE IF EXISTS cc_age_scaled;
 DROP TABLE IF EXISTS cc_age_scaled_copies;
+DROP TABLE IF EXISTS cc_triumph_ages;
+DROP TABLE IF EXISTS cc_triumph_sets;
 DROP TABLE IF EXISTS cc_unit_gates;
 DROP TABLE IF EXISTS cc_park_ids;
 DROP TABLE IF EXISTS cc_park_mod;

@@ -15,6 +15,7 @@ Saves from one beta version may not load in the next. Start a new game after upd
   - Leader abilities, mementos, attribute-tree nodes and traditions whose amounts vanilla scales by Age: double in Exploration, triple in Modern (108 bonuses, including DLC leaders you own).
   - Narrative and discovery rewards from Exploration and Modern stories use their own Age's sizes.
   - Still at Antiquity's values (no per-player version in the engine): the Happiness needed for celebrations and for Joyous/Ecstatic settlements, war weariness, and diplomacy action results.
+- Exploration and Modern Triumphs (legacy paths): all three Ages' Triumphs are on the Triumphs screen, and each later-Age Triumph counts once you reach that personal Age, with vanilla's reward. Their progress shows the real count (for example 1/20 relics). Major Triumphs' Dedications aren't applied yet. Tested in game: Tuhuoqiang (Gunpowder) and Dawn of the Space Race (Flight) completed.
 - AI civilizations get vanilla's later-Age difficulty bonuses by their personal Age: +10% yields and production in Exploration, +20% in Modern, and free Medieval Walls or Defensive Fortifications on higher difficulties (after Castles or Military Science). Before, AIs kept Antiquity's bonuses all game.
 
 ## 0.1.1-beta (21) - fixes from beta feedback

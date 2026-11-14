@@ -467,6 +467,33 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
+  // Triumphs (80-triumphs.sql): Exploration and Modern Triumphs exist as Antiquity ones, are valid for the player, and
+  // each later-Age trigger requires the personal Age (directly, or through a CC_REQSET_TRIUMPH_ wrapper).
+  CC.triumphs = function (pid = 0) {
+    const r = { checks: {} };
+    const L = A(GameInfo.Legacies);
+    const later = L.filter((l) => /^LEGACY_(EX|MO)_/.test(l.LegacyType));
+    r.checks.imported = { pass: later.length > 100, count: later.length };
+    r.checks.retagged = { pass: later.every((l) => l.Age === "AGE_ANTIQUITY"), notAntiquity: later.filter((l) => l.Age !== "AGE_ANTIQUITY").length };
+    const leg = Players.get(pid)?.Legacies;
+    const valid = leg ? later.filter((l) => leg.isValidLegacy(l.$hash)).length : null;
+    r.checks.validForPlayer = { pass: valid > 0, valid };
+    const rsr = A(GameInfo.RequirementSetRequirements);
+    const reqsOf = (set) => rsr.filter((x) => x.RequirementSetId === set).map((x) => x.RequirementId);
+    const lm = A(GameInfo.LegacyModifiers).filter((m) => /^LEGACY_(EX|MO)_/.test(m.LegacyType));
+    const ungated = lm.filter((m) => {
+      const need = /^LEGACY_EX_/.test(m.LegacyType) ? "CC_REQ_IN_EXPLORATION" : "CC_REQ_IN_MODERN";
+      const set = m.RequirementSetId;
+      return !(reqsOf(set).includes(need) || (/^CC_REQSET_TRIUMPH_/.test(set) && reqsOf(set).includes(need)));
+    }).map((m) => m.LegacyType);
+    r.checks.gatedByPersonalAge = { pass: lm.length > 0 && ungated.length === 0, triggers: lm.length, ungated: ungated.slice(0, 10) };
+    // UI (ui/cc-triumphs.js): progress shown without the personal-Age requirement's share, e.g. 0/20, not 0/200.
+    const proto = leg && Object.getPrototypeOf(leg);
+    const shown = leg ? later.filter((l) => leg.isValidLegacy(l.$hash)).map((l) => leg.getProgress(l.$hash)?.progress?.[0]?.total) : [];
+    r.checks.progressDisplay = { pass: !!proto?.__ccTriumphs && shown.length > 0 && shown.every((t) => t !== 200), patched: !!proto?.__ccTriumphs, at200: shown.filter((t) => t === 200).length };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
   // Diplomacy and espionage (00-snapshot, 50-restore, 78-diplomacy.sql): Exploration and Modern actions exist and need
   // an unlock; shared actions keep Antiquity's Influence costs; ruins are Antiquity discoveries (30-buildings.sql).
   CC.diplomacy = function () {
