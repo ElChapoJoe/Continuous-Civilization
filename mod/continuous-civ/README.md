@@ -78,4 +78,4 @@ Engine gotchas, all verified:
 - `tools/survey_imports.py` lists every Exploration-only file not imported yet, with its collisions and Age conditions.
 - One DB error anywhere makes the engine **roll back the whole mod**. Check `Logs/Database.log` and `Logs/Modding.log` (`* cc-pre`, `* cc-import-exploration`, `* cc-merge` must be listed).
 
-Tests: `tests/cc-tests.js` (run with FireTuner `execute_js_file`, then `CC.db()`, `CC.gating(pid)`, `CC.status()`, `CC.resources()`, `CC.civics()`, `CC.personalAge()`, `CC.batchA()`, `CC.batchB()`, `CC.exRules()`).
+Tests: `tests/cc-tests.js` (run with FireTuner `execute_js_file`, then `CC.db()`, `CC.gating(pid)`, `CC.status()`, `CC.resources()`, `CC.civics()`, `CC.personalAge()`, `CC.batchA()`, `CC.batchB()`, `CC.exRules()`, `CC.distantLands(pid)`).
