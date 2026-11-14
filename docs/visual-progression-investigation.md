@@ -342,3 +342,11 @@ Reference city (`CC_Visual_Reference_Modern`, no mods), top-down, positions conv
   - Mine: buildings similar, but our model shows grey spoil heaps where the engine shows orange rock; the engine may choose by resource or terrain with conditions the extractor drops.
   - Woodcutter: Antiquity camp becomes a Modern lumber yard; the model has its own edge trees, so the forest tile doesn't go bare (`sandbox-shots/31-woodcutter-antiquity-vs-modern.png`).
 - Whole view: `sandbox-shots/29-rural-before-after.png` (before top, after bottom).
+
+## Round 26 (2026-11-14): the other rural improvements
+
+- Modern art exists for camps (`IMP_MOD_CAMP`; Exploration also has `IMP_EXP_CAMP`), quarries (`IMP_MOD_Quarry`), pastures (`PROP_Pasture_MOD_Barn`, `PROP_Pasture_MOD_BldB`, `PROP_Pasture_Tractor`) and plantations (`IMP_Plantation_Bld_MOD`). Fishing boats, oil rigs and the unique improvements have no Age variants in the bins.
+- **`selectionScriptParams` doesn't override the Age.** `BIN_Pasture_BldB_Finished` (Antiquity and Modern rows) drew the same Antiquity shed with no parameters, with `{age: "AGE_MODERN"}` and with `{age, civilization}`. So bins that pick by `[AGE:...]` can't be pointed at a personal Age; models have to be named directly.
+- Camps and quarries are whole models and redraw cleanly (`sandbox-shots/32-...antiquity.png` engine, `33-...` ours: Modern lodges, a dump truck and machinery in the quarry).
+- Pastures and plantations pick only their buildings by Age; the animals and crops come from resource bins. Drawing the top-level layout (`IMPROVEMENT_PASTURE`, `IMPROVEMENT_PLANTATION`) on the clipped tile brings back the animals and crops but with Antiquity-picked buildings. They are rebuilt from parts instead: `IMP_Pasture` + `BIN_Pasture_Resources_Finished` + the Modern barn, shed and tractor; `BIN_PROP_Plantation_RES` + `IMP_Plantation_Bld_MOD`. Building spots are hand-picked; there is no vanilla Modern reference for these two yet (`sandbox-shots/34-pasture-plantation-from-parts.png`). The plantation's crop cover comes out sparser than the engine's.
+- Overlay: the rural table is now per personal Age (Exploration: camps; Modern: farms, woodcutters, mines, clay pits, camps, quarries, pastures, plantations) and allows several parts per improvement. Rome sandbox with nine rural tiles: `sandbox-shots/35-rome-modern-with-rural.png`.

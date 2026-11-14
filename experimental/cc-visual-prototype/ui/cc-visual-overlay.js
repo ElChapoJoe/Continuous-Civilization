@@ -59,21 +59,38 @@
   // BIN_IMP_ClayPits, BIN_IMP_Mine_MOD pick these by [AGE:AGE_MODERN]). Exploration has no farm or woodcutter
   // variant and falls back to the Antiquity mine and clay pit, so only Modern rural tiles are redrawn.
   // Farms: the engine's variant B matches the reference farm's house, tractor and shed placement.
-  const RURAL_MODERN = {
-    IMPROVEMENT_FARM: "BIN_IMP_MOD_Farm_B",
-    IMPROVEMENT_WOODCUTTER: "IMP_MOD_WoodCutter",
-    IMPROVEMENT_WOODCUTTER_RESOURCE: "IMP_MOD_WoodCutter",
-    IMPROVEMENT_CLAY_PIT: "BIN_IMP_MOD_Claypit_Base",
-    IMPROVEMENT_CLAY_PIT_RESOURCE: "BIN_IMP_MOD_Claypit_Base",
-    IMPROVEMENT_MINE: "IMP_Mine_MOD",
-    IMPROVEMENT_MINE_RESOURCE: "IMP_Mine_MOD",
+  // Camps and quarries have whole Modern models (camps also an Exploration one). Pastures and plantations
+  // pick only their buildings by Age (the animals and crops come from resource bins), and the game ignores an
+  // Age passed in selectionScriptParams, so they are rebuilt from parts: the resource bin plus the Modern
+  // buildings at hand-picked spots (no vanilla Modern reference measured for these two).
+  // Each entry: list of [model, x, y] in tile units.
+  const RURAL = {
+    1: {
+      IMPROVEMENT_CAMP: [["IMP_EXP_CAMP", 0, 0]],
+    },
+    2: {
+      IMPROVEMENT_FARM: [["BIN_IMP_MOD_Farm_B", 0, 0]],
+      IMPROVEMENT_WOODCUTTER: [["IMP_MOD_WoodCutter", 0, 0]],
+      IMPROVEMENT_WOODCUTTER_RESOURCE: [["IMP_MOD_WoodCutter", 0, 0]],
+      IMPROVEMENT_CLAY_PIT: [["BIN_IMP_MOD_Claypit_Base", 0, 0]],
+      IMPROVEMENT_CLAY_PIT_RESOURCE: [["BIN_IMP_MOD_Claypit_Base", 0, 0]],
+      IMPROVEMENT_MINE: [["IMP_Mine_MOD", 0, 0]],
+      IMPROVEMENT_MINE_RESOURCE: [["IMP_Mine_MOD", 0, 0]],
+      IMPROVEMENT_CAMP: [["IMP_MOD_CAMP", 0, 0]],
+      IMPROVEMENT_QUARRY: [["IMP_MOD_Quarry", 0, 0]],
+      IMPROVEMENT_PASTURE: [["IMP_Pasture", 0, 0], ["BIN_Pasture_Resources_Finished", 0, 0],
+        ["PROP_Pasture_MOD_Barn", 0.22, 0.12], ["PROP_Pasture_MOD_BldB", -0.2, 0.22], ["PROP_Pasture_Tractor", 0.18, -0.22]],
+      IMPROVEMENT_PLANTATION: [["BIN_PROP_Plantation_RES", 0, 0], ["IMP_Plantation_Bld_MOD", -0.18, -0.2]],
+    },
   };
-  /** The Modern model for a rural tile's improvement, or null to leave the tile to the engine. */
-  function ruralModel(loc) {
+  /** The parts for a rural tile's improvement in this personal Age, or null to leave the tile to the engine. */
+  function ruralParts(loc, age) {
+    const table = RURAL[age];
+    if (!table) return null;
     for (const id of MapConstructibles.getConstructibles(loc.x, loc.y) || []) {
       const c = Constructibles.getByComponentID(id);
       const type = c && GameInfo.Constructibles.lookup(c.type)?.ConstructibleType;
-      if (type && RURAL_MODERN[type] && c.complete !== false) return RURAL_MODERN[type];
+      if (type && table[type] && c.complete !== false) return table[type];
     }
     return null;
   }
@@ -213,8 +230,8 @@
           const isCenter = district.type === DistrictTypes.CITY_CENTER;
           if (me >= 0 && GameplayMap.getRevealedState(me, loc.x, loc.y) === RevealedStates.HIDDEN) continue;
           if (district.type === DistrictTypes.RURAL) {
-            const model = age === 2 && ruralModel(loc);
-            if (model) want.set(loc.x + "," + loc.y, [[model, ZERO, 1, 0, id]]);
+            const rural = ruralParts(loc, age);
+            if (rural) want.set(loc.x + "," + loc.y, rural.map(([m, x, y]) => [m, { x, y, z: 0 }, 1, 0, id]));
             continue;
           }
           if (!isCenter && district.type !== DistrictTypes.URBAN) continue;
