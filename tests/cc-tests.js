@@ -266,7 +266,8 @@
     const capArg = (id) => A(GameInfo.ModifierArguments).find((a) => a.ModifierId === id && a.Name === "Amount")?.Value;
     r.checks.settlementCaps = { pass: capArg("CC_EX_SETTLEMENT_CAP") === "8" && capArg("CC_MO_SETTLEMENT_CAP") === "16" && gm.includes("CC_EXRULE_CC_EX_SETTLEMENT_CAP") && gm.includes("CC_MORULE_CC_MO_SETTLEMENT_CAP"), antiquity: capArg("TRAIT_INITIAL_SETTLEMENT_CAP") };
     const exRules = gm.filter((id) => id.startsWith("CC_EXRULE_")).map((id) => id.slice(10));
-    const gdp = (id) => /_GDP$/.test(id);
+    // Rules that carry on into Modern on purpose: the Economic trackers, and the per-Age steps that Modern adds to.
+    const gdp = (id) => /_GDP$/.test(id) || /^CC_EX_(TRADE_RANGE_|EMBARKED_STRENGTH)/.test(id);
     const ending = exRules.filter((id) => !gdp(id)).map((id) => GameInfo.Modifiers.lookup(id));
     const notEnding = ending.filter((m) => m && m.SubjectRequirementSetId !== "CC_REQSET_NOT_IN_MODERN" && !(m.SubjectRequirementSetId || "").startsWith("CC_REQSET_EXRULE_")).map((m) => m.ModifierId + ":" + m.SubjectRequirementSetId);
     r.checks.explorationRulesEndAtModern = { pass: notEnding.length === 0, notEnding };
@@ -495,6 +496,27 @@
     const ok = Game.PlayerOperations.canStart(pid, PlayerOperationTypes.CHANGE_GOVERNMENT, args, false).Success;
     if (ok) Game.PlayerOperations.sendRequest(pid, PlayerOperationTypes.CHANGE_GOVERNMENT, args);
     return ok;
+  };
+
+  // Global-Age values raised per player (audit #5, #6, #7: 72, 74, 79). Live checks use player pid's first city and
+  // identity: compare before and after granting Cartography and then a Modern root tech.
+  CC.ageScaling = function (pid = 0) {
+    const r = { checks: {} };
+    const gm = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
+    const rules = ["CC_EXRULE_CC_EX_TRADE_RANGE_LAND", "CC_EXRULE_CC_EX_TRADE_RANGE_SEA", "CC_EXRULE_CC_EX_EMBARKED_STRENGTH",
+      "CC_MORULE_CC_MO_TRADE_RANGE_LAND", "CC_MORULE_CC_MO_TRADE_RANGE_SEA", "CC_MORULE_CC_MO_EMBARKED_STRENGTH"];
+    r.checks.wrappers = { pass: rules.every((id) => gm.includes(id)), missing: rules.filter((id) => !gm.includes(id)) };
+    const tm = A(GameInfo.TraitModifiers).filter((t) => /^CC_(EX|MO)_(ATTR_|IBN_BATTUTA_WILDCARD)/.test(t.ModifierId));
+    r.checks.attributeTraits = { pass: tm.length === 16, count: tm.length };
+    const city = Players.get(pid)?.Cities?.getCities()[0];
+    const t = city && Cities.get(city.id)?.Trade;
+    r.tradeRange = t ? { land: t.landTradeRouteRange?.value, sea: t.waterTradeRouteRange?.value } : null;
+    const id = Players.get(pid)?.Identity;
+    r.attributePoints = id ? A(GameInfo.Attributes).reduce((n, a) => n + id.getAvailableAttributePoints(a.AttributeType) + id.getSpentAttributePoints(a.AttributeType), 0) : null;
+    const on = (rid) => (Game.Modifiers.getModifierSubjects(Game.getHash(rid)) || []).some((s) => s.owner === pid);
+    r.active = Object.fromEntries(rules.map((rid) => [rid.replace(/^CC_(EX|MO)RULE_/, ""), on(rid)]));
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
   };
 
   CC.grant = function (pid, nodeType) {

@@ -31,6 +31,19 @@ INSERT INTO Modifiers (ModifierId, ModifierType)
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
   ('CC_MO_SETTLEMENT_CAP', 'Amount', '16'), ('CC_MO_SETTLEMENT_CAP', 'Minimum', 'true');
 
+-- Modern's step of the per-Age values in the global Ages table (types defined in 72; audit #5, #6), on top of
+-- Exploration's: trade route range +5 land, +15 sea (to 20/60); embarked land unit strength +30 (to 50).
+INSERT INTO Modifiers (ModifierId, ModifierType) VALUES
+  ('CC_MO_TRADE_RANGE_LAND', 'CC_MODTYPE_CITIES_TRADE_RANGE'), ('CC_MO_TRADE_RANGE_SEA', 'CC_MODTYPE_CITIES_TRADE_RANGE'),
+  ('CC_MO_EMBARKED_STRENGTH', 'CC_MODTYPE_PLAYER_EMBARKED_STRENGTH');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_MO_TRADE_RANGE_LAND', 'DomainType', 'DOMAIN_LAND'), ('CC_MO_TRADE_RANGE_LAND', 'Amount', '5'),
+  ('CC_MO_TRADE_RANGE_SEA', 'DomainType', 'DOMAIN_SEA'), ('CC_MO_TRADE_RANGE_SEA', 'Amount', '15'),
+  ('CC_MO_EMBARKED_STRENGTH', 'Amount', '30');
+INSERT INTO ModifierStrings (ModifierId, Context, Text) VALUES
+  ('CC_MO_EMBARKED_STRENGTH', 'Preview', 'LOC_CC_MO_EMBARKED_STRENGTH_PREVIEW');
+INSERT INTO cc_modern_rules VALUES ('CC_MO_TRADE_RANGE_LAND'), ('CC_MO_TRADE_RANGE_SEA'), ('CC_MO_EMBARKED_STRENGTH');
+
 DELETE FROM cc_modern_rules WHERE ModifierId NOT IN (SELECT ModifierId FROM Modifiers);
 
 -- Wrappers: game-wide, attach each rule to every major player in their personal Modern Age.

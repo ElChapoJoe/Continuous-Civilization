@@ -48,6 +48,27 @@ INSERT INTO Modifiers (ModifierId, ModifierType)
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
   ('CC_EX_SETTLEMENT_CAP', 'Amount', '8'), ('CC_EX_SETTLEMENT_CAP', 'Minimum', 'true');
 
+-- Values vanilla keeps in the global Ages table (base-standard/data/ages.xml), raised per player instead (audit #5,
+-- #6). They stay through Modern (EndsAtModern = 0); 74-modern-rules.sql adds Modern's step on top.
+--   Trade route range, land/sea: Antiquity 10/30, Exploration 15/45, Modern 20/60 -> +5 land, +15 sea here.
+--   Embarked land unit strength: Antiquity 5, Exploration 20, Modern 50 -> +15 here.
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES
+  ('CC_MODTYPE_CITIES_TRADE_RANGE', 'KIND_MODIFIER'), ('CC_MODTYPE_PLAYER_EMBARKED_STRENGTH', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+  ('CC_MODTYPE_CITIES_TRADE_RANGE', 'COLLECTION_PLAYER_CITIES', 'EFFECT_CITY_ADJUST_TRADE_ROUTE_RANGE'),
+  ('CC_MODTYPE_PLAYER_EMBARKED_STRENGTH', 'COLLECTION_PLAYER_COMBAT', 'EFFECT_ADJUST_UNIT_EMBARKED_STRENGTH_MODIFIER');
+INSERT INTO Modifiers (ModifierId, ModifierType) VALUES
+  ('CC_EX_TRADE_RANGE_LAND', 'CC_MODTYPE_CITIES_TRADE_RANGE'), ('CC_EX_TRADE_RANGE_SEA', 'CC_MODTYPE_CITIES_TRADE_RANGE'),
+  ('CC_EX_EMBARKED_STRENGTH', 'CC_MODTYPE_PLAYER_EMBARKED_STRENGTH');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_EX_TRADE_RANGE_LAND', 'DomainType', 'DOMAIN_LAND'), ('CC_EX_TRADE_RANGE_LAND', 'Amount', '5'),
+  ('CC_EX_TRADE_RANGE_SEA', 'DomainType', 'DOMAIN_SEA'), ('CC_EX_TRADE_RANGE_SEA', 'Amount', '15'),
+  ('CC_EX_EMBARKED_STRENGTH', 'Amount', '15');
+INSERT INTO ModifierStrings (ModifierId, Context, Text) VALUES
+  ('CC_EX_EMBARKED_STRENGTH', 'Preview', 'LOC_CC_EX_EMBARKED_STRENGTH_PREVIEW');
+INSERT INTO cc_exploration_rules (ModifierId, EndsAtModern) VALUES
+  ('CC_EX_TRADE_RANGE_LAND', 0), ('CC_EX_TRADE_RANGE_SEA', 0), ('CC_EX_EMBARKED_STRENGTH', 0);
+
 DELETE FROM cc_exploration_rules WHERE ModifierId NOT IN (SELECT ModifierId FROM Modifiers);
 
 -- Wrappers: game-wide, attach each rule to every major player in their personal Exploration.
