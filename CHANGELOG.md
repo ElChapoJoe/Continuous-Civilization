@@ -4,6 +4,13 @@ Versions follow `MAJOR.MINOR.PATCH`. The number in brackets is the mod's interna
 
 Saves from one beta version may not load in the next. Start a new game after updating.
 
+## Unreleased
+
+### Added
+- Exploration and Modern wonders from the DLC wonder packs, if you own them: Grand Bazaar, Wat Xieng Thong and Ubudiah Mosque (Asia wonders), Nirayama Reverberatory Furnace (Japan and Korea wonders) and Nan Madol (water wonders). In vanilla they only appear from their Age on, which never comes here. Each unlocks with the same tech or civic as in vanilla. Not yet tested in a game by an owner of these packs.
+- Four Exploration and Modern wonders from DLC civilization packs, if you own the pack: Rila Monastery (Bulgaria), Serpent Mound (Shawnee and Tecumseh), Battersea Power Station (Great Britain) and Boudhanath (Nepal), each unlocked by its vanilla tech or civic. Tested in game. The civilizations' own unique buildings and improvements in those files stay limited to that civilization.
+- AI civilizations get vanilla's later-Age difficulty bonuses by their personal Age: +10% yields and production in Exploration, +20% in Modern, and free Medieval Walls or Defensive Fortifications on higher difficulties (after Castles or Military Science). Before, AIs kept Antiquity's bonuses all game.
+
 ## 0.1.1-beta (21) - fixes from beta feedback
 
 ### Fixed

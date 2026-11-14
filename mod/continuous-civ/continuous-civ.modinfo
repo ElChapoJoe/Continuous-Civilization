@@ -16,6 +16,34 @@
 		<Criteria id="antiquity-age-current">
 			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
 		</Criteria>
+		<Criteria id="antiquity-with-asia-wonders">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>asia-wonders</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-japan-korea-wonders">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>japan-korea-wonders</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-water-wonders">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>water-wonders</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-bulgaria">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>bulgaria</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-shawnee-tecumseh">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>shawnee-tecumseh</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-great-britain">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>great-britain</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-nepal">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>nepal</ModInUse>
+		</Criteria>
 	</ActionCriteria>
 	<ActionGroups>
 		<!-- 1. Snapshot Antiquity state and remove primary-key collisions (generated). -->
@@ -138,6 +166,113 @@
 					<Item>{age-modern}text/en_us/ResourcesText-v2.xml</Item>
 					<Item>text/09-restore-modern-resources-text.sql</Item>
 				</UpdateText>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC asia-wonders: its Exploration and Modern wonders (vanilla loads them only from that Age on). Re-tagged and
+		     gated with the base wonders in 30-buildings.sql; only loaded when the pack is installed. -->
+		<ActionGroup id="cc-import-dlc-asia-wonders" scope="game" criteria="antiquity-with-asia-wonders">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{asia-wonders}data/constructibles-exploration.xml</Item>
+					<Item>{asia-wonders}data/constructibles-exploration-gameeffects.xml</Item>
+					<Item>{asia-wonders}data/progression-trees-exploration.xml</Item>
+					<Item>{asia-wonders}data/constructibles-modern.xml</Item>
+					<Item>{asia-wonders}data/constructibles-modern-gameeffects.xml</Item>
+					<Item>{asia-wonders}data/progression-trees-modern.xml</Item>
+				</UpdateDatabase>
+				<UpdateText>
+					<Item>{asia-wonders}text/ConstructibleExplorationText.xml</Item>
+					<Item>{asia-wonders}text/CivilopediaExplorationText.xml</Item>
+					<Item>{asia-wonders}text/ConstructibleModernText.xml</Item>
+					<Item>{asia-wonders}text/CivilopediaModernText.xml</Item>
+				</UpdateText>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC japan-korea-wonders: its Exploration and Modern wonders (vanilla loads them only from that Age on). Re-tagged and
+		     gated with the base wonders in 30-buildings.sql; only loaded when the pack is installed. -->
+		<ActionGroup id="cc-import-dlc-japan-korea-wonders" scope="game" criteria="antiquity-with-japan-korea-wonders">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{japan-korea-wonders}data/constructibles-modern.xml</Item>
+					<Item>{japan-korea-wonders}data/constructibles-modern-gameeffects.xml</Item>
+					<Item>{japan-korea-wonders}data/progression-trees-modern.xml</Item>
+				</UpdateDatabase>
+				<UpdateText>
+					<Item>{japan-korea-wonders}text/en_us/ConstructibleModernText.xml</Item>
+				</UpdateText>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC water-wonders: its Exploration and Modern wonders (vanilla loads them only from that Age on). Re-tagged and
+		     gated with the base wonders in 30-buildings.sql; only loaded when the pack is installed. -->
+		<ActionGroup id="cc-import-dlc-water-wonders" scope="game" criteria="antiquity-with-water-wonders">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{water-wonders}data/constructibles-exploration.xml</Item>
+					<Item>{water-wonders}data/constructibles-exploration-gameeffects.xml</Item>
+					<Item>{water-wonders}data/progression-trees-exploration.xml</Item>
+				</UpdateDatabase>
+				<UpdateText>
+					<Item>{water-wonders}text/en_us/CivilopediaExplorationText.xml</Item>
+					<Item>{water-wonders}text/en_us/ConstructibleExplorationText.xml</Item>
+				</UpdateText>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC bulgaria: the Rila Monastery wonder. The file also holds the civilization's own unique content (kept to that
+		     civilization by its trait); the wonder's vanilla unlock is added in 30-buildings.sql. Owners only. -->
+		<ActionGroup id="cc-import-dlc-bulgaria" scope="game" criteria="antiquity-with-bulgaria">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{bulgaria}data/constructibles.xml</Item>
+					<Item>{bulgaria}data/constructibles-gameeffects.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC shawnee-tecumseh: the Serpent Mound wonder. The file also holds the civilization's own unique content (kept to that
+		     civilization by its trait); the wonder's vanilla unlock is added in 30-buildings.sql. Owners only. -->
+		<ActionGroup id="cc-import-dlc-shawnee-tecumseh" scope="game" criteria="antiquity-with-shawnee-tecumseh">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{shawnee-tecumseh}data/constructibles.xml</Item>
+					<Item>{shawnee-tecumseh}data/constructibles-gameeffects.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC great-britain: the Battersea Power Station wonder. The file also holds the civilization's own unique content (kept to that
+		     civilization by its trait); the wonder's vanilla unlock is added in 30-buildings.sql. Owners only. -->
+		<ActionGroup id="cc-import-dlc-great-britain" scope="game" criteria="antiquity-with-great-britain">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{great-britain}data/constructibles.xml</Item>
+					<Item>{great-britain}data/constructibles-gameeffects.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC nepal: the Boudhanath wonder. The file also holds the civilization's own unique content (kept to that
+		     civilization by its trait); the wonder's vanilla unlock is added in 30-buildings.sql. Owners only. -->
+		<ActionGroup id="cc-import-dlc-nepal" scope="game" criteria="antiquity-with-nepal">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{nepal}data/constructibles-modern.xml</Item>
+					<Item>{nepal}data/constructibles-gameeffects.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- AI difficulty bonuses of the later Ages (vanilla loads each only in its Age). 72/74 detach them from the
+		     major-civ trait and attach them by each player's personal Age instead. -->
+		<ActionGroup id="cc-import-difficulty" scope="game" criteria="antiquity-age-current">
+			<Properties><LoadOrder>660</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{age-exploration}data/difficulties.xml</Item>
+					<Item>{age-modern}data/difficulties.xml</Item>
+				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
 		<!-- 4. Resource effects last among the imports: 05 snapshots the modifier list, and 60 treats every

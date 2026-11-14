@@ -69,6 +69,14 @@ INSERT INTO ModifierStrings (ModifierId, Context, Text) VALUES
 INSERT INTO cc_exploration_rules (ModifierId, EndsAtModern) VALUES
   ('CC_EX_TRADE_RANGE_LAND', 0), ('CC_EX_TRADE_RANGE_SEA', 0), ('CC_EX_EMBARKED_STRENGTH', 0);
 
+-- AI difficulty bonuses of Exploration (age-exploration/data/difficulties.xml, imported in cc-import-difficulty): the
+-- AI's +10% yields and production while in Exploration, and free Medieval Walls (after Castles, by difficulty).
+-- Vanilla hangs them on the major-civ trait in the Exploration Age only; here they follow the personal Age. The
+-- yield bonuses end at Modern (Modern's +20% replaces them); the walls are permanent grants and stay.
+DELETE FROM TraitModifiers WHERE ModifierId LIKE 'EX_HANDICAP_%' AND TraitType = 'TRAIT_LEADER_MAJOR_CIV';
+INSERT INTO cc_exploration_rules (ModifierId, EndsAtModern)
+  SELECT ModifierId, CASE WHEN ModifierId LIKE '%_WALLS' THEN 0 ELSE 1 END FROM Modifiers WHERE ModifierId LIKE 'EX_HANDICAP_%';
+
 DELETE FROM cc_exploration_rules WHERE ModifierId NOT IN (SELECT ModifierId FROM Modifiers);
 
 -- Wrappers: game-wide, attach each rule to every major player in their personal Exploration.

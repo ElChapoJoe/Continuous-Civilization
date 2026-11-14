@@ -120,7 +120,7 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 - **Some numbers stay at Antiquity's values**, because the game has only one Age: city growth costs and happiness thresholds, war weariness, narrative rewards, and leader, memento and attribute-tree bonuses that vanilla raises in later Ages.
 - **Older buildings never become obsolete**, so they can't be overbuilt with later-Age buildings.
 - **No crises** happen.
-- **Not yet included:** Treasure Fleets and Factory resources, and Exploration and Modern wonders and story events from DLC packs.
+- **Not yet included:** Treasure Fleets and Factory resources, some Exploration and Modern wonders that come with DLC civilization packs (wonder packs and four civilization-pack wonders are included), and DLC story events.
 - Full list with details: [Age-gating audit](docs/audit-age-gated-mechanics.md).
 - **Single player only** so far. Multiplayer is untested.
 

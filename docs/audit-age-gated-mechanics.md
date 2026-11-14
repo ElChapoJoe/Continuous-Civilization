@@ -22,7 +22,7 @@ Sources read:
 
 ## Status
 
-Fixed on branch `fix/audit-age-gating` (tested in a new game as Ibn Battuta, personal Exploration then Modern): #3 Religion button (`ui/cc-religion.js`), #5 trade route range and #6 embarked strength (`72-exploration-rules.sql`, `74-modern-rules.sql`), #7 leader attribute points (`79-leader-attributes.sql`). Documented as known limitations in the mod README: #2, #8, #9, #12, #15, #16, and the not-yet-included #1, #4, #10, #13, #14, #18. Open: #11 (watch AI overseas settling), #17 (interface details), #19 (feature yields).
+Fixed on branch `fix/audit-age-gating` (tested in a new game as Ibn Battuta, personal Exploration then Modern): #3 Religion button (`ui/cc-religion.js`), #5 trade route range and #6 embarked strength (`72-exploration-rules.sql`, `74-modern-rules.sql`), #7 leader attribute points (`79-leader-attributes.sql`). Documented as known limitations in the mod README: #2, #8, #9, #12, #15, #16, and the not-yet-included #1, #4, #10, #13, #14, #18. On branch `feature/missing-content`: #4 for the three wonder packs and four civilization packs (Bulgaria, Shawnee, Great Britain, Nepal; the other nine civilization packs still open) and #10 (AI difficulty by personal Age). Open: #11 (watch AI overseas settling), #17 (interface details), #19 (feature yields).
 
 ## Findings, by likely player impact
 

@@ -267,7 +267,7 @@
     r.checks.settlementCaps = { pass: capArg("CC_EX_SETTLEMENT_CAP") === "8" && capArg("CC_MO_SETTLEMENT_CAP") === "16" && gm.includes("CC_EXRULE_CC_EX_SETTLEMENT_CAP") && gm.includes("CC_MORULE_CC_MO_SETTLEMENT_CAP"), antiquity: capArg("TRAIT_INITIAL_SETTLEMENT_CAP") };
     const exRules = gm.filter((id) => id.startsWith("CC_EXRULE_")).map((id) => id.slice(10));
     // Rules that carry on into Modern on purpose: the Economic trackers, and the per-Age steps that Modern adds to.
-    const gdp = (id) => /_GDP$/.test(id) || /^CC_EX_(TRADE_RANGE_|EMBARKED_STRENGTH)/.test(id);
+    const gdp = (id) => /_GDP$/.test(id) || /^CC_EX_(TRADE_RANGE_|EMBARKED_STRENGTH)/.test(id) || /^EX_HANDICAP_.*_WALLS$/.test(id);
     const ending = exRules.filter((id) => !gdp(id)).map((id) => GameInfo.Modifiers.lookup(id));
     const notEnding = ending.filter((m) => m && m.SubjectRequirementSetId !== "CC_REQSET_NOT_IN_MODERN" && !(m.SubjectRequirementSetId || "").startsWith("CC_REQSET_EXRULE_")).map((m) => m.ModifierId + ":" + m.SubjectRequirementSetId);
     r.checks.explorationRulesEndAtModern = { pass: notEnding.length === 0, notEnding };
@@ -515,6 +515,33 @@
     r.attributePoints = id ? A(GameInfo.Attributes).reduce((n, a) => n + id.getAvailableAttributePoints(a.AttributeType) + id.getSpentAttributePoints(a.AttributeType), 0) : null;
     const on = (rid) => (Game.Modifiers.getModifierSubjects(Game.getHash(rid)) || []).some((s) => s.owner === pid);
     r.active = Object.fromEntries(rules.map((rid) => [rid.replace(/^CC_(EX|MO)RULE_/, ""), on(rid)]));
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
+
+  // Missing content (cc-import-dlc-*, cc-import-difficulty): DLC wonders of the later Ages (only if the pack is
+  // installed and enabled), and the AI's later-Age difficulty bonuses attached by personal Age.
+  CC.missingContent = function () {
+    const r = { checks: {} };
+    const dlc = { "asia-wonders": ["WONDER_GRAND_BAZAAR", "WONDER_WAT_XIENG_THONG", "WONDER_UBUDIAH_MOSQUE"],
+      "japan-korea-wonders": ["WONDER_NIRAYAMA_REVERBERATORY_FURNACE"], "water-wonders": ["WONDER_NAN_MADOL"],
+      "bulgaria": ["WONDER_RILA_MONASTERY"], "shawnee-tecumseh": ["WONDER_SERPENT_MOUND"],
+      "great-britain": ["WONDER_BATTERSEA_POWER_STATION"], "nepal": ["WONDER_BOUDHANATH"] };
+    const active = new Set((Modding.getActiveMods?.() || []).map((m) => (typeof m === "object" ? m.id : m)));
+    r.wonders = {};
+    for (const [pack, list] of Object.entries(dlc)) {
+      for (const w of list) {
+        const c = GameInfo.Constructibles.lookup(w);
+        const unlock = A(GameInfo.ProgressionTreeNodeUnlocks).find((u) => u.TargetType === w);
+        r.wonders[w] = c ? (c.Age + (unlock ? " @" + unlock.ProgressionTreeNodeType : " (no unlock)")) : "missing";
+      }
+    }
+    const loaded = Object.values(r.wonders).filter((v) => v !== "missing");
+    r.checks.wondersBuildable = { pass: loaded.every((v) => v.startsWith("AGE_ANTIQUITY @")), loaded: loaded.length };
+    const gm = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
+    const ex = gm.filter((id) => /^CC_EXRULE_EX_HANDICAP_/.test(id)), mo = gm.filter((id) => /^CC_MORULE_MO_HANDICAP_/.test(id));
+    const onTrait = A(GameInfo.TraitModifiers).filter((t) => /^(EX|MO)_HANDICAP_/.test(t.ModifierId));
+    r.checks.difficultyByPersonalAge = { pass: ex.length === 8 && mo.length === 8 && onTrait.length === 0, ex: ex.length, mo: mo.length, stillOnTrait: onTrait.length };
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
