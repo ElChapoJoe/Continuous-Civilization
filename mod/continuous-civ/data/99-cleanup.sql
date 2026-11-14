@@ -27,6 +27,7 @@ DROP TABLE IF EXISTS cc_ded_reqsets;
 DROP TABLE IF EXISTS cc_ded_reqs;
 DROP TABLE IF EXISTS cc_ded_reqargs;
 DROP TABLE IF EXISTS cc_ded_top;
+DROP TABLE IF EXISTS cc_ded_conds;
 DROP TABLE IF EXISTS cc_unit_gates;
 DROP TABLE IF EXISTS cc_park_ids;
 DROP TABLE IF EXISTS cc_park_mod;

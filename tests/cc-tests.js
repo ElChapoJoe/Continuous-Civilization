@@ -508,11 +508,17 @@
     const ungated = unlocks.filter((u) => {
       const m = mods.find((x) => x.ModifierId === u.TargetType);
       const reqs = m ? reqsOf(m.OwnerRequirementSetId) : [];
-      return !(reqs.includes("CC_REQ_DED_IS_HUMAN") && reqs.some((q) => q.startsWith("CC_REQ_DED_COND_")));
+      return !(reqs.includes("CC_REQ_DED_IS_HUMAN") && reqs.some((q) => q.startsWith("CC_REQ_DED_TRIUMPH_"))
+        && reqs.some((q) => /^CC_REQ_IN_(EXPLORATION|MODERN)$/.test(q)));
     }).map((u) => u.TargetType);
     r.checks.humanEffectsGated = { pass: unlocks.length >= nodes.length && ungated.length === 0, effects: unlocks.length, ungated: ungated.slice(0, 5) };
     const ai = A(GameInfo.TraitModifiers).filter((t) => t.TraitType === "TRAIT_LEADER_MAJOR_CIV" && t.ModifierId.startsWith("CC_DMAI_"));
-    r.checks.aiCopies = { pass: ai.length === unlocks.length, ai: ai.length };
+    const aiUngated = ai.filter((t) => {
+      const m = mods.find((x) => x.ModifierId === t.ModifierId);
+      const reqs = m ? reqsOf(m.OwnerRequirementSetId) : [];
+      return !(reqs.includes("CC_REQ_DED_IS_AI") && reqs.some((q) => q.startsWith("CC_REQ_DED_TRIUMPH_")));
+    }).length;
+    r.checks.aiCopies = { pass: ai.length === unlocks.length && aiUngated === 0, ai: ai.length, aiUngated };
     const pts = A(GameInfo.TraitModifiers).filter((t) => /^CC_DEDPOINTS_(EX|MO)$/.test(t.ModifierId));
     r.checks.points = { pass: pts.length === 2 };
     r.checks.buyCheck = { pass: !!Game.PlayerOperations.__ccDedications };
