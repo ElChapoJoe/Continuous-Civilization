@@ -308,3 +308,12 @@ Reference city (`CC_Visual_Reference_Modern`, no mods), top-down, positions conv
   - **Palace square:** the engine's square is turned (about 330 degrees, as measured in round 12) with gardens where we draw the palace's dome towers; we draw it at 0 degrees.
   - **Shipyard (49,9):** the engine draws a large dock on the shore; we put a smaller model in lot B, on the water.
   - **Rural tiles:** the engine adds Modern houses, lumber piles and grey roads on woodcutters, mines and farms near the city; we don't touch rural tiles.
+
+## Round 22 (2026-11-14): the palace square, measured on the vanilla Modern reference game
+
+- **The square isn't turned, the palace is.** `BIN_CTY_MOD_Layout_Palace_Full_A` (the engine's full palace-square set, which the overlay hadn't used) drawn at 0 degrees puts its streets, garden beds and steps exactly where the engine's are. The palace stands on the plaza at about (-0.07, -0.18) tile from the centre, turned 330 degrees. Drawn that way our Mexican palace's towers and front line up with the engine's (`sandbox-shots/24-palace-engine-old-new.png`: engine, old overlay, new overlay). The "square turned 330" of round 12 was the palace.
+- **Same rule for other capitals** (`sandbox-shots/25-engine-capitals-mexico-madrid-roma-parsa.png`; the Madrid shot is blocked by a mountain): Roma has the same square, gardens and palace position and turn; Pārsa's Mughal palace stands in the same spot.
+- Overlay: Modern capitals now use the full palace-square set and place the palace there (`PALACE_AT`). Exploration capitals are not measured yet and stay as before (palace at the centre, unturned).
+- **Still different:**
+  - The engine fills the garden beds with spiral topiary hedges, the same for every civilization. Candidates `BIN_GEN_SKU_Palace_Hedges_Splines` and `BIN_GEN_SKU_Palace_WithHB_Hedges_Splines` load but draw nothing on their own (probably spline pieces the engine lays along a path).
+  - Player colours: the engine tints banners, awnings and the palace's roof stripe in the owner's colours (purple for Mexico); our models get the default colour.

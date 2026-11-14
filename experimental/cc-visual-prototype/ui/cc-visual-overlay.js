@@ -43,7 +43,7 @@
     },
     2: {
       urban: ["LAYOUT_CTY_MOD_Section_AB_Road", "BIN_CTY_MOD_Layout_2HB_Full_A"],
-      capital: ["LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace", "LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace_FOL"],
+      capital: ["BIN_CTY_MOD_Layout_Palace_Full_A"],
       center: ["LAYOUT_CTY_MOD_Section_AB_City_Center", "LAYOUT_CTY_MOD_Section_AB_City_Center_FOL"],
       filler: ["BIN_MOD_T2_CityBld_4X4_A", "BIN_MOD_T2_CityBld_3x5_A"],
     },
@@ -51,6 +51,10 @@
   // Engine order (measured on the reference city): the first building goes to lot B (north-east), the second
   // to lot A (south-west); an unused lot gets filler houses.
   const URBAN_LOTS = [{ x: 0.12, y: 0.25 }, { x: -0.19, y: -0.09 }];
+  // Where the engine puts the palace on its square, per Age (measured on the vanilla Modern reference game,
+  // the same for Mexico, Rome and Persia): the square itself is unturned, the palace stands on its plaza
+  // south-west of the tile centre, turned 330 degrees. Exploration not measured yet: centre, unturned.
+  const PALACE_AT = { 2: { x: -0.07, y: -0.18, z: 0, angle: 330 } };
   const BUILDING_SCALE = 0.68; // the engine's "_Scaled" building bins draw at about this size
   const FILLER_SCALE = 0.6;
   // Street eraser. The engine picks one of five Antiquity street patterns per urban tile (A or B, some turned
@@ -200,7 +204,8 @@
             for (const asset of layout[kind]) parts.push([asset, ZERO, 1, 0]);
             const main = buildings.find(civic) || (kind === "capital" ? "BUILDING_PALACE" : "BUILDING_CITY_HALL");
             const model = buildingModel(main, owned, ageName, Math.abs(seed));
-            if (model) parts.push([model, ZERO, 1, 0]);
+            const at = kind === "capital" && PALACE_AT[age];
+            if (model) parts.push(at ? [model, { x: at.x, y: at.y, z: 0 }, 1, at.angle] : [model, ZERO, 1, 0]);
           } else {
             // Lots are measured on the engine's unturned pattern A. The engine turns or swaps the pattern on most
             // tiles (35-district test), so the eraser above clears its inner streets and the lots stay at angle 0.
