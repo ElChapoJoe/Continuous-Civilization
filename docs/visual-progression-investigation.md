@@ -323,3 +323,9 @@ Reference city (`CC_Visual_Reference_Modern`, no mods), top-down, positions conv
 - The game's own UI tints models with the owner's colours by passing `tintColor1: UI.Player.getPrimaryColorValueAsHex(id)` and `tintColor2: UI.Player.getSecondaryColorValueAsHex(id)` to `addModel*` (`leader-model-manager.js`). The same options work on `addModelAtPlot` for city models.
 - Overlay: every part now carries its owner, and is drawn with that player's colours. The palace's roof stripe, banners and awnings now show the owner's colour like the engine's (`sandbox-shots/26-palace-owner-colours.png`: engine, before, after; Mexico's purple).
 - Tested by drawing the overlay's parts by hand with the tint on the reference game: the game's debug connection was in its fallback mode and couldn't load the updated script file. The code path itself is checked for syntax only; still to see running in a normal session (Rome sandbox).
+
+## Round 24 (2026-11-14): rounds 21-23 checked together in the Rome sandbox
+
+- `CC_Visual_Sandbox_Modern` with the installed mod (so the game itself loads the new overlay): the capital uses the full palace-square set with the palace at 330 degrees, every part carries its owner, and the city reads as dense Modern blocks with Roman purple banners and awnings (`sandbox-shots/27-rome-modern-all-changes.png`).
+- Rough-tile rule: all drawn urban tiles now get full house rows. The only one touching water, (48,11), has it on its east edge, which the house rows don't use; from above nothing stands on the beach, and the south-east row sits on the rocks above the shore (`sandbox-shots/28-rome-shore-tile-top.png`).
+- Owner colours are confirmed running from the mod itself (round 23 was tested by hand).
