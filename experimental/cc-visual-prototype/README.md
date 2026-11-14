@@ -1,51 +1,62 @@
 # Visual prototype (experimental)
 
-A separate, opt-in mod that gives each civilization city architecture from its own personal Age. **Not part of the released mod.** Display only: it never changes the game simulation.
+A separate, opt-in mod that gives each civilization city architecture from its own personal Age, so a Modern Rome can stand next to an Antiquity Russia. **Not part of the released mod.** Display only: it never changes the game simulation.
+
+## Status (pinned 2026-11-14)
+
+Paused here. Work happens on the `experiment/visual-overlay` branch; the full log of what was tried and measured is in `docs/visual-progression-investigation.md` (rounds 1-33).
+
+**Estimated closeness to vanilla, by eye at normal zoom:** Modern cities about 80-85%, Exploration about 60-65%.
+
+| Part | State |
+|---|---|
+| Buildings | The model the engine would pick for the owner's cultures and personal Age, in the engine's lots and turns (read from its layout data) |
+| Palace / capital square | Engine layout, palace in its slot at the engine's turn, Exploration and Modern. Missing: the spiral topiary in the garden beds |
+| House rows | The engine's own house layout, chosen like its layout bins (forest version on wooded tiles, "Less" version for some cultures in Exploration); next to cliffs, water or mountains drawn slot by slot without the slots on the rocks or beach |
+| Empty building lots | The engine's vacant-plot piece of the owner's Age |
+| Owner colours | Banners, awnings and roof stripes in the owner's colours |
+| Harbour tiles | Wharf, shipyard and quay on the shore side with a pier; the engine's piers are longer and more numerous |
+| Rural tiles (Modern) | Farms, woodcutters, mines, clay pits, camps, quarries, pastures, plantations in Modern art. Farms are sparser than vanilla; the mine's rock colour differs; pastures lack fence rails; plantations lack their vat and racks |
+| Streets and ground | Our streets are drawn, but the engine's own Antiquity street pattern stays painted underneath, and on about 70% of tiles it differs from ours. Nothing in the game can paint over it except sand-coloured patches (the "eraser", off by default) |
+
+**Known limits (not fixable from scripts as far as we found):** the engine turns some tiles at random (Antiquity: 5 street patterns; Modern: 0 or 60 degrees) in compiled code; navigable-river tiles are left to the engine because the clip can't hide their houses; walls and wonders are left to the engine.
+
+**Next candidates if work resumes:** the Modern river-city ground pieces (`River_City_I_*_MOD_Decal`) for river tiles; `addModelBetweenPlots` for edge pieces; topiary and fence rails (spline pieces that don't draw on their own); the mine's resource-dependent rock; Exploration capitals checked on screen; city ownership changes and multiplayer.
 
 ## How it works
-For every city-centre and urban tile of a city whose owner is in a later personal Age:
-1. `WorldUI.clipHexHeight(plot, 0)` hides everything the engine draws on that tile above ground.
-2. The tile is composed again from the game's own models:
-   - **Streets and houses of the owner's personal Age.** Urban tiles: the Age's road layout plus its packed houses on the west side (`LAYOUT_CTY_MOD_Section_AB_Road` + `LAYOUT_CTY_MOD_Section_AB_Small_Packed`, or the Exploration equivalents). City centres: the Age's palace or city-centre layout.
-   - **The buildings actually on the tile**, each drawn as the model the engine itself would choose for the owner. It reads the owner's building cultures from `VisArt_CivilizationBuildingCultures` (Rome: `MED`, `MED_ANT`, `MED_EXP`, `SAM_MOD` ...) and the owner's personal Age, then follows the game's art bins. For example, Rome in Modern gets the Mexican Modern museum and palace, the Spanish Exploration bank and the Roman amphitheater; Meiji Japan would get the Japanese versions.
-   - **Filler houses** in that Age's regional style (`BIN_MOD_T2_CityBld_*`, resolved the same way) in lots no building uses.
-3. Tiles with a wonder, and walls on tile edges, are left to the engine.
+For every city-centre, urban and (in Modern) rural tile of a player whose personal Age is later than Antiquity:
+1. `WorldUI.clipHexHeight(plot, 0)` hides everything the engine draws on the tile above ground (not ground paint).
+2. The tile is composed again from the game's own models, drawn with `addModelAtPlot` in the owner's colours:
+   - the street section and house layout of the owner's Age, chosen and placed from the engine's own layout data;
+   - each completed building on the tile, as the model the engine would choose for the owner's building cultures (`VisArt_CivilizationBuildingCultures`) and personal Age, in the engine's lot for it;
+   - the vacant-plot piece in empty lots; Modern rural improvements; harbour buildings on the shore side.
+3. Tiles with a wonder, navigable-river tiles and walls are left to the engine.
 
 | Owner's personal Age | Result |
 |---|---|
 | Antiquity | engine art, untouched |
-| Exploration (Cartography, Astronomy or Machinery) | Exploration streets and houses; buildings in the owner's style |
-| Modern (Academics, Steam Engine or Military Science) | Modern streets and houses; Modern palace or city hall; buildings in the owner's style |
+| Exploration (Cartography, Astronomy or Machinery) | Exploration streets, houses and squares; buildings in the owner's style; camps |
+| Modern (Academics, Steam Engine or Military Science) | Modern streets, houses and squares; buildings in the owner's style; Modern rural improvements |
 
-### Where the art choices come from
-`ui/cc-building-art.js` is generated by `tools/extract_building_art.py` from the installed game's art packages (`StandardAsset.*.blp`). It holds only names: which art bin each building type uses, and for each bin the model chosen for each building culture and Age. No art is copied; the game draws its own models. The format was worked out by inspection: a bin entry is a 32-byte record holding the FNV-1a hash of the model name, a model index and a condition index. Both indexes point into the package's length-prefixed string table; they run in table order locally, so a condition index is read relative to the nearest model whose name is known for certain from its hash. Rerun the script after a game patch:
+## Data read from the game
+All generated from the installed game's art packages (`Base/Platforms/Windows/BLPs/*.blp`). They hold only asset names and numbers; no art is copied, the game draws its own models. Rerun after a game patch (set `CIV7_DIR` to the game folder or pass its `Base` folder):
 
-```
-python -I tools/extract_building_art.py "<Civ VII folder>\Base"
-```
+| Tool | Writes | What |
+|---|---|---|
+| `tools/extract_building_art.py` | `ui/cc-building-art.js` | Which art bin each building uses, and per bin the model for each building culture and Age (32-byte bin records, FNV-1a model hashes, string-table indexes) |
+| `tools/extract_layout_slots.py` | `ui/cc-layout-slots.js` | The attachment slots of the house layouts: model, position, turn, scale per slot (40-byte transform record before each slot's name record) |
+| `tools/decode_layouts.py LAYOUT_NAME` | (prints) | The slots of any layout, for checking |
 
-Coverage today: 94 building types. Buildings with no variant for the owner fall back to the game's own bin, and among unconditioned variants the owner's region is preferred (Rome's kiln is Spanish, not Persian).
+`tools/sandbox.js` (`CCSandbox`) and `tools/bench.js` (`CCBench`) are debug-console helpers for test games: placing buildings, granting techs, framing top-down shots. They change the game state and are not part of the mod.
 
-## Verified (2026-11-13)
+## Debug switches
+From the debug console: `CCVisualOverlay.rebuild()`, `.reset()` (engine art back), `.tile(x, y)` (what is drawn on a tile), `.setErase(true|false)` (the street eraser test), `.personalAge(player)`.
 
-| Requirement | Result |
-|---|---|
-| Two neighbours in different Ages | Turn-42 game: Rome moved to personal Modern got a Modern palace square and Modern blocks; neighbouring Russia (Antiquity) kept its timber Antiquity St. Petersburg. Game Age stayed Antiquity |
-| Real buildings, not generic blocks | Turn-451 Rome: each tile shows its own buildings (for example amphitheater and museum on (8,38); palace and bank on the capital) in Rome's regional style for that building's Age |
-| Regional style | Resolved per culture from the game's own tables (Rome Modern = Mexican set, as the engine uses for Rome); other civs resolve to their own sets (not inspected on screen) |
-| Exploration and Modern | Both street and house sets render (Exploration seen on a test tile with Rome's Spanish university) |
-| Updates on progress | Granting Steam Engine rebuilt Rome's 4 city tiles immediately |
-| Rebuilt after loading | After a full game restart, loading the turn-451 save rebuilt 241 tiles from the mod alone |
-| Gameplay untouched | Reads state and draws client-side only; units, banners and yields still show |
-| City ownership changes | Hooked (`PlotOwnershipChanged`, `DistrictControlChanged`, `CityRemovedFromMap`); not tested |
-| Multiplayer | Not tested (each client draws from shared game state, so it should match) |
-
-## Limits
-- **Layout measured on a test bench, not read from the files.** `tools/bench.js` clears a few tiles, hides units and points a straight-down camera at them with a measuring grid. Measured there and against the engine's own tiles: an urban tile is the street section plus the engine's two-building house layout (`BIN_CTY_*_Layout_2HB_Full_A`) with lots A (-0.19, -0.09) and B (0.12, 0.25); the whole section turns in 60-degree steps per tile (`angle` turns counter-clockwise); buildings draw at about 0.68 of full size; the palace or city hall fills the centre plaza at full size. The engine picks each tile's turn from rules we can't see, so the overlay picks one per tile from its coordinates.
-- **City centres show only the palace or city hall**; any other building on a centre tile isn't drawn.
-- **Models need a moment to load.** A newly drawn building shows its paved base first and the building a second or two later. Each tile has its own model group and only changed tiles are redrawn; redrawing every tile on every change (the first version) kept buildings from ever finishing loading during busy turns.
-- **Changing modinfo needs a full game restart**: the game caches modinfo files, so `UI.reloadUI()` alone won't pick up a new script list.
-- **Never call `clipHexHeight` without its height argument** (`clipHexHeight(plot)` crashed the game). `clipHexHeight(plot, height)` is safe; `restoreHexHeight(plot)` and `restoreAllHexHeight()` undo it.
+## Practical notes
+- **Changing the modinfo needs a full game restart**; `UI.reloadUI()` re-reads scripts but not the script list.
+- **Never call `clipHexHeight` without its height argument**: that crashes the game.
+- Loading the overlay script by hand on the debug console registers its event handlers again, so a camera move can redraw it after `reset()`; check `WorldUI.modelGroupIds` before taking an "engine only" screenshot.
+- Models take a second or two to load after a tile is drawn.
 
 ## Try it
-Copy `cc-visual-prototype.modinfo` and the `ui` folder to `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Mods\cc-visual-prototype`, then restart the game. It's enabled automatically and also applies when loading existing saves. Delete the folder to remove it.
+Copy `cc-visual-prototype.modinfo` and the `ui` folder to `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Mods\cc-visual-prototype`, then restart the game. It's enabled automatically and also applies to existing saves. Delete the folder to remove it.

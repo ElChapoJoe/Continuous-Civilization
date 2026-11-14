@@ -30,15 +30,15 @@
   const ZERO = { x: 0, y: 0, z: 0 };
   const WEDGE = "LAYOUT_CTY_MOD_Wedge";
 
-  // Layouts per personal Age, as the engine composes a city tile (measured on a test bench, tools/bench.js):
-  //   urban:   the street section plus the engine's "two hero building" house layout, leaving two lots A and B;
-  //   capital/center: the plaza layout, with the palace or city hall filling the plaza at full size.
-  // Offsets are in tile units (x east, y north; 0.5 = the tile's inner edge). The engine turns a whole urban section
-  // in 60-degree steps per tile; `angle` turns models counter-clockwise, so lots are rotated the same way.
+  // Layouts per personal Age, as the engine composes a city tile:
+  //   urban:   the street section plus the house layout, which leaves two building lots A and B;
+  //   capital/center: the square layout, with the palace or city hall in its first slot.
+  // Offsets are in tile units (x east, y north; 0.5 = the tile's inner edge); turns are degrees counter-clockwise.
   // The house and square layouts are chosen as the engine's own layout bins choose them (decoded rows of
   // BIN_CTY_*_Layout_2HB_Full_A, _Palace_Full_A, _City_Center_Full_A): a forest version on wooded tiles; in
-  // Exploration a "Less" version for some cultures, otherwise one of the street-pattern-A variants at random
-  // (pattern B would not fit the pattern-A streets we draw). `street` is drawn on every urban tile.
+  // Exploration a "Less" version for some cultures, otherwise one of the street-pattern-A variants by tile seed
+  // (pattern B would not fit the pattern-A streets we draw). The engine also turns some tiles at random in code
+  // we can't read; we always draw them unturned.
   const LAYOUTS = {
     1: {
       street: "LAYOUT_CTY_Hex_Section_AB_Road_EXP",
@@ -142,15 +142,15 @@
   // Off by default: the only high-priority patches in the game are sand-coloured dirt, which takes the ground
   // further from vanilla (grey paving in Modern, streets in Exploration). Kept as a switch for testing.
   let erase = false;
-  /** Per edge: 3 if it faces water or a mountain, 1 if it is a cliff, else 0. */
-  function edgeCosts(loc) {
-    const cost = [];
+  /** The directions (0-5) whose edge faces water, a mountain, a cliff or the map's end. */
+  function roughEdges(loc) {
+    const out = [];
     for (let d = 0; d < 6; d++) {
       const a = GameplayMap.getAdjacentPlotLocation(loc, d);
-      cost[d] = !a ? 3 : GameplayMap.isWater(a.x, a.y) || GameplayMap.isMountain(a.x, a.y) ? 3
-        : GameplayMap.isCliffCrossing(loc.x, loc.y, d) ? 1 : 0;
+      if (!a || GameplayMap.isWater(a.x, a.y) || GameplayMap.isMountain(a.x, a.y)
+        || GameplayMap.isCliffCrossing(loc.x, loc.y, d)) out.push(d);
     }
-    return cost;
+    return out;
   }
   // Each direction's angle (DirectionTypes 0 NE, 1 E, 2 SE, 3 SW, 4 W, 5 NW) in degrees counter-clockwise from east.
   const DIR_ANGLE = [60, 0, 300, 240, 180, 120];
@@ -158,10 +158,6 @@
   // two unturned cliff tiles of the vanilla Modern reference (48,10 and 50,27): the engine drops the slots 0.13 and
   // 0.15 from the cliff edge and keeps the next one at 0.22.
   const EDGE_CLEARANCE = 0.18;
-  const rotate = (p, deg) => {
-    const r = deg * Math.PI / 180;
-    return { x: p.x * Math.cos(r) - p.y * Math.sin(r), y: p.x * Math.sin(r) + p.y * Math.cos(r), z: 0 };
-  };
 
   // Loaded by ui/cc-building-art.js; read lazily so the load order of the two scripts does not matter.
   const ART = () => globalThis.CCBuildingArt || { bins: {}, art: {} };
@@ -226,7 +222,6 @@
     return bins[0] || null;
   }
 
-
   function viewer() {
     const id = GameContext.localPlayerID;
     return id >= 0 ? id : GameContext.localObserverID;
@@ -247,7 +242,7 @@
     return out;
   }
 
-  /** "x,y" -> list of [asset, offset, scale, angle] for every tile that should be rebuilt. */
+  /** "x,y" -> list of [asset, offset, scale, turn, owner] for every tile that should be rebuilt. */
   function desiredTiles() {
     const want = new Map();
     const me = viewer();
@@ -318,25 +313,19 @@
               parts.push([model, at, 1, turn(land + 120)]);
             });
           } else {
-            // Lots are measured on the engine's unturned pattern A. The engine turns or swaps the pattern on most
-            // tiles (35-district test), so the eraser above clears its inner streets and the lots stay at angle 0.
-            const angle = 0;
-            // On shore, cliff or mountain tiles the fixed house rows would spill onto rocks or beach (the engine
-            // places its houses piece by piece around the terrain; we can't), so draw only the streets there.
-            const costs = edgeCosts(loc);
             if (erase) for (const a of [0, 60, 120]) parts.push([ERASER, ZERO, ERASER_SCALE, a]);
-            parts.push([layout.street, ZERO, 1, angle]);
+            parts.push([layout.street, ZERO, 1, 0]);
             const houses = pickLayout(layout.houses, loc, owned, Math.abs(seed));
             // Next to a cliff, water or a mountain the engine leaves out the house slots nearest that edge (they
             // would stand on the rocks or the beach). Draw such tiles slot by slot from the engine's own slot table
             // and skip those slots; other tiles get the whole layout in one piece.
-            const roughEdges = [0, 1, 2, 3, 4, 5].filter((d) => costs[d] > 0);
-            const slots = roughEdges.length && globalThis.CCLayoutSlots?.[houses];
-            if (!slots) parts.push([houses, ZERO, 1, angle]);
+            const rough = roughEdges(loc);
+            const slots = rough.length && globalThis.CCLayoutSlots?.[houses];
+            if (!slots) parts.push([houses, ZERO, 1, 0]);
             else {
               slots.forEach(([m, x, y, z, turn, scale], i) => {
                 if (/^Hero_Building|_Road$/.test(m)) return; // our buildings and street are drawn separately
-                const clear = Math.min(...roughEdges.map((d) => {
+                const clear = Math.min(...rough.map((d) => {
                   const r = DIR_ANGLE[d] * Math.PI / 180;
                   return 0.5 - (x * Math.cos(r) + y * Math.sin(r));
                 }));
@@ -356,7 +345,7 @@
                 model = VACANT[age][(Math.abs(seed) + i) % VACANT[age].length];
                 scale = BUILDING_SCALE;
               }
-              if (model) parts.push([model, at, scale, lot.turn]);
+              parts.push([model, at, scale, lot.turn]);
             });
           }
           // Modern gap filler: at angle 0 the engine's wedge piece fills the tile's east edge, the one edge our
@@ -380,7 +369,7 @@
 
   // One model group per tile, so a change on one tile redraws only that tile. Redrawing everything made models
   // restart loading, and buildings often never finished appearing during busy turns.
-  const PREFIX = "ccVisualOverlay:";
+  const PREFIX = GROUP_NAME + ":";
   const groups = new Map();
   function groupFor(key) {
     let g = groups.get(key);
@@ -435,7 +424,7 @@
 
   function reset() {
     for (const g of groups.values()) g.clear();
-    WorldUI.getModelGroupByName?.("ccVisualOverlay")?.clear(); // the single group of earlier versions
+    WorldUI.getModelGroupByName?.(GROUP_NAME)?.clear(); // the single group of earlier versions
     WorldUI.restoreAllHexHeight();
     current = new Map();
   }
