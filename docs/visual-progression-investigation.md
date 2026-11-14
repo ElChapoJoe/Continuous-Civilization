@@ -228,3 +228,13 @@ The user still saw buildings inside each other and at odd angles, and suggested 
 - Matching a single tile by drawing our street layout at each 60-degree turn over the engine's ground was inconclusive: the engine's ground streets are faint dirt paths that our paved model covers.
 - `WorldUI.hash` is a string hash (the same family as `Database.makeHash`), not a per-tile seed.
 - Not found: the rule itself. Next candidates: derive turns from which neighbours are city tiles (the road-network idea above), checked tile by tile against top-down shots of the engine's own buildings in the Modern reference game.
+
+## Round 12 (2026-11-13): the engine doesn't turn city tiles
+
+Measured by drawing each street layout over the engine's own ground on every Rome tile, one 60-degree turn at a time, and comparing image structure per tile against the engine-only ground (scripts in the session scratchpad; method: clip all city tiles, top-down camera, mean difference of brightness gradients in a disc around each tile centre):
+
+- Every urban tile matched a street layout at **angle 0**: `LAYOUT_CTY_Hex_Section_AB_Road_ANT` (variant A) on four tiles, `LAYOUT_CTY_Hex_Section_AB_B_Road_ANT` (variant B) on one, and variant B turned 60 degrees on one (the weakest match).
+- The capital's palace square also matched best at angle 0. The earlier "330 degrees" was a misreading: the square is modelled on a diagonal.
+- Antiquity and Exploration each have A and B street variants; Modern has one (`LAYOUT_CTY_MOD_Section_AB_Road`), so in Modern every tile uses the same piece unturned, which is why the engine's Modern streets join up.
+- Which tiles get variant B is still unknown.
+- The prototype now draws every tile at angle 0 (the shore turning of round 8 is removed; shore and cliff tiles still skip the house rows). Result: one continuous street network across the sandbox city (`sandbox-shots/12-streets-aligned.png`).
