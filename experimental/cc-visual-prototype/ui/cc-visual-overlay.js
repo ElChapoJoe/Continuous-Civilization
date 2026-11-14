@@ -94,6 +94,8 @@
     }
     return null;
   }
+  const HARBOUR_PIER = "LAYOUT_CTY_Coastal_2Shore"; // the engine's coastal pier piece
+  const HARBOUR_OFFSET = 0.2; // tile units from the centre toward the shore
   const BUILDING_SCALE = 0.68; // the engine's "_Scaled" building bins draw at about this size
   const FILLER_SCALE = 0.6;
   // Street eraser. The engine picks one of five Antiquity street patterns per urban tile (A or B, some turned
@@ -250,6 +252,28 @@
             const model = buildingModel(main, owned, ageName, Math.abs(seed));
             const at = kind === "capital" && PALACE_AT[age];
             if (model) parts.push(at ? [model, { x: at.x, y: at.y, z: 0 }, 1, at.angle] : [model, ZERO, 1, 0]);
+          } else if (GameplayMap.isWater(loc.x, loc.y)) {
+            // Harbour tile (wharf, shipyard, fishing quay ...): no streets or houses on the water. Like the engine
+            // (reference game, tile 50,9), each harbour building stands at full size on the land side, its long
+            // side facing the shore, with a pier running out to sea.
+            let lx = 0, ly = 0;
+            for (let d = 0; d < 6; d++) {
+              const a = GameplayMap.getAdjacentPlotLocation(loc, d);
+              if (a && !GameplayMap.isWater(a.x, a.y)) {
+                lx += Math.cos(DIR_ANGLE[d] * Math.PI / 180);
+                ly += Math.sin(DIR_ANGLE[d] * Math.PI / 180);
+              }
+            }
+            const land = (lx || ly) ? Math.atan2(ly, lx) * 180 / Math.PI : 210;
+            const turn = (deg) => ((Math.round(deg) % 360) + 360) % 360;
+            parts.push([HARBOUR_PIER, ZERO, 1, turn(land - 90)]);
+            buildings.filter((b) => !/BRIDGE/.test(b)).forEach((type, i) => {
+              const model = buildingModel(type, owned, ageName, Math.abs(seed) + i);
+              if (!model) return;
+              const r = (land + (i === 0 ? 0 : i === 1 ? 70 : -70)) * Math.PI / 180;
+              const at = { x: HARBOUR_OFFSET * Math.cos(r), y: HARBOUR_OFFSET * Math.sin(r), z: 0 };
+              parts.push([model, at, 1, turn(land + 120)]);
+            });
           } else {
             // Lots are measured on the engine's unturned pattern A. The engine turns or swaps the pattern on most
             // tiles (35-district test), so the eraser above clears its inner streets and the lots stay at angle 0.
@@ -288,7 +312,7 @@
           }
           // Modern gap filler: at angle 0 the engine's wedge piece fills the tile's east edge, the one edge our
           // layout leaves open. Draw it when the eastern neighbour is also a city tile (never on water or rivers).
-          if (age === 2 && !isCenter) {
+          if (age === 2 && !isCenter && !GameplayMap.isWater(loc.x, loc.y)) {
             const e = GameplayMap.getAdjacentPlotLocation(loc, 1);
             const ed = e && Districts.getAtLocation(e);
             if (ed && (ed.type === DistrictTypes.URBAN || ed.type === DistrictTypes.CITY_CENTER)
