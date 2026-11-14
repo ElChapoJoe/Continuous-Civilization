@@ -18,9 +18,10 @@ What if Civilization VII let you guide your empire through history without ever 
 
 [h2]Personal Ages[/h2]
 [list]
-[*][b]Exploration[/b] starts when you research Cartography, Astronomy or Machinery: deep-ocean travel, embarkation, a settlement cap of at least 8, higher base yields, more resource slots and envoys.
-[*][b]Modern[/b] starts when you research Academics, Steam Engine or Military Science: a settlement cap of at least 16, higher base yields, Modern resource slots and town focuses.
+[*][b]Exploration[/b] starts when you research Cartography, Astronomy or Machinery: crossing the Ocean (civilians and commanders after Cartography, all land units after Shipbuilding mastery), deep-ocean ships, a settlement cap of at least 8, higher base yields, more resource slots and envoys, longer trade routes, stronger embarked units and leader attribute points.
+[*][b]Modern[/b] starts when you research Academics, Steam Engine or Military Science: a settlement cap of at least 16, higher base yields, Modern resource slots and town focuses, longer trade routes, stronger embarked units and more attribute points.
 [/list]
+The [b]Distant Lands[/b] across the Ocean are open from the start: you can meet the civilizations there, and settle their land once your Exploration lets you cross.
 
 [h2]Content from every Age[/h2]
 [list]
@@ -28,7 +29,7 @@ What if Civilization VII let you guide your empire through history without ever 
 [*][b]Governments[/b] unlock by civic, with a [b]Change Government[/b] button on the policies screen. AI civilizations change government too.
 [*][b]Religion[/b] from Exploration: Piety, Temples, founding a religion, beliefs, Missionaries and relics.
 [*][b]Later-Age resources[/b] are on the map from the start but stay inactive and hidden until you research them (Coal at Steam Engine, Oil at Combustion).
-[*][b]Diplomacy and espionage[/b] from later Ages: Demand Tribute, Treasure Fleets, and spy actions such as Open the Gates and Sabotage Space Program.
+[*][b]Diplomacy and espionage[/b] from later Ages: Demand Tribute and spy actions such as Open the Gates and Sabotage Space Program.
 [*][b]Ideologies:[/b] Democracy, Fascism and Communism open with Political Theory.
 [/list]
 
@@ -56,6 +57,9 @@ Tested on Civilization VII 1.5.1, single player.
 [*]Legacy paths don't progress. Launch Rocket requires the three earlier space projects instead.
 [*]Diplomacy costs don't scale by Age.
 [*]Town houses, roads and bridges keep their Antiquity look; later-Age buildings, wonders and units use their own art.
+[*]Some numbers stay at Antiquity's values, because the game has only one Age: city growth costs and happiness thresholds, war weariness, narrative rewards, and leader and memento bonuses that vanilla raises in later Ages.
+[*]Older buildings never become obsolete, and no crises happen.
+[*]Not yet included: Treasure Fleets and Factory resources, and Exploration and Modern wonders and story events from DLC packs.
 [*]Single player only so far. Other mods that change Ages, the trees or victories are likely to conflict.
 [/list]
 

@@ -61,8 +61,10 @@ Requires Civilization VII (tested on 1.5.1). No game files are included or chang
 | Age | You enter it by researching any of | What changes for you |
 |---|---|---|
 | Antiquity | (start) | Vanilla Antiquity rules |
-| Exploration | Cartography, Astronomy, Machinery | Deep-ocean travel, embarkation, settlement cap of at least 8, base yields +10 Gold / +20 Science, Culture and Influence, more resource slots and envoys |
-| Modern | Academics, Steam Engine, Military Science | Settlement cap of at least 16, base yields +15 Gold / +30 Science, Culture and Influence, Modern resource slots and town focuses |
+| Exploration | Cartography, Astronomy, Machinery | Crossing the Ocean (civilians and commanders after Cartography, all land units after Shipbuilding mastery), deep-ocean ships, embarkation, settlement cap of at least 8, base yields +10 Gold / +20 Science, Culture and Influence, more resource slots and envoys, longer trade routes, stronger embarked units, leader attribute points |
+| Modern | Academics, Steam Engine, Military Science | Settlement cap of at least 16, base yields +15 Gold / +30 Science, Culture and Influence, Modern resource slots and town focuses, longer trade routes, stronger embarked units, more leader attribute points |
+
+The **Distant Lands** across the Ocean are open from the start: you can meet the civilizations there, and settle their land once your Exploration lets you cross.
 
 ### Content from every Age
 - **Units and buildings** from all three Ages, unlocked through research, with upgrades across Ages (Galleon to Frigate, Arquebusier to Line Infantry).
@@ -76,7 +78,7 @@ Requires Civilization VII (tested on 1.5.1). No game files are included or chang
 
 - **Religion** from Exploration: Piety, Temples, founding a religion, beliefs, Missionaries, relics.
 - **Resources** from later Ages are on the map from the start, but stay inactive and hidden for each player until they research the matching tech (Coal at Steam Engine, Oil at Combustion).
-- **Diplomacy and espionage** from later Ages: Demand Tribute, Treasure Fleets, and spy actions such as Open the Gates and Sabotage Space Program, each unlocked by its tech, civic or city-state bonus.
+- **Diplomacy and espionage** from later Ages: Demand Tribute and spy actions such as Open the Gates and Sabotage Space Program, each unlocked by its tech, civic or city-state bonus.
 - **City-states, great people, projects, narratives and discoveries** from all three Ages share one pool.
 - **Ideologies:** Democracy, Fascism and Communism open with Political Theory.
 
@@ -115,6 +117,11 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 - **Diplomacy costs don't scale by Age.** Shared actions keep Antiquity's Influence costs, which vanilla doubles in Exploration and triples in Modern.
 - **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look, because the engine draws them from a single game-wide Age. Buildings, wonders and units from later Ages use their own art. [Details](docs/visual-progression-investigation.md).
 - **Ruins** stay Antiquity discoveries all game, so Modern archaeology can't use them.
+- **Some numbers stay at Antiquity's values**, because the game has only one Age: city growth costs and happiness thresholds, war weariness, narrative rewards, and leader, memento and attribute-tree bonuses that vanilla raises in later Ages.
+- **Older buildings never become obsolete**, so they can't be overbuilt with later-Age buildings.
+- **No crises** happen.
+- **Not yet included:** Treasure Fleets and Factory resources, and Exploration and Modern wonders and story events from DLC packs.
+- Full list with details: [Age-gating audit](docs/audit-age-gated-mechanics.md).
 - **Single player only** so far. Multiplayer is untested.
 
 ## FAQ
