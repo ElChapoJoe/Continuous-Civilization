@@ -343,6 +343,7 @@
 					<Item>ui/cc-religion.js</Item>
 					<Item>ui/cc-triumphs.js</Item>
 					<Item>ui/cc-dedications.js</Item>
+					<Item>ui/cc-dedication-popup.js</Item>
 				</UIScripts>
 			</Actions>
 		</ActionGroup>

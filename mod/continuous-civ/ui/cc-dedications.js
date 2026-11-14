@@ -46,6 +46,23 @@ function qualifies(playerId, info) {
   });
 }
 
+// Shared with ui/cc-dedication-popup.js: the Dedications a player can take now (qualifying, not yet taken).
+globalThis.CCDedications = {
+  available(playerId) {
+    const player = Players.get(playerId);
+    const out = [];
+    if (!player) return out;
+    for (const [index, info] of dedNodes) {
+      if (!qualifies(playerId, info)) continue;
+      const node = GameInfo.ProgressionTreeNodes[index] ?? GameInfo.ProgressionTreeNodes.find((n) => n.$index === index);
+      if (!node || Game.ProgressionTrees.getNodeState(playerId, node.$hash) >= ProgressionTreeNodeState.NODE_STATE_UNLOCKED) continue;
+      const earned = info.triumphs.map((t) => GameInfo.Legacies.lookup(t)).find((d) => d && player.Legacies?.isTriggered(d.$hash));
+      out.push({ index, name: node.Name, description: node.Description, triumphName: earned ? earned.Name : node.Name });
+    }
+    return out;
+  },
+};
+
 (function install() {
   const ops = Game.PlayerOperations;
   if (ops.__ccDedications) return;
