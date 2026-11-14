@@ -50,11 +50,21 @@
   };
   // Engine order (measured on the reference city): the first building goes to lot B (north-east), the second
   // to lot A (south-west); an unused lot gets filler houses.
-  const URBAN_LOTS = [{ x: 0.12, y: 0.25 }, { x: -0.19, y: -0.09 }];
-  // Where the engine puts the palace on its square, per Age (measured on the vanilla Modern reference game,
-  // the same for Mexico, Rome and Persia): the square itself is unturned, the palace stands on its plaza
-  // south-west of the tile centre, turned 330 degrees. Exploration not measured yet: centre, unturned.
-  const PALACE_AT = { 2: { x: -0.07, y: -0.18, z: 0, angle: 330 } };
+  // Building lots read from the engine's own layout assets (tools/decode_layouts.py): the Herobuilding_A/B
+  // attachment points of the urban and city-centre layouts, in tile units, with their turns in degrees.
+  // The first building goes to A, the second to B.
+  const LOTS = {
+    urban: {
+      1: [{ x: 0.120, y: 0.245, turn: 330 }, { x: -0.214, y: -0.086, turn: 0 }],
+      2: [{ x: 0.123, y: 0.275, turn: 330 }, { x: -0.215, y: -0.093, turn: 0 }],
+    },
+    center: {
+      1: [{ x: 0.120, y: 0.245, turn: 150 }, { x: -0.214, y: -0.086, turn: 0 }],
+      2: [{ x: 0.123, y: 0.275, turn: 330 }, { x: -0.215, y: -0.093, turn: 0 }],
+    },
+    // Palace square (Hero_Building_A_1 / A_2), the same in Exploration and Modern.
+    capital: [{ x: -0.103, y: -0.179, turn: 330 }, { x: 0.129, y: 0.224, turn: 330 }],
+  };
   // Rural improvements with their own Modern art (from the game's bins: BIN_IMP_Farms, BIN_IMP_WoodCutters,
   // BIN_IMP_ClayPits, BIN_IMP_Mine_MOD pick these by [AGE:AGE_MODERN]). Exploration has no farm or woodcutter
   // variant and falls back to the Antiquity mine and clay pit, so only Modern rural tiles are redrawn.
@@ -248,10 +258,17 @@
           if (isCenter) {
             const kind = buildings.includes("BUILDING_PALACE") ? "capital" : "center";
             for (const asset of layout[kind]) parts.push([asset, ZERO, 1, 0]);
+            // The palace or city hall takes the first slot of the square, at full size; any other building on the
+            // centre tile takes the second slot.
             const main = buildings.find(civic) || (kind === "capital" ? "BUILDING_PALACE" : "BUILDING_CITY_HALL");
-            const model = buildingModel(main, owned, ageName, Math.abs(seed));
-            const at = kind === "capital" && PALACE_AT[age];
-            if (model) parts.push(at ? [model, { x: at.x, y: at.y, z: 0 }, 1, at.angle] : [model, ZERO, 1, 0]);
+            const slots = kind === "capital" ? LOTS.capital : LOTS.center[age];
+            [main, ...buildings.filter((b) => !civic(b) && !/BRIDGE/.test(b))].slice(0, 2).forEach((type, i) => {
+              const model = buildingModel(type, owned, ageName, Math.abs(seed));
+              if (!model) return;
+              const s = slots[i];
+              const scale = i === 0 ? 1 : /_Scaled$/.test(model) ? 1 : BUILDING_SCALE;
+              parts.push([model, { x: s.x, y: s.y, z: 0 }, scale, s.turn]);
+            });
           } else if (GameplayMap.isWater(loc.x, loc.y)) {
             // Harbour tile (wharf, shipyard, fishing quay ...): no streets or houses on the water. Like the engine
             // (reference game, tile 50,9), each harbour building stands at full size on the land side, its long
@@ -298,8 +315,8 @@
               });
             }
             const others = buildings.filter((b) => !civic(b) && !/BRIDGE/.test(b));
-            URBAN_LOTS.forEach((lot, i) => {
-              const at = rotate(lot, angle);
+            LOTS.urban[age].forEach((lot, i) => {
+              const at = { x: lot.x, y: lot.y, z: 0 };
               const type = others[i];
               let model = type && buildingModel(type, owned, ageName, Math.abs(seed));
               let scale = model && /_Scaled$/.test(model) ? 1 : BUILDING_SCALE;
@@ -307,7 +324,7 @@
                 model = resolve(layout.filler[(Math.abs(seed) + i) % layout.filler.length], owned, ageName, Math.abs(seed) + i);
                 scale = FILLER_SCALE;
               }
-              if (model) parts.push([model, at, scale, angle]);
+              if (model) parts.push([model, at, scale, lot.turn]);
             });
           }
           // Modern gap filler: at angle 0 the engine's wedge piece fills the tile's east edge, the one edge our
