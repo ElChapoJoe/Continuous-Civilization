@@ -61,6 +61,18 @@ STRING = re.compile(rb"[A-Za-z0-9_\[\]:. ()]{6,}(?=\x00)")
 CULTURE = re.compile(r"\[BUILDING_CULTURE:BUILDING_CULTURE_([A-Z_]+)\]")
 BUILDING = re.compile(r"^\[BUILDING:([A-Z0-9_]+)\]$")
 AGE = re.compile(r"\[AGE:AGE_([A-Z]+)\]")
+DISPATCH_TERM = re.compile(r"^\[(?:BUILDING|IMPROVEMENT):([A-Z0-9_]+)\]$")
+
+
+def dispatch_types(cond):
+    """`[BUILDING:X]` or `[IMPROVEMENT:X] or [IMPROVEMENT:Y]` -> [X, Y]; anything else -> None."""
+    out = []
+    for term in cond.split(" or "):
+        m = DISPATCH_TERM.match(term.strip())
+        if not m:
+            return None
+        out.append(m.group(1))
+    return out
 
 
 ENTRY = re.compile(rb"[\x20-\x7e]+\x00")
@@ -123,11 +135,12 @@ def parse(path, bins, dispatch, names):
         for cond, model in ((condition(c), names.get(h)) for h, c in recs):
             if not cond or not model:
                 continue
-            bm = BUILDING.match(cond)
-            if bm:
-                dispatch.setdefault(bm.group(1), [])
-                if model not in dispatch[bm.group(1)]:
-                    dispatch[bm.group(1)].append(model)
+            types = dispatch_types(cond)
+            if types:
+                for t in types:
+                    dispatch.setdefault(t, [])
+                    if model not in dispatch[t]:
+                        dispatch[t].append(model)
                 continue
             if "CONSTRUCTION" in cond or "PILLAGED" in cond:
                 continue

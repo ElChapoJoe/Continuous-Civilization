@@ -329,3 +329,16 @@ Reference city (`CC_Visual_Reference_Modern`, no mods), top-down, positions conv
 - `CC_Visual_Sandbox_Modern` with the installed mod (so the game itself loads the new overlay): the capital uses the full palace-square set with the palace at 330 degrees, every part carries its owner, and the city reads as dense Modern blocks with Roman purple banners and awnings (`sandbox-shots/27-rome-modern-all-changes.png`).
 - Rough-tile rule: all drawn urban tiles now get full house rows. The only one touching water, (48,11), has it on its east edge, which the house rows don't use; from above nothing stands on the beach, and the south-east row sits on the rocks above the shore (`sandbox-shots/28-rome-shore-tile-top.png`).
 - Owner colours are confirmed running from the mod itself (round 23 was tested by hand).
+
+## Round 25 (2026-11-14): rural tiles
+
+- The engine picks rural art the same way as buildings: generic bins with `[AGE:...]` rows. `BIN_IMP_Farms` -> `BIN_IMP_MOD_Farm_A/B/C` (Modern), `BIN_IMP_WoodCutters` -> `IMP_MOD_WoodCutter`, `BIN_IMP_ClayPits` -> `BIN_IMP_MOD_Claypit_Base` (Exploration: `BIN_IMP_Claypit_Base`), `BIN_IMP_Mine_MOD` -> `IMP_Mine_MOD` (Exploration: the Antiquity mine). Farms and woodcutters have no Exploration rows, so in vanilla Exploration rural tiles look like Antiquity; only Modern needs redrawing.
+- The improvement-to-bin dispatch is not in the bins (`[IMPROVEMENT:X]` sits on a layout named after the improvement), so the extractor didn't pick improvements up; the overlay has a small fixed table instead. The extractor now also accepts `[IMPROVEMENT:X] or [IMPROVEMENT:Y]` dispatch conditions for when they do appear.
+- Sandbox setup: rural improvements need a rural district first (`CREATE_ELEMENT` `{Kind: "DISTRICT", Type: "DISTRICT_RURAL"}`, then the improvement as a constructible), like the tuner does for wonders.
+- Overlay: Modern rural tiles with a farm, woodcutter, mine or clay pit are clipped and redrawn with the Modern model in the owner's colours. Other improvements (plantations, pastures, camps, quarries, fishing boats) are left to the engine for now.
+- Compared on the same tiles of the same map against the vanilla Modern reference (`sandbox-shots/30-rural-engine-vs-ours-mine-clay-farm.png`, engine left):
+  - Clay pit: close (same pit, crane and building).
+  - Farm: variant B matches the engine's house, tractor and shed. The engine's field is lusher; ours keeps the engine's Antiquity farm paths underneath (ground decals the clip can't hide), and the Antiquity crop rows are clipped with the rest. Clipping higher (4, 10) brings the Antiquity farmhouse back without the crops, so 0 stays.
+  - Mine: buildings similar, but our model shows grey spoil heaps where the engine shows orange rock; the engine may choose by resource or terrain with conditions the extractor drops.
+  - Woodcutter: Antiquity camp becomes a Modern lumber yard; the model has its own edge trees, so the forest tile doesn't go bare (`sandbox-shots/31-woodcutter-antiquity-vs-modern.png`).
+- Whole view: `sandbox-shots/29-rural-before-after.png` (before top, after bottom).

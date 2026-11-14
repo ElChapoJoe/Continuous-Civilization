@@ -55,6 +55,28 @@
   // the same for Mexico, Rome and Persia): the square itself is unturned, the palace stands on its plaza
   // south-west of the tile centre, turned 330 degrees. Exploration not measured yet: centre, unturned.
   const PALACE_AT = { 2: { x: -0.07, y: -0.18, z: 0, angle: 330 } };
+  // Rural improvements with their own Modern art (from the game's bins: BIN_IMP_Farms, BIN_IMP_WoodCutters,
+  // BIN_IMP_ClayPits, BIN_IMP_Mine_MOD pick these by [AGE:AGE_MODERN]). Exploration has no farm or woodcutter
+  // variant and falls back to the Antiquity mine and clay pit, so only Modern rural tiles are redrawn.
+  // Farms: the engine's variant B matches the reference farm's house, tractor and shed placement.
+  const RURAL_MODERN = {
+    IMPROVEMENT_FARM: "BIN_IMP_MOD_Farm_B",
+    IMPROVEMENT_WOODCUTTER: "IMP_MOD_WoodCutter",
+    IMPROVEMENT_WOODCUTTER_RESOURCE: "IMP_MOD_WoodCutter",
+    IMPROVEMENT_CLAY_PIT: "BIN_IMP_MOD_Claypit_Base",
+    IMPROVEMENT_CLAY_PIT_RESOURCE: "BIN_IMP_MOD_Claypit_Base",
+    IMPROVEMENT_MINE: "IMP_Mine_MOD",
+    IMPROVEMENT_MINE_RESOURCE: "IMP_Mine_MOD",
+  };
+  /** The Modern model for a rural tile's improvement, or null to leave the tile to the engine. */
+  function ruralModel(loc) {
+    for (const id of MapConstructibles.getConstructibles(loc.x, loc.y) || []) {
+      const c = Constructibles.getByComponentID(id);
+      const type = c && GameInfo.Constructibles.lookup(c.type)?.ConstructibleType;
+      if (type && RURAL_MODERN[type] && c.complete !== false) return RURAL_MODERN[type];
+    }
+    return null;
+  }
   const BUILDING_SCALE = 0.68; // the engine's "_Scaled" building bins draw at about this size
   const FILLER_SCALE = 0.6;
   // Street eraser. The engine picks one of five Antiquity street patterns per urban tile (A or B, some turned
@@ -189,8 +211,13 @@
           const district = Districts.getAtLocation(loc);
           if (!district) continue;
           const isCenter = district.type === DistrictTypes.CITY_CENTER;
-          if (!isCenter && district.type !== DistrictTypes.URBAN) continue;
           if (me >= 0 && GameplayMap.getRevealedState(me, loc.x, loc.y) === RevealedStates.HIDDEN) continue;
+          if (district.type === DistrictTypes.RURAL) {
+            const model = age === 2 && ruralModel(loc);
+            if (model) want.set(loc.x + "," + loc.y, [[model, ZERO, 1, 0, id]]);
+            continue;
+          }
+          if (!isCenter && district.type !== DistrictTypes.URBAN) continue;
           const buildings = tileBuildings(loc);
           if (!buildings) continue;
           // clipHexHeight can't hide the engine's riverside houses on a navigable-river tile, so redrawing there
