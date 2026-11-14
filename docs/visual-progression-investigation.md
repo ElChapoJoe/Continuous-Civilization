@@ -238,3 +238,12 @@ Measured by drawing each street layout over the engine's own ground on every Rom
 - Antiquity and Exploration each have A and B street variants; Modern has one (`LAYOUT_CTY_MOD_Section_AB_Road`), so in Modern every tile uses the same piece unturned, which is why the engine's Modern streets join up.
 - Which tiles get variant B is still unknown.
 - The prototype now draws every tile at angle 0 (the shore turning of round 8 is removed; shore and cliff tiles still skip the house rows). Result: one continuous street network across the sandbox city (`sandbox-shots/12-streets-aligned.png`).
+
+## Round 13 (2026-11-13): Modern streets and gap fillers, first measurements
+
+Reference: the same-seed Modern game (Mexico, no mods), saved as `CC_Visual_Reference_Modern`.
+
+- **Correction to round 12:** in Modern the engine *does* turn tiles. Drawing `LAYOUT_CTY_MOD_Section_AB_Road` over the engine's clipped ground at each 60-degree step: (48,10) and (48,8) match at 0 degrees, (46,9) and (47,8) at 60 degrees (clear minima). These four fit "(x + y) even: 0, odd: 60", but four tiles are not enough to call it a rule; Antiquity tiles did not follow it (they choose between street variants A and B instead).
+- **Gap filler belongs to tiles:** clipping all city tiles also removes the engine's in-between buildings, so they are drawn as part of a city tile, not on their own.
+- **`LAYOUT_CTY_MOD_Wedge`** drawn on a tile at angle 0 puts a row of Modern buildings along the tile's east edge (into the gap toward the eastern neighbour), with a short street. So a wedge is an edge piece, turned to face one neighbour.
+- Open: which edges get a wedge (only between two city tiles? only in Modern? only when the neighbour is not water?), and the Modern turn rule. Both can be measured the same way: draw candidates over the reference city's clipped ground and score per tile.
