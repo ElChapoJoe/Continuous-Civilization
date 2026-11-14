@@ -7,6 +7,7 @@ Saves from one beta version may not load in the next. Start a new game after upd
 ## Unreleased
 
 ### Fixed
+- Land units can cross the Ocean once you are in your personal Exploration: civilians and commanders after Cartography, all land units after Shipbuilding mastery, as in vanilla. Antiquity's rule that makes the Ocean impassable now ends for each player at their personal Exploration; before, it never ended. (Reported by beta testers.)
 - City-state bonus choices now only list the bonuses of your personal Age (Antiquity, Exploration or Modern), as in vanilla, instead of all three Ages at once. If every bonus of your Age is already taken, the other Ages' bonuses are offered so the choice is never empty. The AI's own picks are unchanged. ([#2](https://github.com/ElChapoJoe/Continuous-Civilization/issues/2))
 
 ## 0.1.0-beta (20) - first public beta
