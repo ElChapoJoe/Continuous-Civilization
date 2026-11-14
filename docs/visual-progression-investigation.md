@@ -254,3 +254,11 @@ Reference: the same-seed Modern game (Mexico, no mods), saved as `CC_Visual_Refe
 - **Why it doesn't matter for this mod:** the game Age stays Antiquity, so the engine's ground streets under our art are always the unturned Antiquity ones. Our Modern streets stay unturned to line up with them.
 - **Wedges:** at angle 0 the `LAYOUT_CTY_MOD_Wedge` piece fills the tile's east edge, which is exactly the edge our two-building layout leaves open. The prototype now draws it on every Modern urban tile whose eastern neighbour is a city tile (not water, not a navigable river). Sandbox result: tall Modern blocks between districts, closer to the engine's density (`sandbox-shots/13-modern-wedges.png`).
 - Not reproduced: the engine's wedge versions of real buildings (`*_Factory_Wedge` and so on), and wedges on other edges.
+
+## Round 15 (2026-11-13): building lots checked against the engine
+
+Reference city (`CC_Visual_Reference_Modern`, no mods), top-down, positions converted with `WorldUI.getScreenPos` (1 tile = 624 px at that height):
+
+- Tile (48,8), University + Temple: the engine's buildings sit at about (0.13, 0.29) and (-0.22, -0.06), within 0.04 tile of our lots B (0.12, 0.25) and A (-0.19, -0.09). Drawing our street section, the two-building house layout and both buildings at 0.68 on the engine's clipped tile reproduced the engine's tile closely (`sandbox-shots/14-lots-engine-tile.png` engine, `15-lots-ours-on-engine-tile.png` ours). Sizes agree within about 10%.
+- **Order:** the first building in the tile's list goes to lot B (north-east), the second to lot A. Tile (48,10) with only a Bank: the bank in lot B, lot A filled with small houses. The prototype had the order reversed; fixed.
+- The `_HB` models are larger hero versions (about twice the size); the engine uses the scaled bins in cities.

@@ -48,7 +48,9 @@
       filler: ["BIN_MOD_T2_CityBld_4X4_A", "BIN_MOD_T2_CityBld_3x5_A"],
     },
   };
-  const URBAN_LOTS = [{ x: -0.19, y: -0.09 }, { x: 0.12, y: 0.25 }];
+  // Engine order (measured on the reference city): the first building goes to lot B (north-east), the second
+  // to lot A (south-west); an unused lot gets filler houses.
+  const URBAN_LOTS = [{ x: 0.12, y: 0.25 }, { x: -0.19, y: -0.09 }];
   const BUILDING_SCALE = 0.68; // the engine's "_Scaled" building bins draw at about this size
   const FILLER_SCALE = 0.6;
   /** Per edge: 3 if it faces water or a mountain, 1 if it is a cliff, else 0. */
