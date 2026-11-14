@@ -62,7 +62,7 @@
   // Camps and quarries have whole Modern models (camps also an Exploration one). Pastures and plantations
   // pick only their buildings by Age (the animals and crops come from resource bins), and the game ignores an
   // Age passed in selectionScriptParams, so they are rebuilt from parts: the resource bin plus the Modern
-  // buildings at hand-picked spots (no vanilla Modern reference measured for these two).
+  // buildings at the spots the engine uses (measured on the vanilla Modern reference game, round 27).
   // Each entry: list of [model, x, y] in tile units.
   const RURAL = {
     1: {
@@ -79,8 +79,8 @@
       IMPROVEMENT_CAMP: [["IMP_MOD_CAMP", 0, 0]],
       IMPROVEMENT_QUARRY: [["IMP_MOD_Quarry", 0, 0]],
       IMPROVEMENT_PASTURE: [["IMP_Pasture", 0, 0], ["BIN_Pasture_Resources_Finished", 0, 0],
-        ["PROP_Pasture_MOD_Barn", 0.22, 0.12], ["PROP_Pasture_MOD_BldB", -0.2, 0.22], ["PROP_Pasture_Tractor", 0.18, -0.22]],
-      IMPROVEMENT_PLANTATION: [["BIN_PROP_Plantation_RES", 0, 0], ["IMP_Plantation_Bld_MOD", -0.18, -0.2]],
+        ["PROP_Pasture_MOD_Barn", 0.2, -0.11], ["PROP_Pasture_MOD_BldB", 0.04, 0.32]],
+      IMPROVEMENT_PLANTATION: [["BIN_PROP_Plantation_RES", 0, 0], ["IMP_Plantation_Bld_MOD", -0.13, 0.3]],
     },
   };
   /** The parts for a rural tile's improvement in this personal Age, or null to leave the tile to the engine. */
