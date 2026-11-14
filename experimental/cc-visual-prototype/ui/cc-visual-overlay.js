@@ -252,6 +252,8 @@
               parts.push([WEDGE, ZERO, 1, 0]);
             }
           }
+          // Owner's colours (banners, awnings, roof stripes), as the engine tints its own city models.
+          for (const p of parts) p[4] = id;
           want.set(loc.x + "," + loc.y, parts);
         }
       }
@@ -273,15 +275,23 @@
   }
   let current = new Map();
   const loc = (key) => { const [x, y] = key.split(",").map(Number); return { x, y }; };
-  const signature = (parts) => parts.map((p) => p[0] + "@" + p[1].x + "," + p[1].y + "," + p[2] + "," + p[3]).join("|");
+  const signature = (parts) => parts.map((p) => p[0] + "@" + p[1].x + "," + p[1].y + "," + p[2] + "," + p[3] + "," + p[4]).join("|");
+  /** The player's colours as the game's own UI passes them to models (leader-model-manager.js). */
+  function tint(owner) {
+    try {
+      return { tintColor1: UI.Player.getPrimaryColorValueAsHex(owner), tintColor2: UI.Player.getSecondaryColorValueAsHex(owner) };
+    } catch (e) {
+      return {};
+    }
+  }
 
   function drawTile(key, parts) {
     const plot = loc(key);
     const g = groupFor(key);
     g.clear();
     WorldUI.clipHexHeight(plot, CLIP_HEIGHT);
-    for (const [asset, offset, scale, angle] of parts) {
-      g.addModelAtPlot(asset, plot, offset, { placement: PlacementMode.TERRAIN, scale, angle });
+    for (const [asset, offset, scale, angle, owner] of parts) {
+      g.addModelAtPlot(asset, plot, offset, { placement: PlacementMode.TERRAIN, scale, angle, ...tint(owner) });
     }
   }
 

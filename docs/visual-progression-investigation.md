@@ -317,3 +317,9 @@ Reference city (`CC_Visual_Reference_Modern`, no mods), top-down, positions conv
 - **Still different:**
   - The engine fills the garden beds with spiral topiary hedges, the same for every civilization. Candidates `BIN_GEN_SKU_Palace_Hedges_Splines` and `BIN_GEN_SKU_Palace_WithHB_Hedges_Splines` load but draw nothing on their own (probably spline pieces the engine lays along a path).
   - Player colours: the engine tints banners, awnings and the palace's roof stripe in the owner's colours (purple for Mexico); our models get the default colour.
+
+## Round 23 (2026-11-14): owner colours
+
+- The game's own UI tints models with the owner's colours by passing `tintColor1: UI.Player.getPrimaryColorValueAsHex(id)` and `tintColor2: UI.Player.getSecondaryColorValueAsHex(id)` to `addModel*` (`leader-model-manager.js`). The same options work on `addModelAtPlot` for city models.
+- Overlay: every part now carries its owner, and is drawn with that player's colours. The palace's roof stripe, banners and awnings now show the owner's colour like the engine's (`sandbox-shots/26-palace-owner-colours.png`: engine, before, after; Mexico's purple).
+- Tested by drawing the overlay's parts by hand with the tint on the reference game: the game's debug connection was in its fallback mode and couldn't load the updated script file. The code path itself is checked for syntax only; still to see running in a normal session (Rome sandbox).
