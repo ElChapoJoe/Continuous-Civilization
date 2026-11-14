@@ -53,6 +53,14 @@
   const URBAN_LOTS = [{ x: 0.12, y: 0.25 }, { x: -0.19, y: -0.09 }];
   const BUILDING_SCALE = 0.68; // the engine's "_Scaled" building bins draw at about this size
   const FILLER_SCALE = 0.6;
+  // Street eraser. The engine picks one of five Antiquity street patterns per urban tile (A or B, some turned
+  // 60 degrees) in compiled code we can't read, so on most tiles its ground streets don't match ours, and the
+  // clip doesn't hide ground decals. This high-priority dirt patch paints over every lower decal: three copies
+  // turned 0/60/120 at this size cover the inside of the hex and leave the street ring along its edges, which all
+  // five patterns share. Our own street decals are covered too, so the inside becomes one block for our models.
+  const ERASER = "EXP_Decal_Patch_DirtRectangle_A_highPrio";
+  const ERASER_SCALE = 2.2;
+  let erase = true;
   /** Per edge: 3 if it faces water or a mountain, 1 if it is a cliff, else 0. */
   function edgeCosts(loc) {
     const cost = [];
@@ -192,13 +200,14 @@
             const model = buildingModel(main, owned, ageName, Math.abs(seed));
             if (model) parts.push([model, ZERO, 1, 0]);
           } else {
-            // The engine draws city tiles unturned (measured: every Rome tile and the palace square match its ground
-            // streets at angle 0), so its street network lines up; ours must too.
+            // Lots are measured on the engine's unturned pattern A. The engine turns or swaps the pattern on most
+            // tiles (35-district test), so the eraser above clears its inner streets and the lots stay at angle 0.
             const angle = 0;
             // On shore, cliff or mountain tiles the fixed house rows would spill onto rocks or beach (the engine
             // places its houses piece by piece around the terrain; we can't), so draw only the streets there.
             const costs = edgeCosts(loc);
             const rough = costs.some((c) => c > 0);
+            if (erase) for (const a of [0, 60, 120]) parts.push([ERASER, ZERO, ERASER_SCALE, a]);
             for (const asset of rough ? layout.urban.slice(0, 1) : layout.urban) parts.push([asset, ZERO, 1, angle]);
             // On shore, cliff and mountain tiles the house rows are one fixed piece that would spill onto the terrain.
             // Place single house blocks instead, like the engine, only on the house edges that face land.
@@ -315,6 +324,7 @@
   globalThis.CCVisualOverlay = {
     rebuild: () => { reset(); rebuild(); return current.size; },
     reset, personalAge, count: () => current.size,
+    setErase: (on) => { erase = !!on; reset(); rebuild(); return erase; },
     tile: (x, y) => current.get(x + "," + y) || null,
     resolve, buildingModel,
   };
