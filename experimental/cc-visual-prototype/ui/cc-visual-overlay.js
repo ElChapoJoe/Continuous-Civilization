@@ -60,7 +60,9 @@
   // five patterns share. Our own street decals are covered too, so the inside becomes one block for our models.
   const ERASER = "EXP_Decal_Patch_DirtRectangle_A_highPrio";
   const ERASER_SCALE = 2.2;
-  let erase = true;
+  // Off by default: the only high-priority patches in the game are sand-coloured dirt, which takes the ground
+  // further from vanilla (grey paving in Modern, streets in Exploration). Kept as a switch for testing.
+  let erase = false;
   /** Per edge: 3 if it faces water or a mountain, 1 if it is a cliff, else 0. */
   function edgeCosts(loc) {
     const cost = [];
