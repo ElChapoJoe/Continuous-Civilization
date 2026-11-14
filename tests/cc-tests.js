@@ -524,7 +524,9 @@
   CC.missingContent = function () {
     const r = { checks: {} };
     const dlc = { "asia-wonders": ["WONDER_GRAND_BAZAAR", "WONDER_WAT_XIENG_THONG", "WONDER_UBUDIAH_MOSQUE"],
-      "japan-korea-wonders": ["WONDER_NIRAYAMA_REVERBERATORY_FURNACE"], "water-wonders": ["WONDER_NAN_MADOL"] };
+      "japan-korea-wonders": ["WONDER_NIRAYAMA_REVERBERATORY_FURNACE"], "water-wonders": ["WONDER_NAN_MADOL"],
+      "bulgaria": ["WONDER_RILA_MONASTERY"], "shawnee-tecumseh": ["WONDER_SERPENT_MOUND"],
+      "great-britain": ["WONDER_BATTERSEA_POWER_STATION"], "nepal": ["WONDER_BOUDHANATH"] };
     const active = new Set((Modding.getActiveMods?.() || []).map((m) => (typeof m === "object" ? m.id : m)));
     r.wonders = {};
     for (const [pack, list] of Object.entries(dlc)) {

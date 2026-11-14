@@ -59,7 +59,7 @@ Tested on Civilization VII 1.5.1, single player.
 [*]Town houses, roads and bridges keep their Antiquity look; later-Age buildings, wonders and units use their own art.
 [*]Some numbers stay at Antiquity's values, because the game has only one Age: city growth costs and happiness thresholds, war weariness, narrative rewards, and leader and memento bonuses that vanilla raises in later Ages.
 [*]Older buildings never become obsolete, and no crises happen.
-[*]Not yet included: Treasure Fleets and Factory resources, the Exploration and Modern wonders that come with DLC civilization packs (wonder packs are included), and DLC story events.
+[*]Not yet included: Treasure Fleets and Factory resources, some Exploration and Modern wonders that come with DLC civilization packs (wonder packs and four civilization-pack wonders are included), and DLC story events.
 [*]Single player only so far. Other mods that change Ages, the trees or victories are likely to conflict.
 [/list]
 

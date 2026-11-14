@@ -32,7 +32,7 @@ Map generation, terrain, rivers, graphics and all Antiquity rules are vanilla, e
 - **Older buildings never become obsolete**: every building counts as "current Age", so Antiquity buildings can't be overbuilt and keep their adjacency bonuses (#8).
 - **Culture victory points** count every wonder and celebration as Antiquity's (#12); the fixed Culture target was tuned with this scoring.
 - **No crises** happen (the Age meter is held near 0%) (#16).
-- **Not yet included** (planned or under consideration): Treasure Fleets and Factory resources (#1), Exploration and Modern wonders that come with DLC civilization packs and DLC story events (#4, #14), later-Age civilizations' own abilities when played from the start (#13), and Ocean ending a unit's move as in vanilla Exploration (#18).
+- **Not yet included** (planned or under consideration): Treasure Fleets and Factory resources (#1), the remaining civilization-pack wonders (England, Dai Viet, Goryeo, Iceland, Sengoku, Joseon, Ottomans, Qajar, Pirate Republic) and DLC story events (#4, #14), later-Age civilizations' own abilities when played from the start (#13), and Ocean ending a unit's move as in vanilla Exploration (#18).
 - **Modern AI file** (`ai-modern.xml`) is not imported: it crashed the game. The AI uses the base military/diplomatic components with Exploration's targets and lists.
 - **Modern diplomacy actions** (espionage etc.) are not imported yet; they re-define Antiquity's diplomacy values (planned with the balance pass).
 

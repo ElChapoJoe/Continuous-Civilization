@@ -11,6 +11,7 @@ DROP TABLE IF EXISTS cc_bak_dip_responses;
 DROP TABLE IF EXISTS cc_bak_dip_response_mods;
 DROP TABLE IF EXISTS cc_bak_dip_grievances;
 DROP TABLE IF EXISTS cc_building_gates;
+DROP TABLE IF EXISTS cc_dlc_wonder_unlocks;
 DROP TABLE IF EXISTS cc_unit_gates;
 DROP TABLE IF EXISTS cc_park_ids;
 DROP TABLE IF EXISTS cc_park_mod;

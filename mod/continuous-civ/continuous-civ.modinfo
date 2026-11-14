@@ -28,6 +28,22 @@
 			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
 			<ModInUse>water-wonders</ModInUse>
 		</Criteria>
+		<Criteria id="antiquity-with-bulgaria">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>bulgaria</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-shawnee-tecumseh">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>shawnee-tecumseh</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-great-britain">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>great-britain</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-nepal">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>nepal</ModInUse>
+		</Criteria>
 	</ActionCriteria>
 	<ActionGroups>
 		<!-- 1. Snapshot Antiquity state and remove primary-key collisions (generated). -->
@@ -202,6 +218,50 @@
 					<Item>{water-wonders}text/en_us/CivilopediaExplorationText.xml</Item>
 					<Item>{water-wonders}text/en_us/ConstructibleExplorationText.xml</Item>
 				</UpdateText>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC bulgaria: the Rila Monastery wonder. The file also holds the civilization's own unique content (kept to that
+		     civilization by its trait); the wonder's vanilla unlock is added in 30-buildings.sql. Owners only. -->
+		<ActionGroup id="cc-import-dlc-bulgaria" scope="game" criteria="antiquity-with-bulgaria">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{bulgaria}data/constructibles.xml</Item>
+					<Item>{bulgaria}data/constructibles-gameeffects.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC shawnee-tecumseh: the Serpent Mound wonder. The file also holds the civilization's own unique content (kept to that
+		     civilization by its trait); the wonder's vanilla unlock is added in 30-buildings.sql. Owners only. -->
+		<ActionGroup id="cc-import-dlc-shawnee-tecumseh" scope="game" criteria="antiquity-with-shawnee-tecumseh">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{shawnee-tecumseh}data/constructibles.xml</Item>
+					<Item>{shawnee-tecumseh}data/constructibles-gameeffects.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC great-britain: the Battersea Power Station wonder. The file also holds the civilization's own unique content (kept to that
+		     civilization by its trait); the wonder's vanilla unlock is added in 30-buildings.sql. Owners only. -->
+		<ActionGroup id="cc-import-dlc-great-britain" scope="game" criteria="antiquity-with-great-britain">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{great-britain}data/constructibles.xml</Item>
+					<Item>{great-britain}data/constructibles-gameeffects.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC nepal: the Boudhanath wonder. The file also holds the civilization's own unique content (kept to that
+		     civilization by its trait); the wonder's vanilla unlock is added in 30-buildings.sql. Owners only. -->
+		<ActionGroup id="cc-import-dlc-nepal" scope="game" criteria="antiquity-with-nepal">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{nepal}data/constructibles-modern.xml</Item>
+					<Item>{nepal}data/constructibles-gameeffects.xml</Item>
+				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
 		<!-- AI difficulty bonuses of the later Ages (vanilla loads each only in its Age). 72/74 detach them from the
