@@ -299,3 +299,12 @@ Reference city (`CC_Visual_Reference_Modern`, no mods), top-down, positions conv
 - Our Modern street and house layouts drawn on a bare grass tile give grey streets and **green** blocks. On a city tile the same layouts sit on **sand**: that sand is the engine's own Antiquity city ground decals, which the clip leaves, so it isn't in our layouts and isn't the terrain.
 - No asset paves over it. There are no Modern paving decals by name; `LAYOUT_CTY_MOD_Section_AB_Small_Packed` (+`_FOL`) only adds a few small sheds; large normal-priority stone and brick decals (`EXP_Decal_Block_A_Brick_Rect_A` at scale 4, `EXP_Decal_Patch_Flagstone_Puzzle_A` at scale 5) don't cover the sand; `GEN_Decal_Stone_Brick_B` and `GEN_CityKit_Decals_Stone` don't load as standalone assets; the only high-priority patches are sand-coloured dirt (round 19).
 - Consequence: the way vanilla hides the ground is buildings. Closing the density gap (gap 2) is also the fix for the ground.
+
+## Round 21 (2026-11-14): density, measured on the vanilla Modern reference city
+
+- Method: the reference save (`CC_Visual_Reference_Modern`, global Modern Age, no mods), with the overlay scripts loaded by hand and Modern techs granted, so the same tiles can be shown as the engine draws them (`CCVisualOverlay.reset()`) and as we draw them (`rebuild()`).
+- **Biggest density loss was our "rough tile" rule.** Tile (48,10) (Bank) has a cliff on its west edge and a navigable river to the south-east; the overlay counted any cliff as rough and drew only the streets plus three single houses, leaving mostly sand. The engine fills that tile with full row-house blocks, including along the river bank. Now only a house edge (north-west, south-west, south-east) facing water or a mountain makes a tile rough. Result: (48,10) shows the same three row-house blocks as the engine (`sandbox-shots/22-tile-48-10-engine-old-new.png`: engine, old, new).
+- Wide view after the fix (`sandbox-shots/23-reference-engine-vs-ours.png`, engine top, ours bottom): urban tiles are now close in density. Remaining differences:
+  - **Palace square:** the engine's square is turned (about 330 degrees, as measured in round 12) with gardens where we draw the palace's dome towers; we draw it at 0 degrees.
+  - **Shipyard (49,9):** the engine draws a large dock on the shore; we put a smaller model in lot B, on the water.
+  - **Rural tiles:** the engine adds Modern houses, lumber piles and grey roads on woodcutters, mines and farms near the city; we don't touch rural tiles.

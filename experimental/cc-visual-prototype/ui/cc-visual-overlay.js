@@ -208,7 +208,9 @@
             // On shore, cliff or mountain tiles the fixed house rows would spill onto rocks or beach (the engine
             // places its houses piece by piece around the terrain; we can't), so draw only the streets there.
             const costs = edgeCosts(loc);
-            const rough = costs.some((c) => c > 0);
+            // Only a house edge facing water or a mountain counts: the engine still fills tiles next to cliffs,
+            // rivers and coasts on other edges with full house rows (reference city, tile 48,10).
+            const rough = HOUSE_EDGES.some((d) => costs[d] >= 3);
             if (erase) for (const a of [0, 60, 120]) parts.push([ERASER, ZERO, ERASER_SCALE, a]);
             for (const asset of rough ? layout.urban.slice(0, 1) : layout.urban) parts.push([asset, ZERO, 1, angle]);
             // On shore, cliff and mountain tiles the house rows are one fixed piece that would spill onto the terrain.
