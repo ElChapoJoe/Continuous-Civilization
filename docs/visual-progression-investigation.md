@@ -400,3 +400,14 @@ Checked everything the UI scripts can reach (every global engine object and its 
   - A conditioned row that matches wins over the unconditioned ones. Drawing the bin ourselves does not apply the feature condition (we always got the plain layout).
 - Overlay: picks the layout per tile like the bins do (forest version on wooded tiles, "Less" for those cultures in Exploration, otherwise a pattern-A variant by tile seed). Fixed: Exploration capitals and all city centres drew both the plain and the forest layout on top of each other. Forest tile 48,8 now shows the engine's tree and fewer houses (`sandbox-shots/44-forest-layout-engine-before-now.png`).
 - Not done: dropping single house slots that fall on rocks or cliffs (the engine tests terrain per slot); the random 0/60 degree turn of Modern tiles (46,9 is turned in the engine) remains unknowable.
+
+## Round 32 (2026-11-14): house slots on rocks and cliffs
+
+- Rule search on the vanilla Modern reference, using unturned tiles only:
+  - Height above the tile centre doesn't separate kept from dropped slots (48,10: dropped at 4.4 and 3.4, kept at 3.1; 50,27: dropped at 1.9, kept at 2.8). Slope doesn't either (the steepest slot on 48,10 is kept).
+  - Distance to the edge facing the cliff does. On both cliff tiles (48,10 and 50,27, cliff on the west edge) the engine drops exactly `9x6_2` and `3x5_5`, 0.13 and 0.15 tile from that edge, and keeps `C7` at 0.22 (`sandbox-shots/46-engine-slots-second-cliff-tile.png`).
+  - Roma's coast tile 20,31 couldn't be used: the engine had turned it (its random per-tile turn), so the slots don't line up.
+- `tools/extract_layout_slots.py` exports the slots of the house layouts (Modern plain and forest; Exploration plain, VAR_A, Less, Less forest) to `ui/cc-layout-slots.js` (`globalThis.CCLayoutSlots`: model, x, y, z, turn, scale, kind), expanding nested layouts. Registered in the modinfo.
+- Overlay: a tile with any edge facing a cliff, water or a mountain is drawn slot by slot: the street, every slot of the chosen house layout except the building lots and the street piece, each house block resolved to the owner's culture (`SAM_MEX_CityBld_*` for Mexico), and slots closer than 0.18 tile to such an edge left out. This replaces the old shore rule (street plus three guessed single houses). Other tiles still get the whole layout in one piece.
+- Check on 48,10 (`sandbox-shots/45-cliff-tile-slot-by-slot.png`, engine left): no houses on the rocks; the bottom and right rows match the engine's.
+- Open: the engine fills an empty building lot with `BIN_Vacant_Building` (Modern: `Vacant_Hero_Building_Plot_MOD_01` or `_02`, several small houses and palms); drawn at the slot's scale they cover the whole tile, so the right scale is still to be found (the `_Scaled` bin is untested). We still draw one small house there.

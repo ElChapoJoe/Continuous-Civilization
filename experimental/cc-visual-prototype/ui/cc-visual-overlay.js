@@ -147,10 +147,12 @@
     }
     return cost;
   }
-  // Edges (DirectionTypes 0 NE, 1 E, 2 SE, 3 SW, 4 W, 5 NW) that the two-building house layout fills, and each
-  // direction's angle in degrees counter-clockwise from east.
-  const HOUSE_EDGES = [5, 3, 2];
+  // Each direction's angle (DirectionTypes 0 NE, 1 E, 2 SE, 3 SW, 4 W, 5 NW) in degrees counter-clockwise from east.
   const DIR_ANGLE = [60, 0, 300, 240, 180, 120];
+  // House slots closer than this (tile units) to an edge facing a cliff, water or a mountain are left out. Fitted on
+  // two unturned cliff tiles of the vanilla Modern reference (48,10 and 50,27): the engine drops the slots 0.13 and
+  // 0.15 from the cliff edge and keeps the next one at 0.22.
+  const EDGE_CLEARANCE = 0.18;
   const rotate = (p, deg) => {
     const r = deg * Math.PI / 180;
     return { x: p.x * Math.cos(r) - p.y * Math.sin(r), y: p.x * Math.sin(r) + p.y * Math.cos(r), z: 0 };
@@ -317,21 +319,24 @@
             // On shore, cliff or mountain tiles the fixed house rows would spill onto rocks or beach (the engine
             // places its houses piece by piece around the terrain; we can't), so draw only the streets there.
             const costs = edgeCosts(loc);
-            // Only a house edge facing water or a mountain counts: the engine still fills tiles next to cliffs,
-            // rivers and coasts on other edges with full house rows (reference city, tile 48,10).
-            const rough = HOUSE_EDGES.some((d) => costs[d] >= 3);
             if (erase) for (const a of [0, 60, 120]) parts.push([ERASER, ZERO, ERASER_SCALE, a]);
             parts.push([layout.street, ZERO, 1, angle]);
-            if (!rough) parts.push([pickLayout(layout.houses, loc, owned, Math.abs(seed)), ZERO, 1, angle]);
-            // On shore, cliff and mountain tiles the house rows are one fixed piece that would spill onto the terrain.
-            // Place single house blocks instead, like the engine, only on the house edges that face land.
-            if (rough) {
-              HOUSE_EDGES.forEach((d, i) => {
-                if (costs[d] > 0) return;
-                const r = DIR_ANGLE[d] * Math.PI / 180;
-                const bin = layout.filler[(Math.abs(seed) + i) % layout.filler.length];
-                const model = resolve(bin, owned, ageName, Math.abs(seed) + i);
-                if (model) parts.push([model, { x: 0.3 * Math.cos(r), y: 0.3 * Math.sin(r), z: 0 }, FILLER_SCALE, 0]);
+            const houses = pickLayout(layout.houses, loc, owned, Math.abs(seed));
+            // Next to a cliff, water or a mountain the engine leaves out the house slots nearest that edge (they
+            // would stand on the rocks or the beach). Draw such tiles slot by slot from the engine's own slot table
+            // and skip those slots; other tiles get the whole layout in one piece.
+            const roughEdges = [0, 1, 2, 3, 4, 5].filter((d) => costs[d] > 0);
+            const slots = roughEdges.length && globalThis.CCLayoutSlots?.[houses];
+            if (!slots) parts.push([houses, ZERO, 1, angle]);
+            else {
+              slots.forEach(([m, x, y, z, turn, scale], i) => {
+                if (/^Hero_Building|_Road$/.test(m)) return; // our buildings and street are drawn separately
+                const clear = Math.min(...roughEdges.map((d) => {
+                  const r = DIR_ANGLE[d] * Math.PI / 180;
+                  return 0.5 - (x * Math.cos(r) + y * Math.sin(r));
+                }));
+                if (clear < EDGE_CLEARANCE) return;
+                parts.push([resolve(m, owned, ageName, Math.abs(seed) + i) || m, { x, y, z }, scale, turn]);
               });
             }
             const others = buildings.filter((b) => !civic(b) && !/BRIDGE/.test(b));

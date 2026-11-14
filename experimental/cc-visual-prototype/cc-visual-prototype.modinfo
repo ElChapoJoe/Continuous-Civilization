@@ -19,6 +19,7 @@
 			<Actions>
 				<UIScripts>
 					<Item>ui/cc-building-art.js</Item>
+					<Item>ui/cc-layout-slots.js</Item>
 					<Item>ui/cc-visual-overlay.js</Item>
 				</UIScripts>
 			</Actions>
