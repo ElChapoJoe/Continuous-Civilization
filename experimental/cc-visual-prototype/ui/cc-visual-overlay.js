@@ -63,6 +63,10 @@
     }
     return cost;
   }
+  // Edges (DirectionTypes 0 NE, 1 E, 2 SE, 3 SW, 4 W, 5 NW) that the two-building house layout fills, and each
+  // direction's angle in degrees counter-clockwise from east.
+  const HOUSE_EDGES = [5, 3, 2];
+  const DIR_ANGLE = [60, 0, 300, 240, 180, 120];
   const rotate = (p, deg) => {
     const r = deg * Math.PI / 180;
     return { x: p.x * Math.cos(r) - p.y * Math.sin(r), y: p.x * Math.sin(r) + p.y * Math.cos(r), z: 0 };
@@ -193,8 +197,20 @@
             const angle = 0;
             // On shore, cliff or mountain tiles the fixed house rows would spill onto rocks or beach (the engine
             // places its houses piece by piece around the terrain; we can't), so draw only the streets there.
-            const rough = edgeCosts(loc).some((c) => c > 0);
+            const costs = edgeCosts(loc);
+            const rough = costs.some((c) => c > 0);
             for (const asset of rough ? layout.urban.slice(0, 1) : layout.urban) parts.push([asset, ZERO, 1, angle]);
+            // On shore, cliff and mountain tiles the house rows are one fixed piece that would spill onto the terrain.
+            // Place single house blocks instead, like the engine, only on the house edges that face land.
+            if (rough) {
+              HOUSE_EDGES.forEach((d, i) => {
+                if (costs[d] > 0) return;
+                const r = DIR_ANGLE[d] * Math.PI / 180;
+                const bin = layout.filler[(Math.abs(seed) + i) % layout.filler.length];
+                const model = resolve(bin, owned, ageName, Math.abs(seed) + i);
+                if (model) parts.push([model, { x: 0.3 * Math.cos(r), y: 0.3 * Math.sin(r), z: 0 }, FILLER_SCALE, 0]);
+              });
+            }
             const others = buildings.filter((b) => !civic(b) && !/BRIDGE/.test(b));
             URBAN_LOTS.forEach((lot, i) => {
               const at = rotate(lot, angle);

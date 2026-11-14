@@ -262,3 +262,9 @@ Reference city (`CC_Visual_Reference_Modern`, no mods), top-down, positions conv
 - Tile (48,8), University + Temple: the engine's buildings sit at about (0.13, 0.29) and (-0.22, -0.06), within 0.04 tile of our lots B (0.12, 0.25) and A (-0.19, -0.09). Drawing our street section, the two-building house layout and both buildings at 0.68 on the engine's clipped tile reproduced the engine's tile closely (`sandbox-shots/14-lots-engine-tile.png` engine, `15-lots-ours-on-engine-tile.png` ours). Sizes agree within about 10%.
 - **Order:** the first building in the tile's list goes to lot B (north-east), the second to lot A. Tile (48,10) with only a Bank: the bank in lot B, lot A filled with small houses. The prototype had the order reversed; fixed.
 - The `_HB` models are larger hero versions (about twice the size); the engine uses the scaled bins in cities.
+
+## Round 16 (2026-11-13): shore, cliff and mountain tiles
+
+- Reference city grown with 14 rough tiles (16 measured: water, cliff or mountain on at least one edge). On its own art the engine still fills these tiles with houses, keeping them on the land side.
+- Scoring our two options against it per tile (street section only vs street section plus the two-building house layout) was inconclusive: the scores were within a few percent of each other and split both ways, because the house layout is one fixed piece. With it, houses spill onto rocks and water; without it, the tile is too empty.
+- Change: on rough tiles the prototype now places single filler house blocks (the Age's `BIN_*_T2_CityBld_*`, resolved to the owner's style) 0.3 tile out toward each house edge (north-west, south-west, south-east) that faces land, and skips edges facing water, mountains or cliffs. Sandbox: shore districts are populated on the land side with nothing on the beach (`sandbox-shots/16-shore-single-houses.png`). Not scored against the reference.
