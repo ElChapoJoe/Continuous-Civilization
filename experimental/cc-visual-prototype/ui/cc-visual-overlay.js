@@ -34,22 +34,41 @@
   //   capital/center: the plaza layout, with the palace or city hall filling the plaza at full size.
   // Offsets are in tile units (x east, y north; 0.5 = the tile's inner edge). The engine turns a whole urban section
   // in 60-degree steps per tile; `angle` turns models counter-clockwise, so lots are rotated the same way.
+  // The house and square layouts are chosen as the engine's own layout bins choose them (decoded rows of
+  // BIN_CTY_*_Layout_2HB_Full_A, _Palace_Full_A, _City_Center_Full_A): a forest version on wooded tiles; in
+  // Exploration a "Less" version for some cultures, otherwise one of the street-pattern-A variants at random
+  // (pattern B would not fit the pattern-A streets we draw). `street` is drawn on every urban tile.
   const LAYOUTS = {
     1: {
-      urban: ["LAYOUT_CTY_Hex_Section_AB_Road_EXP", "BIN_CTY_EXP_Layout_2HB_Full_A"],
-      capital: ["LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace", "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace_FOL"],
-      center: ["LAYOUT_CTY_EXP_Hex_Section_AB_City_Center", "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Less_FOL"],
+      street: "LAYOUT_CTY_Hex_Section_AB_Road_EXP",
+      houses: { plain: ["LAYOUT_CTY_EXP_Hex_Section_AB", "LAYOUT_CTY_EXP_Hex_Section_AB_VAR_A"],
+        less: ["LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less"], fol: ["LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less_FOL"] },
+      capital: { plain: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace", fol: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace_FOL" },
+      center: { plain: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center", less: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Less",
+        fol: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Less_FOL" },
       filler: ["BIN_EXP_T2_CityBld_4X4_A", "BIN_EXP_T2_CityBld_3x5_A"],
     },
     2: {
-      urban: ["LAYOUT_CTY_MOD_Section_AB_Road", "BIN_CTY_MOD_Layout_2HB_Full_A"],
-      capital: ["BIN_CTY_MOD_Layout_Palace_Full_A"],
-      center: ["LAYOUT_CTY_MOD_Section_AB_City_Center", "LAYOUT_CTY_MOD_Section_AB_City_Center_FOL"],
+      street: "LAYOUT_CTY_MOD_Section_AB_Road",
+      houses: { plain: ["LAYOUT_CTY_MOD_Section_AB_Small_Packed"], fol: ["LAYOUT_CTY_MOD_Section_AB_Small_Packed_FOL"] },
+      capital: { plain: "LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace", fol: "LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace_FOL" },
+      center: { plain: "LAYOUT_CTY_MOD_Section_AB_City_Center", fol: "LAYOUT_CTY_MOD_Section_AB_City_Center_FOL" },
       filler: ["BIN_MOD_T2_CityBld_4X4_A", "BIN_MOD_T2_CityBld_3x5_A"],
     },
   };
-  // Engine order (measured on the reference city): the first building goes to lot B (north-east), the second
-  // to lot A (south-west); an unused lot gets filler houses.
+  const WOODED = new Set(["FEATURE_FOREST", "FEATURE_SAGEBRUSH_STEPPE", "FEATURE_SAVANNA_WOODLAND", "FEATURE_TAIGA", "FEATURE_RAINFOREST"]);
+  const LESS_CULTURES = ["SAM", "SEA", "PAC", "NAM", "SAF"];
+  function isWooded(loc) {
+    const f = GameplayMap.getFeatureType(loc.x, loc.y);
+    return f >= 0 && WOODED.has(GameInfo.Features.lookup(f)?.FeatureType);
+  }
+  /** The variant of a layout set ({plain, less?, fol?}) the engine would pick for this tile and owner. */
+  function pickLayout(set, loc, owned, seed) {
+    const pick = (v) => Array.isArray(v) ? v[seed % v.length] : v;
+    if (set.fol && isWooded(loc)) return pick(set.fol);
+    if (set.less && LESS_CULTURES.some((c) => owned.has(c) || owned.has(c + "_EXP"))) return pick(set.less);
+    return pick(set.plain);
+  }
   // Building lots read from the engine's own layout assets (tools/decode_layouts.py): the Herobuilding_A/B
   // attachment points of the urban and city-centre layouts, in tile units, with their turns in degrees.
   // The first building goes to A, the second to B.
@@ -257,7 +276,7 @@
           const civic = (b) => b === "BUILDING_PALACE" || b === "BUILDING_CITY_HALL";
           if (isCenter) {
             const kind = buildings.includes("BUILDING_PALACE") ? "capital" : "center";
-            for (const asset of layout[kind]) parts.push([asset, ZERO, 1, 0]);
+            parts.push([pickLayout(layout[kind], loc, owned, Math.abs(seed)), ZERO, 1, 0]);
             // The palace or city hall takes the first slot of the square, at full size; any other building on the
             // centre tile takes the second slot.
             const main = buildings.find(civic) || (kind === "capital" ? "BUILDING_PALACE" : "BUILDING_CITY_HALL");
@@ -302,7 +321,8 @@
             // rivers and coasts on other edges with full house rows (reference city, tile 48,10).
             const rough = HOUSE_EDGES.some((d) => costs[d] >= 3);
             if (erase) for (const a of [0, 60, 120]) parts.push([ERASER, ZERO, ERASER_SCALE, a]);
-            for (const asset of rough ? layout.urban.slice(0, 1) : layout.urban) parts.push([asset, ZERO, 1, angle]);
+            parts.push([layout.street, ZERO, 1, angle]);
+            if (!rough) parts.push([pickLayout(layout.houses, loc, owned, Math.abs(seed)), ZERO, 1, angle]);
             // On shore, cliff and mountain tiles the house rows are one fixed piece that would spill onto the terrain.
             // Place single house blocks instead, like the engine, only on the house edges that face land.
             if (rough) {
