@@ -36,7 +36,7 @@
 - 🌳 **One tech tree, one civic tree.** Exploration continues straight on from Antiquity and Modern from Exploration, all the way to Future Tech.
 - 🧭 **Your own pace.** Each player enters Exploration and Modern through their own research. A leader can be flying planes while a rival still fields knights.
 - ⚔️ **Content from every Age.** Units, buildings, governments, religion, resources, diplomacy and espionage from all three Ages, in one game.
-- 🏆 **Every main victory works:** Science, Culture, Economic and Domination.
+- 🏆 **Every main victory works:** Science, Culture, Economic, Military and Domination.
 
 ![A Roman empire on turn 42](docs/images/empire.jpg)
 
@@ -91,9 +91,10 @@ The **Distant Lands** across the Ocean are open from the start: you can meet the
 | 🚀 **Science** | 100 Science victory points and an undamaged Launch Pad, then a 5-turn countdown |
 | 🎭 **Culture** | 150 Culture victory points, then a 5-turn countdown |
 | 💰 **Economic** | 12,000 Economic victory points, then a 5-turn countdown |
+| ⚔️ **Military** | 100 Military victory points (from the settlements you hold, more for conquered ones and capitals), then a 5-turn countdown |
 | 🗡️ **Domination** | Capture every rival's original capital |
 
-In vanilla, Culture and Economic are won by staying 25% ahead of second place, a check the game only runs inside a real Modern Age. Here they use a fixed target, as Science does. The targets are set so AI leaders reach them late in the game, and will be tuned from beta feedback.
+In vanilla, Culture, Economic and Military are won by staying 25% ahead of second place, a check the game only runs inside a real Modern Age. Here they use a fixed target, as Science does. Culture and Economic are set so AI leaders reach them late in the game; Military is set above what an empire scores without conquest. All targets will be tuned from beta feedback.
 
 ## Beta testers
 
@@ -111,7 +112,6 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 
 ## Known limitations
 
-- **Military (points) victory** can't be won: it uses the 25%-lead check that only runs in a real Modern Age. Use Domination for a military win.
 - **Score victory** is decided when the final Age ends, which never happens here.
 - **Legacy paths** don't progress, so their Modern rewards (World's Fair, Manhattan Project, John Maynard Keynes) are unavailable. Launch Rocket instead requires the three earlier space projects.
 - **Diplomacy costs don't scale by Age.** Shared actions keep Antiquity's Influence costs, which vanilla doubles in Exploration and triples in Modern.
@@ -144,7 +144,6 @@ Likely: Civ VII patches can change the data the mod builds on. Please open an is
 ## Roadmap
 
 - Balance pass from beta feedback: pacing, diplomacy costs, victory targets.
-- Military points victory.
 - Multiplayer testing.
 - Per-player visual city changes: city art (buildings, houses, roads, bridges) that advances for each player as they research, instead of staying Antiquity's all game. In progress: the engine picks this art from one global Age (see [the investigation](docs/visual-progression-investigation.md)), so we're working on a workaround.
 

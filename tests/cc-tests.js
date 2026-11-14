@@ -451,7 +451,7 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
-  // Victories (76-victories.sql). Science and Domination work; Military/Culture/Economic points victories are a known limitation.
+  // Victories (76-victories.sql). Science and Domination as in vanilla; Culture, Economic and Military with a fixed points target.
   CC.victories = function () {
     const r = { checks: {} };
     const vm = Game.VictoryManager, h = (t) => GameInfo.Victories.lookup(t)?.$hash;
@@ -463,6 +463,7 @@
     r.checks.notSingleAge = { pass: !Game.AgeProgressManager.isSingleAge };
     r.checks.cultureFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_CULTURE_MODERN")) === 150 };
     r.checks.economicFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_ECONOMIC_MODERN")) === 12000 };
+    r.checks.militaryFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_MILITARY_MODERN")) === 100 };
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
