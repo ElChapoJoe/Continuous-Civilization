@@ -69,6 +69,33 @@ INSERT INTO ModifierStrings (ModifierId, Context, Text) VALUES
 INSERT INTO cc_exploration_rules (ModifierId, EndsAtModern) VALUES
   ('CC_EX_TRADE_RANGE_LAND', 0), ('CC_EX_TRADE_RANGE_SEA', 0), ('CC_EX_EMBARKED_STRENGTH', 0);
 
+-- City balance that vanilla sets per Age in global tables (audit #9), which keep Antiquity's values here. Each is
+-- matched per player with an effect instead, as a step that stays through Modern (74 adds Modern's step):
+--   Growth: AgeGrowthBalances Antiquity 5/20/400, Exploration 30/50/600, Modern 60/100/850 (flat/linear/quadratic),
+--     about 1.9x and 3.3x the food per population. A negative growth Percent raises the food needed by that much
+--     (verified: -50 turned a 29-food threshold into 43.5) -> -90% here, -230% in Modern.
+--   Specialist cap: CITY_WORKER_STARTING_CAP Antiquity 0, Exploration 1, Modern 3 -> +1 here, +3 in Modern.
+--   Town upgrade cost: TOWN_UPGRADE_* Antiquity 400 + 300 per city, Exploration 700 + 700, Modern 800 + 1000
+--     -> about 2x here, 3x in Modern (discount -100% / -200%, as vanilla's -50% "more expensive" trait).
+--   Not matched: celebrations (GOLDEN_AGE_HAPPINESS_CURVE_*, 4x in Exploration, 9x in Modern; the unused effect
+--   EFFECT_PLAYER_ADJUST_GOLDEN_AGE_THRESHOLD changed nothing with Percent or Amount), happiness stages
+--   (HappinessStages) and war weariness (WarWearinessEffects): global, with no per-player effect.
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES
+  ('CC_MODTYPE_CITIES_GROWTH', 'KIND_MODIFIER'), ('CC_MODTYPE_CITIES_WORKER_CAP', 'KIND_MODIFIER'),
+  ('CC_MODTYPE_CITIES_TOWN_UPGRADE', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+  ('CC_MODTYPE_CITIES_GROWTH', 'COLLECTION_PLAYER_CITIES', 'EFFECT_CITY_ADJUST_GROWTH'),
+  ('CC_MODTYPE_CITIES_WORKER_CAP', 'COLLECTION_PLAYER_CITIES', 'EFFECT_CITY_ADJUST_WORKER_CAP'),
+  ('CC_MODTYPE_CITIES_TOWN_UPGRADE', 'COLLECTION_PLAYER_CITIES', 'EFFECT_CITY_ADJUST_TOWN_UPGRADE_DISCOUNT');
+INSERT INTO Modifiers (ModifierId, ModifierType) VALUES
+  ('CC_EX_GROWTH', 'CC_MODTYPE_CITIES_GROWTH'), ('CC_EX_WORKER_CAP', 'CC_MODTYPE_CITIES_WORKER_CAP'),
+  ('CC_EX_TOWN_UPGRADE', 'CC_MODTYPE_CITIES_TOWN_UPGRADE');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_EX_GROWTH', 'Percent', '-90'), ('CC_EX_WORKER_CAP', 'Amount', '1'),
+  ('CC_EX_TOWN_UPGRADE', 'Percent', '-100');
+INSERT INTO cc_exploration_rules (ModifierId, EndsAtModern) VALUES
+  ('CC_EX_GROWTH', 0), ('CC_EX_WORKER_CAP', 0), ('CC_EX_TOWN_UPGRADE', 0);
+
 -- AI difficulty bonuses of Exploration (age-exploration/data/difficulties.xml, imported in cc-import-difficulty): the
 -- AI's +10% yields and production while in Exploration, and free Medieval Walls (after Castles, by difficulty).
 -- Vanilla hangs them on the major-civ trait in the Exploration Age only; here they follow the personal Age. The
