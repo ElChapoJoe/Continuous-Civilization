@@ -95,3 +95,23 @@ INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES ('CC_R
 INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES ('CC_REQSET_NOT_IN_EXPLORATION', 'CC_REQ_NOT_IN_EXPLORATION');
 UPDATE Modifiers SET SubjectRequirementSetId = 'CC_REQSET_NOT_IN_EXPLORATION', Permanent = 0
   WHERE ModifierId IN ('TRAIT_MOD_DEFAULT_YIELD_5', 'TRAIT_MOD_DEFAULT_YIELD_10') AND SubjectRequirementSetId IS NULL;
+
+-- Antiquity makes Ocean invalid terrain for every unit of every player (AGE_ANTIQUITY_MOD_OCEAN_TERRAIN_INVALID, a
+-- PlayerModifiers row in advanced-start.xml). Vanilla drops it with the Age; here it never ended, so the deep-water
+-- embarkation from Cartography (civilians, commanders) and Shipbuilding mastery (all land units) had no effect and
+-- land units could not cross Ocean. It now ends once the player is in Exploration, where vanilla's own rules take
+-- over (naval units: MOD_TECH_OCEAN_TRAVEL above; land units: embarkation from the techs). The condition is on the
+-- owner (the player): the subjects are units, and "player has tech" is only reliable on a player.
+-- Found by beta testers (v0.1.0-beta).
+UPDATE Modifiers SET OwnerRequirementSetId = 'CC_REQSET_NOT_IN_EXPLORATION', Permanent = 0
+  WHERE ModifierId = 'AGE_ANTIQUITY_MOD_OCEAN_TERRAIN_INVALID' AND OwnerRequirementSetId IS NULL;
+
+-- Distant Lands. While the game Age is Antiquity the engine closes the Distant Lands (land that needs an Ocean
+-- crossing from the player's capital, mostly the other hemisphere) to everyone: land units can't enter or be placed
+-- there, no plot there is a valid settlement spot, and civilizations there can't be met, so their leaders never
+-- appear in the diplomacy ribbon. The switch is the Ages column NoVictoriesSecondaryHemisphere (only Antiquity has it
+-- on; verified live: with it off, settle spots and meetings across the Ocean work). There is no per-player version
+-- (Tonga's "meet Distant Lands civs" effect only covers meeting, not land), so it is off for everyone. Players still
+-- need their personal Exploration to cross Ocean (above), so in practice only islands reachable along the Coast open
+-- up earlier than in vanilla. Found by beta testers (v0.1.0-beta).
+UPDATE Ages SET NoVictoriesSecondaryHemisphere = 0 WHERE AgeType = 'AGE_ANTIQUITY';

@@ -323,6 +323,37 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
+  // Ocean crossing and Distant Lands (beta feedback, 72-exploration-rules.sql). Live checks use player pid's units and
+  // revealed plots: reveal the map and give the player Cartography (or Shipbuilding mastery for military units) first.
+  CC.distantLands = function (pid = 0) {
+    const r = { checks: {} };
+    r.checks.distantLandsOpen = { pass: GameInfo.Ages.lookup("AGE_ANTIQUITY")?.NoVictoriesSecondaryHemisphere === false };
+    const inv = GameInfo.Modifiers.lookup("AGE_ANTIQUITY_MOD_OCEAN_TERRAIN_INVALID");
+    r.checks.oceanRuleEndsAtExploration = { pass: inv?.OwnerRequirementSetId === "CC_REQSET_NOT_IN_EXPLORATION" && !inv?.Permanent };
+    const p = Players.get(pid), terr = (l) => GameInfo.Terrains.lookup(GameplayMap.getTerrainType(l.x, l.y))?.TerrainType;
+    let claims = 0;
+    for (let x = 0; x < GameplayMap.getGridWidth(); x++) for (let y = 0; y < GameplayMap.getGridHeight(); y++) {
+      if (!GameplayMap.isWater(x, y) && p.isDistantLands({ x, y }) && p.Diplomacy.isValidLandClaimLocation({ x, y }, true)) claims++;
+    }
+    r.checks.distantSettleSpots = { pass: claims > 0, count: claims };
+    // Every land unit with deep-water embarkation must find a path to the nearest Ocean plot (within 3 tiles).
+    const deep = Database.makeHash("UNIT_EMBARKATION_DEEP_WATER");
+    const blocked = [], tested = [];
+    for (const u of p.Units.getUnits()) {
+      if (u.embarkationType !== deep) continue;
+      const { x: ux, y: uy } = u.location;
+      let q = null;
+      for (let x = ux - 3; x <= ux + 3 && !q; x++) for (let y = uy - 3; y <= uy + 3; y++) {
+        if (y >= 0 && y < GameplayMap.getGridHeight() && GameplayMap.getPlotDistance(ux, uy, x, y) <= 3 && terr({ x, y }) === "TERRAIN_OCEAN") { q = { x, y }; break; }
+      }
+      if (!q) continue;
+      tested.push(unitName(u.type));
+      if (!(Units.getPathTo(u.id, q)?.plots || []).length) blocked.push(unitName(u.type));
+    }
+    r.checks.deepWaterUnitsEnterOcean = { pass: tested.length > 0 && blocked.length === 0, tested, blocked };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
   // Modern trees (Phase 3.1: 21-modern-tech-tree.sql, 26-modern-civic-tree.sql).
   CC.modernTrees = function () {
     const r = { checks: {} };
