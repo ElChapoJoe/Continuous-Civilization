@@ -247,3 +247,10 @@ Reference: the same-seed Modern game (Mexico, no mods), saved as `CC_Visual_Refe
 - **Gap filler belongs to tiles:** clipping all city tiles also removes the engine's in-between buildings, so they are drawn as part of a city tile, not on their own.
 - **`LAYOUT_CTY_MOD_Wedge`** drawn on a tile at angle 0 puts a row of Modern buildings along the tile's east edge (into the gap toward the eastern neighbour), with a short street. So a wedge is an edge piece, turned to face one neighbour.
 - Open: which edges get a wedge (only between two city tiles? only in Modern? only when the neighbour is not water?), and the Modern turn rule. Both can be measured the same way: draw candidates over the reference city's clipped ground and score per tile.
+
+## Round 14 (2026-11-13): Modern turn rule and wedges
+
+- **Modern street turns, 9 tiles** (reference city grown to 18 urban tiles, same scoring method): 0 degrees on (48,10), (48,8), (45,8), (50,8); 60 degrees on (46,9), (44,9), (47,8), (45,10); (50,9) unclear (riverside). (45,8) breaks the "(x + y) even/odd" guess, and no other coordinate rule fits; the choice may be a per-tile random pick.
+- **Why it doesn't matter for this mod:** the game Age stays Antiquity, so the engine's ground streets under our art are always the unturned Antiquity ones. Our Modern streets stay unturned to line up with them.
+- **Wedges:** at angle 0 the `LAYOUT_CTY_MOD_Wedge` piece fills the tile's east edge, which is exactly the edge our two-building layout leaves open. The prototype now draws it on every Modern urban tile whose eastern neighbour is a city tile (not water, not a navigable river). Sandbox result: tall Modern blocks between districts, closer to the engine's density (`sandbox-shots/13-modern-wedges.png`).
+- Not reproduced: the engine's wedge versions of real buildings (`*_Factory_Wedge` and so on), and wedges on other edges.

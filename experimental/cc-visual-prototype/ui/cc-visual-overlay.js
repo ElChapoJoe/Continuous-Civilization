@@ -27,6 +27,7 @@
   const MODERN = ["NODE_TECH_MO_ACADEMICS", "NODE_TECH_MO_STEAM_ENGINE", "NODE_TECH_MO_MILITARY_SCIENCE"];
   const AGE_NAMES = ["ANTIQUITY", "EXPLORATION", "MODERN"];
   const ZERO = { x: 0, y: 0, z: 0 };
+  const WEDGE = "LAYOUT_CTY_MOD_Wedge";
 
   // Layouts per personal Age, as the engine composes a city tile (measured on a test bench, tools/bench.js):
   //   urban:   the street section plus the engine's "two hero building" house layout, leaving two lots A and B;
@@ -204,6 +205,16 @@
               }
               if (model) parts.push([model, at, scale, angle]);
             });
+          }
+          // Modern gap filler: at angle 0 the engine's wedge piece fills the tile's east edge, the one edge our
+          // layout leaves open. Draw it when the eastern neighbour is also a city tile (never on water or rivers).
+          if (age === 2 && !isCenter) {
+            const e = GameplayMap.getAdjacentPlotLocation(loc, 1);
+            const ed = e && Districts.getAtLocation(e);
+            if (ed && (ed.type === DistrictTypes.URBAN || ed.type === DistrictTypes.CITY_CENTER)
+              && !GameplayMap.isWater(e.x, e.y) && !GameplayMap.isNavigableRiver(e.x, e.y)) {
+              parts.push([WEDGE, ZERO, 1, 0]);
+            }
           }
           want.set(loc.x + "," + loc.y, parts);
         }
