@@ -61,8 +61,8 @@ Requires Civilization VII (tested on 1.5.1). No game files are included or chang
 | Age | You enter it by researching any of | What changes for you |
 |---|---|---|
 | Antiquity | (start) | Vanilla Antiquity rules |
-| Exploration | Cartography, Astronomy, Machinery | Crossing the Ocean (civilians and commanders after Cartography, all land units after Shipbuilding mastery), deep-ocean ships, embarkation, settlement cap of at least 8, base yields +10 Gold / +20 Science, Culture and Influence, more resource slots and envoys, longer trade routes, stronger embarked units, leader attribute points |
-| Modern | Academics, Steam Engine, Military Science | Settlement cap of at least 16, base yields +15 Gold / +30 Science, Culture and Influence, Modern resource slots and town focuses, longer trade routes, stronger embarked units, more leader attribute points |
+| Exploration | Cartography, Astronomy, Machinery | Crossing the Ocean (civilians and commanders after Cartography, all land units after Shipbuilding mastery), deep-ocean ships, embarkation, settlement cap of at least 8, base yields +10 Gold / +20 Science, Culture and Influence, more resource slots and envoys, longer trade routes, stronger embarked units, leader attribute points; growth costs, town upgrade costs and the specialist cap rise as in vanilla Exploration, and Age-scaled bonuses (leader abilities, mementos, attribute nodes) double |
+| Modern | Academics, Steam Engine, Military Science | Settlement cap of at least 16, base yields +15 Gold / +30 Science, Culture and Influence, Modern resource slots and town focuses, longer trade routes, stronger embarked units, more leader attribute points; Modern growth costs, town upgrade costs and specialist cap, and Age-scaled bonuses triple |
 
 The **Distant Lands** across the Ocean are open from the start: you can meet the civilizations there, and settle their land once your Exploration lets you cross.
 
@@ -117,7 +117,7 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 - **Diplomacy costs don't scale by Age.** Shared actions keep Antiquity's Influence costs, which vanilla doubles in Exploration and triples in Modern.
 - **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look, because the engine draws them from a single game-wide Age. Buildings, wonders and units from later Ages use their own art. [Details](docs/visual-progression-investigation.md).
 - **Ruins** stay Antiquity discoveries all game, so Modern archaeology can't use them.
-- **Some numbers stay at Antiquity's values**, because the game has only one Age: city growth costs and happiness thresholds, war weariness, narrative rewards, and leader, memento and attribute-tree bonuses that vanilla raises in later Ages.
+- **A few numbers stay at Antiquity's values**, because the engine reads them from the one game Age with no per-player version: the Happiness needed for celebrations and for Joyous/Ecstatic settlements, and war weariness. (Growth costs, the specialist cap, town upgrade costs, narrative rewards, and leader, memento and attribute-tree bonuses now follow your personal Age.)
 - **Older buildings never become obsolete**, so they can't be overbuilt with later-Age buildings.
 - **No crises** happen.
 - **Not yet included:** Treasure Fleets and Factory resources, some Exploration and Modern wonders that come with DLC civilization packs (wonder packs and four civilization-pack wonders are included), and DLC story events.

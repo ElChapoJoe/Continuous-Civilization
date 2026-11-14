@@ -316,6 +316,7 @@
 					<Item>data/76-victories.sql</Item>
 					<Item>data/78-diplomacy.sql</Item>
 					<Item>data/79-leader-attributes.sql</Item>
+					<Item>data/81-age-scaled-bonuses.sql</Item>
 					<Item>data/90-prune-dangling.sql</Item>
 					<Item>data/99-cleanup.sql</Item>
 				</UpdateDatabase>

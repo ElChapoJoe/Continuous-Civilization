@@ -267,7 +267,7 @@
     r.checks.settlementCaps = { pass: capArg("CC_EX_SETTLEMENT_CAP") === "8" && capArg("CC_MO_SETTLEMENT_CAP") === "16" && gm.includes("CC_EXRULE_CC_EX_SETTLEMENT_CAP") && gm.includes("CC_MORULE_CC_MO_SETTLEMENT_CAP"), antiquity: capArg("TRAIT_INITIAL_SETTLEMENT_CAP") };
     const exRules = gm.filter((id) => id.startsWith("CC_EXRULE_")).map((id) => id.slice(10));
     // Rules that carry on into Modern on purpose: the Economic trackers, and the per-Age steps that Modern adds to.
-    const gdp = (id) => /_GDP$/.test(id) || /^CC_EX_(TRADE_RANGE_|EMBARKED_STRENGTH)/.test(id) || /^EX_HANDICAP_.*_WALLS$/.test(id);
+    const gdp = (id) => /_GDP$/.test(id) || /^CC_EX_(TRADE_RANGE_|EMBARKED_STRENGTH|GROWTH|WORKER_CAP|TOWN_UPGRADE)/.test(id) || /^EX_HANDICAP_.*_WALLS$/.test(id);
     const ending = exRules.filter((id) => !gdp(id)).map((id) => GameInfo.Modifiers.lookup(id));
     const notEnding = ending.filter((m) => m && m.SubjectRequirementSetId !== "CC_REQSET_NOT_IN_MODERN" && !(m.SubjectRequirementSetId || "").startsWith("CC_REQSET_EXRULE_")).map((m) => m.ModifierId + ":" + m.SubjectRequirementSetId);
     r.checks.explorationRulesEndAtModern = { pass: notEnding.length === 0, notEnding };
@@ -509,6 +509,17 @@
     r.checks.wrappers = { pass: rules.every((id) => gm.includes(id)), missing: rules.filter((id) => !gm.includes(id)) };
     const tm = A(GameInfo.TraitModifiers).filter((t) => /^CC_(EX|MO)_(ATTR_|IBN_BATTUTA_WILDCARD)/.test(t.ModifierId));
     r.checks.attributeTraits = { pass: tm.length === 16, count: tm.length };
+    // City balance by personal Age (72/74, audit #9): growth, specialist cap, town upgrade cost.
+    const balance = ["GROWTH", "WORKER_CAP", "TOWN_UPGRADE"].flatMap((k) => ["CC_EXRULE_CC_EX_" + k, "CC_MORULE_CC_MO_" + k]);
+    r.checks.cityBalanceWrappers = { pass: balance.every((id) => gm.includes(id)), missing: balance.filter((id) => !gm.includes(id)) };
+    // Age-scaled bonuses (81, audit #2): an Exploration and a Modern copy of each player-owned ScaleByGameAge modifier.
+    const scaled = A(GameInfo.Modifiers).filter((m) => /^CC_SA_(EX|MO)_/.test(m.ModifierId));
+    const ex = scaled.filter((m) => m.ModifierId.startsWith("CC_SA_EX_")).length, mo = scaled.length - ex;
+    r.checks.ageScaledCopies = { pass: ex > 80 && ex === mo, ex, mo };
+    // Narrative rewards (37, audit #15): later-Age reward sizes exist as Antiquity rows and stories point to them.
+    const nyr = A(GameInfo.NarrativeStory_Yield_Rewards).filter((x) => x.Age === "AGE_ANTIQUITY" && /^CC_(EX|MO)_/.test(x.Type)).length;
+    const repointed = A(GameInfo.ModifierArguments).filter((a) => a.Name === "MultiplierType" && /^CC_(EX|MO)_/.test(a.Value)).length;
+    r.checks.narrativeRewardSizes = { pass: nyr > 0 && repointed > 500, rows: nyr, repointed };
     const city = Players.get(pid)?.Cities?.getCities()[0];
     const t = city && Cities.get(city.id)?.Trade;
     r.tradeRange = t ? { land: t.landTradeRouteRange?.value, sea: t.waterTradeRouteRange?.value } : null;

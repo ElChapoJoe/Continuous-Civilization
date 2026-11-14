@@ -44,6 +44,16 @@ INSERT INTO ModifierStrings (ModifierId, Context, Text) VALUES
   ('CC_MO_EMBARKED_STRENGTH', 'Preview', 'LOC_CC_MO_EMBARKED_STRENGTH_PREVIEW');
 INSERT INTO cc_modern_rules VALUES ('CC_MO_TRADE_RANGE_LAND'), ('CC_MO_TRADE_RANGE_SEA'), ('CC_MO_EMBARKED_STRENGTH');
 
+-- Modern's step of the city balance (types and values in 72): growth -230%, specialist cap +3, town upgrades 3x
+-- in total.
+INSERT INTO Modifiers (ModifierId, ModifierType) VALUES
+  ('CC_MO_GROWTH', 'CC_MODTYPE_CITIES_GROWTH'), ('CC_MO_WORKER_CAP', 'CC_MODTYPE_CITIES_WORKER_CAP'),
+  ('CC_MO_TOWN_UPGRADE', 'CC_MODTYPE_CITIES_TOWN_UPGRADE');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_MO_GROWTH', 'Percent', '-140'), ('CC_MO_WORKER_CAP', 'Amount', '2'),
+  ('CC_MO_TOWN_UPGRADE', 'Percent', '-100');
+INSERT INTO cc_modern_rules VALUES ('CC_MO_GROWTH'), ('CC_MO_WORKER_CAP'), ('CC_MO_TOWN_UPGRADE');
+
 -- AI difficulty bonuses of Modern (age-modern/data/difficulties.xml): +20% yields and production for the AI, and
 -- free Defensive Fortifications (after Military Science, by difficulty), by personal Modern Age (see 72).
 DELETE FROM TraitModifiers WHERE ModifierId LIKE 'MO_HANDICAP_%' AND TraitType = 'TRAIT_LEADER_MAJOR_CIV';
