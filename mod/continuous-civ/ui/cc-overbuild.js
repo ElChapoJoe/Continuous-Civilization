@@ -8,7 +8,8 @@
 //     Antiquity buildings, Modern players over Antiquity and Exploration ones.
 //   * Ageless buildings (which includes every civilization's unique buildings), walls and the Palace are never
 //     replaced, as in vanilla. Buildings with special placement (water, river, bridge) aren't placed this way.
-//   * When both buildings on the tile are older, you choose which one goes.
+//   * When both buildings on the tile are older, you first choose which one goes; the side panel then shows that
+//     choice before the usual confirmation.
 //   * Confirming asks first, then removes the old building and places the new one (queued or bought). The engine
 //     only accepts a building on a free slot, so the old building goes when the new one is queued, not when it is
 //     finished. If the new one can't be placed after all, the old building is put back.
@@ -205,6 +206,16 @@ function overbuild(cityID, args, isPurchasing, victim, newDef) {
   return true;
 }
 
+/** Shows the chosen building in the side panel: its placement entry, then a re-select of the tile to redraw. */
+function previewChoice(plotIndex, newDef, oldDef) {
+  const placements = BuildingPlacementManager.selectedPlacementData?.placements;
+  const entry = placements?.find((p) => p.plotID == plotIndex);
+  if (!entry) return;
+  Object.assign(entry, placementEntry(plotIndex, newDef, oldDef));
+  BuildingPlacementManager.selectedPlotIndex = null;
+  BuildingPlacementManager.selectedPlotIndex = plotIndex;
+}
+
 let patched = false;
 function patchInterfaceMode() {
   if (patched) return;
@@ -217,14 +228,27 @@ function patchInterfaceMode() {
     const newDef = BuildingPlacementManager.currentConstructible;
     if (!victim || !newDef) return vanillaPropose(plot, accept, reject);
     NavTray.clear();
+    const plotIndex = GameplayMap.getIndexFromLocation(plot);
     const cancel = { actions: ["cancel", "keyboard-escape", "mousebutton-right"], label: "LOC_GENERIC_CANCEL",
       callback: () => { this.setMapFocused?.(true); reject(); } };
+    const confirm = () => DialogBoxManager.createDialog_MultiOption({
+      title: "LOC_BUILDING_PLACEMENT_REPLACE_BUILDING",
+      body: Locale.compose("LOC_CC_OVERBUILD_BODY", victim.def.Name, newDef.Name),
+      options: [{ actions: ["accept"], label: "LOC_GENERIC_OK", callback: () => accept() }, cancel],
+      canClose: false
+    });
     if (victim.choices.length > 1) {
-      // Both buildings on the tile are from an earlier Age: one button per building.
+      // Both buildings on the tile are from an earlier Age: first choose which one (one button per building), then
+      // the side panel shows that choice's result and the usual confirmation follows.
       const options = victim.choices.map((choice, i) => ({
         actions: i === 0 ? ["accept"] : [],
         label: Locale.compose("LOC_CC_OVERBUILD_REPLACE", choice.def.Name),
-        callback: () => { victim.id = choice.id; victim.def = choice.def; accept(); }
+        callback: () => {
+          victim.id = choice.id;
+          victim.def = choice.def;
+          previewChoice(plotIndex, newDef, choice.def);
+          confirm();
+        }
       }));
       DialogBoxManager.createDialog_MultiOption({
         title: "LOC_BUILDING_PLACEMENT_REPLACE_BUILDING",
@@ -234,12 +258,7 @@ function patchInterfaceMode() {
       });
       return;
     }
-    DialogBoxManager.createDialog_MultiOption({
-      title: "LOC_BUILDING_PLACEMENT_REPLACE_BUILDING",
-      body: Locale.compose("LOC_CC_OVERBUILD_BODY", victim.def.Name, newDef.Name),
-      options: [{ actions: ["accept"], label: "LOC_GENERIC_OK", callback: () => accept() }, cancel],
-      canClose: false
-    });
+    confirm();
   };
   const vanillaCommit = mode.commitPlot.bind(mode);
   mode.commitPlot = function (plot) {

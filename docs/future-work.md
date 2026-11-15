@@ -47,7 +47,5 @@ has a full tile with an older building, move it there. Needs an autoplay to conf
 
 ### Smaller
 
-- When both buildings on a tile can be replaced, the side panel previews the default one (oldest Age, then cheapest)
-  before you choose in the dialog.
 - Replaceable tiles use the same highlight as vanilla's farm/improvement tiles; only hovering shows "will OVERBUILD".
 - Multiplayer is untested (`DESTROY_ELEMENT`/`CREATE_ELEMENT` may be refused there).
