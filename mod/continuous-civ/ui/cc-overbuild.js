@@ -216,6 +216,31 @@ function previewChoice(plotIndex, newDef, oldDef) {
   BuildingPlacementManager.selectedPlotIndex = plotIndex;
 }
 
+/**
+ * The dialog box stacks 3+ buttons in a centred column with no space between them (its spacing is for a row). Once
+ * the choice dialog is drawn: equal-width buttons, a gap between them, and a larger gap before Cancel.
+ */
+function styleChoiceDialog(tries = 30) {
+  const boxes = document.querySelectorAll("screen-dialog-box");
+  const group = boxes.length ? boxes[boxes.length - 1].querySelector(".multi-button-container") : null;
+  const buttons = group ? [...group.querySelectorAll("fxs-button")] : [];
+  if (buttons.length < 3 || buttons.some((b) => b.offsetWidth === 0)) {
+    if (tries > 0) requestAnimationFrame(() => styleChoiceDialog(tries - 1));
+    return;
+  }
+  // Wide enough for "Replace" + a long building name on one line; all buttons the same width.
+  const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+  const width = Math.max(22 * rem, ...buttons.map((b) => b.scrollWidth));
+  group.style.alignItems = "center";
+  buttons.forEach((b, i) => {
+    b.style.width = `${width}px`;
+    b.style.whiteSpace = "nowrap";
+    b.style.marginRight = "0";
+    b.style.marginLeft = "0";
+    b.style.marginTop = i === 0 ? "0.5rem" : i === buttons.length - 1 ? "1.5rem" : "0.75rem";
+  });
+}
+
 const OVERBUILD_FILL = 0xC8FF9A5A; // ABGR, same alpha as vanilla's placement colours: a light blue
 
 let patched = false;
@@ -253,7 +278,7 @@ function patchInterfaceMode() {
     const confirm = () => DialogBoxManager.createDialog_MultiOption({
       title: "LOC_BUILDING_PLACEMENT_REPLACE_BUILDING",
       body: Locale.compose("LOC_CC_OVERBUILD_BODY", victim.def.Name, newDef.Name),
-      options: [{ actions: ["accept"], label: "LOC_GENERIC_OK", callback: () => accept() }, cancel],
+      options: [{ actions: ["accept"], label: "LOC_CC_OVERBUILD_CONFIRM", callback: () => accept() }, cancel],
       canClose: false
     });
     if (victim.choices.length > 1) {
@@ -270,11 +295,12 @@ function patchInterfaceMode() {
         }
       }));
       DialogBoxManager.createDialog_MultiOption({
-        title: "LOC_BUILDING_PLACEMENT_REPLACE_BUILDING",
+        title: "LOC_CC_OVERBUILD_CHOOSE_TITLE",
         body: Locale.compose("LOC_CC_OVERBUILD_CHOOSE_BODY", newDef.Name),
         options: [...options, cancel],
         canClose: false
       });
+      styleChoiceDialog();
       return;
     }
     confirm();
