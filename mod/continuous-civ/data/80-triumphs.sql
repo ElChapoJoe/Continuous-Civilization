@@ -92,3 +92,35 @@ INSERT INTO VictoryScorings (ScoringId, VictoryType, TrackerType, Name, Points, 
 INSERT INTO VictoryDataUIs (Key, Name, IconOverride, SortOrder) VALUES
   ('CC_VICTORY_TRACKER_WONDERS_EXPLORATION', 'LOC_CC_VICTORY_WONDER_EXPLORATION_NAME', 'blp:victory_cultural', 71),
   ('CC_VICTORY_TRACKER_WONDERS_MODERN', 'LOC_CC_VICTORY_WONDER_MODERN_NAME', 'blp:victory_cultural', 72);
+
+-- Culture victory points for celebrations by personal Age, as vanilla scores them by Age (VICTORY_TRACKER_CELEBRATIONS:
+-- 2 in Antiquity, 4 in Exploration, 6 in Modern, by the game Age, which stays Antiquity here). Two more celebration
+-- rows of +2 each, switched on per player (EFFECT_PLAYER_ACTIVATE_VICTORY_POINT_TRACKER, as the Manifesto Triumph's
+-- row) when the player enters its personal Exploration and its personal Modern: a celebration then scores 2 + 2 = 4
+-- and 2 + 2 + 2 = 6. Vanilla's Antiquity row needs the Entertainment civic, but vanilla Exploration and Modern score
+-- every celebration, so entering Exploration also switches on the Antiquity row. Activation is not retroactive (the
+-- Entertainment civic's row in a long autoplay), so earlier celebrations keep their value.
+INSERT INTO VictoryScorings (ScoringId, VictoryType, TrackerType, Name, Points, RequiresActivation) VALUES
+  ('CC_VICTORY_TRACKER_CELEBRATIONS_EXPLORATION', 'VICTORY_CULTURE_MODERN', 'VICTORY_TRACKER_CELEBRATIONS', 'LOC_VICTORY_TRACKER_CELEBRATIONS_EXPLORATION_NAME', 2, 1),
+  ('CC_VICTORY_TRACKER_CELEBRATIONS_MODERN', 'VICTORY_CULTURE_MODERN', 'VICTORY_TRACKER_CELEBRATIONS', 'LOC_VICTORY_TRACKER_CELEBRATIONS_MODERN_NAME', 2, 1);
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES ('CC_MODTYPE_PLAYER_ACTIVATE_VP_TRACKER', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType)
+  VALUES ('CC_MODTYPE_PLAYER_ACTIVATE_VP_TRACKER', 'COLLECTION_OWNER', 'EFFECT_PLAYER_ACTIVATE_VICTORY_POINT_TRACKER');
+INSERT INTO Modifiers (ModifierId, ModifierType, Permanent) VALUES
+  ('CC_CELEBRATIONS_EX', 'CC_MODTYPE_PLAYER_ACTIVATE_VP_TRACKER', 1), ('CC_CELEBRATIONS_MO', 'CC_MODTYPE_PLAYER_ACTIVATE_VP_TRACKER', 1),
+  ('CC_CELEBRATIONS_EX_AQ', 'CC_MODTYPE_PLAYER_ACTIVATE_VP_TRACKER', 1);
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_CELEBRATIONS_EX', 'TrackerName', 'CC_VICTORY_TRACKER_CELEBRATIONS_EXPLORATION'),
+  ('CC_CELEBRATIONS_MO', 'TrackerName', 'CC_VICTORY_TRACKER_CELEBRATIONS_MODERN'),
+  ('CC_CELEBRATIONS_EX_AQ', 'TrackerName', 'VICTORY_TRACKER_CELEBRATIONS_ANTIQUITY');
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES ('CC_MODTYPE_MAJORS_ATTACH', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType)
+  VALUES ('CC_MODTYPE_MAJORS_ATTACH', 'COLLECTION_MAJOR_PLAYERS', 'EFFECT_ATTACH_MODIFIERS');
+INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId) VALUES
+  ('CC_CELEBRATIONSRULE_EX', 'CC_MODTYPE_MAJORS_ATTACH', 'CC_REQSET_TEST_IN_EXPLORATION'),
+  ('CC_CELEBRATIONSRULE_MO', 'CC_MODTYPE_MAJORS_ATTACH', 'CC_REQSET_TEST_IN_MODERN'),
+  ('CC_CELEBRATIONSRULE_EX_AQ', 'CC_MODTYPE_MAJORS_ATTACH', 'CC_REQSET_TEST_IN_EXPLORATION');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_CELEBRATIONSRULE_EX', 'ModifierId', 'CC_CELEBRATIONS_EX'), ('CC_CELEBRATIONSRULE_MO', 'ModifierId', 'CC_CELEBRATIONS_MO'),
+  ('CC_CELEBRATIONSRULE_EX_AQ', 'ModifierId', 'CC_CELEBRATIONS_EX_AQ');
+INSERT INTO GameModifiers (ModifierId) VALUES ('CC_CELEBRATIONSRULE_EX'), ('CC_CELEBRATIONSRULE_MO'), ('CC_CELEBRATIONSRULE_EX_AQ');

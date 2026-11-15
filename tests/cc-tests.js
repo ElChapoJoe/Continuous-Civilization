@@ -476,6 +476,13 @@
     r.checks.cultureFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_CULTURE_MODERN")) === 350 };
     r.checks.economicFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_ECONOMIC_MODERN")) === 8000 };
     r.checks.militaryFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_MILITARY_MODERN")) === 100 };
+    // Culture points by Age (80-triumphs.sql): wonders by their Age's tag, celebrations by rows switched on in the
+    // personal Age (game-wide rules, attached in games started on this version).
+    const sc = (id) => GameInfo.VictoryScorings.lookup(id);
+    const gm = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
+    r.checks.cultureByAge = { pass: sc("CC_VICTORY_TRACKER_WONDERS_EXPLORATION")?.Points === 4 && sc("CC_VICTORY_TRACKER_WONDERS_MODERN")?.Points === 8
+      && ["CC_VICTORY_TRACKER_CELEBRATIONS_EXPLORATION", "CC_VICTORY_TRACKER_CELEBRATIONS_MODERN"].every((id) => sc(id)?.Points === 2 && sc(id)?.RequiresActivation)
+      && ["CC_CELEBRATIONSRULE_EX", "CC_CELEBRATIONSRULE_MO", "CC_CELEBRATIONSRULE_EX_AQ"].every((id) => gm.includes(id)) };
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
