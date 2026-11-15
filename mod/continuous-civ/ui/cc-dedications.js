@@ -82,3 +82,18 @@ globalThis.CCDedications = {
   };
   ops.__ccDedications = true;
 })();
+
+// The AI gets no Dedication points, but it can spend Wildcard attribute points on Dedication nodes, whose effects are
+// for human players only (the AI gets its Dedications from data/83-dedications.sql's AI copies). Give each such point
+// back so it goes to a real attribute node. Each node can only be bought once, so this ends.
+const dedicationAttribute = GameInfo.Attributes.lookup("ATTRIBUTE_CC_DEDICATION")?.$hash;
+engine.on("AttributeNodeCompleted", (data) => {
+  try {
+    if (data?.attribute !== dedicationAttribute) return;
+    const player = Players.get(data.player);
+    if (!player || player.isHuman) return;
+    player.Identity.addWildcardAttributePoints(1);
+  } catch (e) {
+    console.error("cc-dedications: " + e);
+  }
+});

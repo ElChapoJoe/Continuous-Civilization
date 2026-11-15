@@ -1,7 +1,8 @@
 // Continuous Civilization - Triumph progress for Exploration and Modern Triumphs (UI side).
 // data/80-triumphs.sql adds a personal-Age requirement to each later-Age Triumph's trigger. With two requirements
 // the engine reports the set's progress differently: as a percentage per requirement (0-200, e.g. 105/200 for
-// 1 of 20 relics) or in raw units with the Age counted as 1 more (10/74). The Triumphs screen and tracker show that
+// 1 of 20 relics), in raw units with the Age counted as 1 more (10/74), or for some requirement types in raw units of
+// the goal alone (2/6 Modern wonders, left as is). The Triumphs screen and tracker show that
 // number as is, so getProgress() is wrapped to take the Age requirement's share out and show the real count again
 // (1/20). Display only: whether a Triumph triggers is still decided by the engine.
 // Personal Age uses the same root techs as data/70-personal-age.sql.
@@ -64,7 +65,10 @@ function adjust(playerId, legacyType, result) {
   if (p.total === 200) {              // percentage per requirement
     const pct = Math.max(0, Math.min(100, p.current - (inAge ? 100 : 0)));
     total = g.goal > 0 ? g.goal : g.goal < 0 ? 100 : 1;
-    current = Math.floor(pct * total / 100 + 1e-6);
+    // The engine's percentage is rounded down (1 of 6 = 16), so round back to the nearest count (16% of 6 = 1).
+    current = Math.min(total, Math.round(pct * total / 100));
+  } else if (g.goal > 0 && p.total === g.goal) {
+    return result;                     // raw units without the Age (e.g. the Wonders Triumphs' 2/6)
   } else {                             // raw units, the Age counted as 1
     total = p.total - 1;
     current = Math.max(0, Math.min(total, p.current - (inAge ? 1 : 0)));
