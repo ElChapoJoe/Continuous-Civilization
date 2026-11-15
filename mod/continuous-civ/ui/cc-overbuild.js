@@ -199,7 +199,7 @@ function overbuild(cityID, args, isPurchasing, victim, newDef) {
     if (gone) Game.PlayerOperations.sendRequest(owner, "CREATE_ELEMENT", restore);
     console.warn(`cc-overbuild: could not place ${newDef.ConstructibleType} over ${victim.def.ConstructibleType}; restored`);
     DialogBoxManager.createDialog_Confirm({
-      title: "LOC_BUILDING_PLACEMENT_REPLACE_BUILDING",
+      title: "LOC_CC_OVERBUILD_FAILED_TITLE",
       body: Locale.compose("LOC_CC_OVERBUILD_FAILED", newDef.Name, victim.def.Name)
     });
   });
@@ -241,6 +241,63 @@ function styleChoiceDialog(tries = 30) {
   });
 }
 
+/**
+ * Adds a row of building icons above a dialog's text once it is drawn: the building(s) that would go, dimmed, an
+ * arrow, and the new building (same icons as the side panel). The dialog is found by its text.
+ */
+function addIconRow(bodyText, oldTypes, newType, tries = 30) {
+  const key = bodyText.slice(0, 40);
+  const box = [...document.querySelectorAll("screen-dialog-box")].reverse()
+    .find((b) => (b.textContent || "").includes(key));
+  // The dialog's text element (vanilla sets its role as a property, not an attribute): the leaf div with the text.
+  const body = box ? [...box.querySelectorAll("div.font-body")].find((d) => (d.textContent || "").includes(key)) : null;
+  if (!body) {
+    if (tries > 0) requestAnimationFrame(() => addIconRow(bodyText, oldTypes, newType, tries - 1));
+    return;
+  }
+  if (box.querySelector(".cc-overbuild-icons")) return;
+  const icon = (type, dim) => {
+    const cell = document.createElement("div");
+    cell.style.display = "flex";
+    cell.style.flexDirection = "column";
+    cell.style.alignItems = "center";
+    cell.style.margin = "0 0.6rem";
+    const el = document.createElement("div");
+    el.style.width = "4.5rem";
+    el.style.height = "4.5rem";
+    el.style.backgroundImage = `url('${UI.getIconURL(type)}')`;
+    el.style.backgroundSize = "contain";
+    el.style.backgroundRepeat = "no-repeat";
+    el.style.backgroundPosition = "center";
+    if (dim) el.style.opacity = "0.55";
+    const name = document.createElement("div");
+    name.classList.add("font-body", "text-xs");
+    name.style.marginTop = "0.25rem";
+    name.style.opacity = dim ? "0.7" : "1";
+    name.textContent = Locale.compose(GameInfo.Constructibles.lookup(type)?.Name ?? type);
+    cell.appendChild(el);
+    cell.appendChild(name);
+    return cell;
+  };
+  const row = document.createElement("div");
+  row.classList.add("cc-overbuild-icons");
+  row.style.display = "flex";
+  row.style.flexDirection = "row";
+  row.style.justifyContent = "center";
+  row.style.alignItems = "center";
+  row.style.marginTop = "0.75rem";
+  for (const t of oldTypes) row.appendChild(icon(t, true));
+  const arrow = document.createElement("div");
+  arrow.classList.add("font-title");
+  arrow.style.transform = "scale(2)";
+  arrow.style.margin = "0 1.25rem 1.25rem";
+  arrow.style.color = "#E5D2AC";
+  arrow.textContent = "→";
+  row.appendChild(arrow);
+  row.appendChild(icon(newType, false));
+  body.parentElement.insertBefore(row, body);
+}
+
 const OVERBUILD_FILL = 0xC8FF9A5A; // ABGR, same alpha as vanilla's placement colours: a light blue
 
 let patched = false;
@@ -275,12 +332,16 @@ function patchInterfaceMode() {
     const plotIndex = GameplayMap.getIndexFromLocation(plot);
     const cancel = { actions: ["cancel", "keyboard-escape", "mousebutton-right"], label: "LOC_GENERIC_CANCEL",
       callback: () => { this.setMapFocused?.(true); reject(); } };
-    const confirm = () => DialogBoxManager.createDialog_MultiOption({
-      title: "LOC_BUILDING_PLACEMENT_REPLACE_BUILDING",
-      body: Locale.compose("LOC_CC_OVERBUILD_BODY", victim.def.Name, newDef.Name),
-      options: [{ actions: ["accept"], label: "LOC_CC_OVERBUILD_CONFIRM", callback: () => accept() }, cancel],
-      canClose: false
-    });
+    const confirm = () => {
+      const body = Locale.compose("LOC_CC_OVERBUILD_BODY", victim.def.Name, newDef.Name);
+      DialogBoxManager.createDialog_MultiOption({
+        title: "LOC_BUILDING_PLACEMENT_REPLACE_BUILDING",
+        body,
+        options: [{ actions: ["accept"], label: "LOC_CC_OVERBUILD_CONFIRM", callback: () => accept() }, cancel],
+        canClose: false
+      });
+      addIconRow(body, [victim.def.ConstructibleType], newDef.ConstructibleType);
+    };
     if (victim.choices.length > 1) {
       // Both buildings on the tile are from an earlier Age: first choose which one (one button per building), then
       // the side panel shows that choice's result and the usual confirmation follows.
@@ -294,13 +355,15 @@ function patchInterfaceMode() {
           confirm();
         }
       }));
+      const body = Locale.compose("LOC_CC_OVERBUILD_CHOOSE_BODY", newDef.Name);
       DialogBoxManager.createDialog_MultiOption({
         title: "LOC_CC_OVERBUILD_CHOOSE_TITLE",
-        body: Locale.compose("LOC_CC_OVERBUILD_CHOOSE_BODY", newDef.Name),
+        body,
         options: [...options, cancel],
         canClose: false
       });
       styleChoiceDialog();
+      addIconRow(body, victim.choices.map((c) => c.def.ConstructibleType), newDef.ConstructibleType);
       return;
     }
     confirm();

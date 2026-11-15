@@ -10,4 +10,5 @@ INSERT OR REPLACE INTO LocalizedText (Language, Tag, Text) VALUES
   ('en_US', 'LOC_CC_OVERBUILD_CHOOSE_TITLE', 'Which Building to Replace?'),
   ('en_US', 'LOC_CC_OVERBUILD_CHOOSE_BODY', 'Both buildings on this tile are from an earlier Age. Choose the one the {1_NewName} will replace; the panel then shows the result.'),
   ('en_US', 'LOC_CC_OVERBUILD_REPLACE', 'Replace {1_OldName}'),
+  ('en_US', 'LOC_CC_OVERBUILD_FAILED_TITLE', 'Building Not Placed'),
   ('en_US', 'LOC_CC_OVERBUILD_FAILED', 'The {1_NewName} could not be placed on this tile, so the {2_OldName} was put back.');
