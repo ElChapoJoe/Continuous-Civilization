@@ -467,7 +467,7 @@
     const pre = A(GameInfo.ProjectPrereqs).filter((p) => p.ProjectType === "PROJECT_LAUNCH_ROCKET").map((p) => p.PrereqProjectType).sort();
     r.checks.rocketNeedsSpaceProjects = { pass: !!rocket && !rocket.RequireCompletedLegacyPathType && pre.length === 3, pre };
     r.checks.notSingleAge = { pass: !Game.AgeProgressManager.isSingleAge };
-    r.checks.cultureFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_CULTURE_MODERN")) === 150 };
+    r.checks.cultureFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_CULTURE_MODERN")) === 350 };
     r.checks.economicFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_ECONOMIC_MODERN")) === 12000 };
     r.checks.militaryFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_MILITARY_MODERN")) === 100 };
     r.pass = Object.values(r.checks).every((c) => c.pass);
