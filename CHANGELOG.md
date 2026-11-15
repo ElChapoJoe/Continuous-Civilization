@@ -22,6 +22,7 @@ Saves from one beta version may not load in the next. Start a new game after upd
 
 ### Changed
 - Culture victory target raised from 150 to 350 points. The new Triumphs and Dedications bring vanilla's Culture points with them (Wonderland: +3 per wonder; World's Fair: +2 per wonder; Manifesto: +4 per celebration; a Dedication with +2 per fortification), and a test game passed 150 by turn 130 on Online speed. With the Culture victory switched off in the same game, Science was won on turn 184 and the top Culture civilization had 345 points on turn 170, so 350 puts a strong Culture win just ahead of Science.
+- Wonders score Culture victory points by their Age, as in vanilla: 4 for an Antiquity wonder, 8 for an Exploration one, 12 for a Modern one (unlocked by an Exploration or Modern tech or civic). Before, every wonder scored 4 here. Tested in game: an Exploration and a Modern wonder gave 8 and 12. Only in games started on this version.
 - Economic victory target lowered from 12,000 to 8,000 points. In the same test game the leader gained about 85 points a turn and had 8,324 on turn 191, so 12,000 would have come about 50 turns after the Science win; vanilla's leader ended a full game with 4,646. 8,000 puts it near Science. Measurements: [docs/victory-pace-0.2.0.md](docs/victory-pace-0.2.0.md).
 
 ### Fixed

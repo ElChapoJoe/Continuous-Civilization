@@ -81,3 +81,14 @@ UPDATE Legacies SET Age = 'AGE_ANTIQUITY' WHERE LegacyType IN (SELECT LegacyType
 
 -- Crisis Triumphs need crises, which never happen here (10-age-clock.sql).
 DELETE FROM GameModifiers WHERE ModifierId LIKE 'MOD_EX_%_CRISIS_%_ADD_TRIUMPH' OR ModifierId LIKE 'MOD_MO_%_CRISIS_%_ADD_TRIUMPH';
+
+-- Culture victory points for wonders by their Age, as vanilla scores them (base-standard victories.xml: a wonder of
+-- Antiquity 4, Exploration 8, Modern 12, VICTORY_TRACKER_WONDER by the wonder's Age). Here every wonder is tagged
+-- Antiquity (30-buildings.sql) so it can be built, and scores 4. The tags above add the difference: +4 for an
+-- Exploration wonder, +8 for a Modern one, through the building-tag tracker vanilla uses for the Great Wall.
+INSERT INTO VictoryScorings (ScoringId, VictoryType, TrackerType, Name, Points, Data) VALUES
+  ('CC_VICTORY_TRACKER_WONDERS_EXPLORATION', 'VICTORY_CULTURE_MODERN', 'VICTORY_TRACKER_BUILDING_TAG', 'LOC_CC_VICTORY_WONDER_EXPLORATION_NAME', 4, 'CC_WONDER_EXPLORATION'),
+  ('CC_VICTORY_TRACKER_WONDERS_MODERN', 'VICTORY_CULTURE_MODERN', 'VICTORY_TRACKER_BUILDING_TAG', 'LOC_CC_VICTORY_WONDER_MODERN_NAME', 8, 'CC_WONDER_MODERN');
+INSERT INTO VictoryDataUIs (Key, Name, IconOverride, SortOrder) VALUES
+  ('CC_VICTORY_TRACKER_WONDERS_EXPLORATION', 'LOC_CC_VICTORY_WONDER_EXPLORATION_NAME', 'blp:victory_cultural', 71),
+  ('CC_VICTORY_TRACKER_WONDERS_MODERN', 'LOC_CC_VICTORY_WONDER_MODERN_NAME', 'blp:victory_cultural', 72);
