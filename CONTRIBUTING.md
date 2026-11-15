@@ -17,8 +17,9 @@ The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game 
 | Path | Contents |
 |---|---|
 | `mod/continuous-civ/` | The mod: `.modinfo`, SQL data changes (`data/`), text (`text/`), UI scripts (`ui/`) |
-| `tools/` | `gen_dedupe.py` (resolves clashes between Ages' data), `gen_modern_resources.py`, `gen_dedications.py` (Dedication cards), `survey_imports.py`, `age-audit.js`, `deploy.ps1` |
-| `tests/cc-tests.js` | In-game test suites for the game's debug console (`CC.db()`, `CC.modernTrees()`, `CC.victories()`, `CC.diplomacy()` and more) |
+| `tools/` | Generators: `gen_dedupe.py` (resolves clashes between Ages' data), `gen_modern_resources.py`, `gen_dedications.py` (Dedication cards), `survey_imports.py`, `age-audit.js`. Dev loop (PowerShell, see below): `deploy.ps1`, `restart-civ.ps1`, `wait-civ.ps1`, `watch-autoplay.ps1`, `scan-logs.ps1`, `civ-status.ps1` (shared paths in `civ7-common.ps1`) |
+| `tests/cc-tests.js` | In-game test suites for the game's debug console (`CC.db()`, `CC.modernTrees()`, `CC.victories()`, `CC.diplomacy()`, `CC.worldAge()` and more); `tests/run-all-suites.js` runs them all and lists failing checks |
+| `tests/cc-dev.js` | Debug-console helpers: `CCDev.status()`, `.victory()`, `.costs()`, `.load()`, `.save()`, `.newGame()`, `.autoplay()`, `.grant()` and more |
 | `docs/` | Engine investigation, phase plans, test reports and README images |
 
 ## Workflow
@@ -29,6 +30,12 @@ The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game 
   python -I tools/gen_modern_resources.py
   python -I tools/gen_dedications.py
   ```
-- Deploy to your Mods folder with `tools/deploy.ps1`. A `.modinfo` change needs a full game restart; SQL-only changes need a new game (or a reload).
-- Test in game: load `tests/cc-tests.js` on the debug console (FireTuner) and run the suites, then run an AI autoplay and check expansion, Age progress and the logs.
+- Dev loop (run the scripts with `powershell -ExecutionPolicy Bypass -File tools\<script>.ps1`):
+  1. `civ-status.ps1`: game running?, UI page (menu or game), a stuck crash reporter, whether the deployed mod matches the project, newest saves and crash dumps.
+  2. `deploy.ps1` mirrors `mod/continuous-civ` into the Mods folder and says what the game needs next: a `.modinfo` change (new or removed files) needs a full restart, data changes a new game (game-wide rules only attach in games started after the change), UI-only changes a UI reload.
+  3. `restart-civ.ps1` starts or restarts the game and waits for the main menu. Close the game first (`engine.call("exitToDesktop")` on the console) or pass `-Kill`. It stops a leftover `FiraxisCrashReporter.exe`, which otherwise makes Steam think the game is still running and silently refuse to launch it.
+  4. Load a save or start a game from the console (`CCDev.load(name)`, `CCDev.newGame()`), then `wait-civ.ps1 -For game` returns when loading has finished and "Begin Game" can be pressed.
+  5. On the console: load `tests/cc-tests.js`, then `tests/run-all-suites.js` (all suites, failing checks listed); load `tests/cc-dev.js` for the helpers. Expected failures: `distantLands` on early turns (nobody can cross the Ocean yet).
+  6. AI autoplay: `CCDev.autoplay(turns)`, then `watch-autoplay.ps1` prints `TURN n` lines and exits on `DONE`, `CRASH` or `STALL` (no autosave for 6 minutes).
+  7. `scan-logs.ps1` summarises errors in the game logs, mod-related first; it exits 1 on mod or database errors.
 - Branches: `main` is the stable, tested version; work happens on branches and is merged once tested. Never upload game files (XML, art, audio, saves, logs).
