@@ -30,9 +30,9 @@ ap.add_argument("--out", required=True)
 ap.add_argument("--width", type=int, default=1920)
 ap.add_argument("--height", type=int, default=None, help="default 480 for the banner, 200 for the slogan")
 ap.add_argument("--samples", type=int, default=128)
-ap.add_argument("--mode", default="banner", choices=("banner", "slogan", "card"),
+ap.add_argument("--mode", default="banner", choices=("banner", "slogan", "card", "wide"),
                 help="banner: the city on its gold line; slogan: a strip with only the slogan, to go under it; "
-                     "card: the banner with the slogan below, as a 16:9 title card")
+                     "card: the banner with the slogan below, as a 16:9 title card; wide: the banner with the slogan above the city")
 ap.add_argument("--slogan", default="ONE CIVILIZATION \u00b7 ONE TIMELINE \u00b7 NO FORCED AGE TRANSITIONS")
 ap.add_argument("--font", default=r"C:\Windows\Fonts\PERTIBD.TTF")
 for b in ("castle", "tower", "dome", "houses", "factory"):
@@ -46,7 +46,7 @@ ap.add_argument("--glow", type=float, default=0.0, help="power of a warm sunset 
 ap.add_argument("--front", type=float, default=1.0, help="scales the front lamps")
 args = ap.parse_args(argv)
 if args.height is None:
-    args.height = {"banner": 480, "slogan": 200, "card": 1080}[args.mode]
+    args.height = {"banner": 480, "slogan": 200, "card": 1080, "wide": 640}[args.mode]
 
 scene = K.setup(args.width, args.height, args.samples, exposure=-0.1)
 K.init_materials()
@@ -115,7 +115,7 @@ def building(key, x, width, kit_build):
     return None
 
 
-if args.mode in ("banner", "card"):
+if args.mode in ("banner", "card", "wide"):
     # ---------------------------------------------------------------------------------------------------- the gold line and star
     # The logo's gold arc, straightened: a fine gold line left to right that the city stands on, the star at its middle.
     L0, L1 = -4.4, 4.4
@@ -138,11 +138,15 @@ if args.mode in ("banner", "card"):
 
 
 
-if args.mode in ("slogan", "card"):
+if args.mode in ("slogan", "card", "wide"):
     # ---------------------------------------------------------------------------------------------------- slogan
     MATTE_NAVY = K.material("Matte navy", (0.008, 0.02, 0.075, 1), 0.75)     # no sheen, so it stays dark and readable
-    K.text("Slogan", args.slogan, 0.17, 0.0, 0.0 if args.mode == "slogan" else -0.95, W - 0.01, 0.012, MATTE_NAVY,
-           args.font, spacing=1.12)
+    wide = args.mode == "wide"
+    slogan = K.text("Slogan", args.slogan, 0.255 if wide else 0.17, 0.0,
+                    {"slogan": 0.0, "card": -0.95, "wide": 2.22}[args.mode], W - 0.01, 0.014 if wide else 0.012,
+                    MATTE_NAVY, args.font, spacing=1.08 if wide else 1.12)
+    if wide:
+        slogan.data.offset = 0.0045          # bolder strokes: the wide banner's slogan spans the whole width
 if args.mode == "card":
     # The name above the city, as on the logo: CONTINUOUS in navy, CIVILIZATION in gold between gold rules.
     K.text("Title", "CONTINUOUS", 0.58, 0.0, 2.88, W - 0.02, 0.025, MATTE_NAVY, args.font, spacing=1.06)
@@ -184,7 +188,7 @@ if args.sun:
     # From behind the camera, a little left and above: shadows fall back onto the wall, not over the slogan.
     sun_ob.rotation_euler = mathutils.Vector((0.3, 0.9, -0.3)).normalized().to_track_quat("-Z", "Y").to_euler()
 
-if args.glow and args.mode in ("banner", "card"):
+if args.glow and args.mode in ("banner", "card", "wide"):
     # A sunrise behind the city: a wide orange oval on the wall, centred on the gold line, fading smoothly upward.
     K.add_wall_glow(wall_mat, 0.0, GROUND, 5.4, 2.6, 0.55, args.glow)
 cam_data = bpy.data.cameras.new("Camera")
@@ -193,7 +197,7 @@ cam_data.ortho_scale = 9.6                      # the banner's width; its height
 cam = bpy.data.objects.new("Camera", cam_data)
 K.COL.objects.link(cam)
 frame_h = 9.6 * args.height / args.width
-cam.location = (0.0, -12.0, {"banner": frame_h / 2 - 0.53, "slogan": 0.0, "card": 0.85}[args.mode])  # banner: ends below the star
+cam.location = (0.0, -12.0, {"banner": frame_h / 2 - 0.53, "slogan": 0.0, "card": 0.85, "wide": 1.0}[args.mode])  # banner: ends below the star
 cam.rotation_euler = (math.radians(90), 0, 0)
 scene.camera = cam
 K.render(scene, args.out)

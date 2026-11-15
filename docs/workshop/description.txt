@@ -1,8 +1,5 @@
 [img]https://raw.githubusercontent.com/ElChapoJoe/Continuous-Civilization/main/docs/images/workshop-banner.jpg[/img]
 
-[h1]Continuous Civilization (Beta)[/h1]
-[b]One Civilization. One Timeline. No Forced Age Transitions.[/b]
-
 What if Civilization VII let you guide your empire through history without ever stopping to begin a new Age? Continuous Civilization turns the three Ages into one unbroken campaign, from the first city to the space race, and every civilization moves into the next Age on its own research.
 
 [b]BETA:[/b] start a [b]new game[/b] after every update. Saves from one beta version may not load in the next.

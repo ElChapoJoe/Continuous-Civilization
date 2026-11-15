@@ -6,7 +6,7 @@ rendering** (both use the GPU heavily).
 | Script | Renders |
 |---|---|
 | `cc_logo_medallion.py` | The logo: a carved plaster medallion cut into a C, a skyline on its rim, the title below (Workshop preview) |
-| `cc_banner.py` | `--mode banner`: the city on a gold line with a star; `--mode slogan`: the slogan strip; `--mode card`: the 16:9 title card |
+| `cc_banner.py` | `--mode banner`: the city on a gold line with a star; `--mode slogan`: the slogan strip; `--mode card`: the 16:9 title card; `--mode wide`: the slogan over the city, for the top of the Workshop description |
 | `cc_kit.py` | Shared helpers: scene setup, materials (incl. photo marble and the sunrise wall glow), simple buildings |
 | `cc_building_refs.py` | Each kit building alone on white, as image references for an image-to-3D tool |
 | `cc_logo.py`, `cc_logo_base.py` | Earlier all-procedural logo attempts, kept for reference |
