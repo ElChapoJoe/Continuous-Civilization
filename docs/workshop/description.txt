@@ -38,7 +38,7 @@ The [b]Distant Lands[/b] across the Ocean are open from the start: you can meet 
 [tr][th]Victory[/th][th]How to win[/th][/tr]
 [tr][td]Science[/td][td]100 Science points and an undamaged Launch Pad, then a 5-turn countdown[/td][/tr]
 [tr][td]Culture[/td][td]150 Culture points, then a 5-turn countdown[/td][/tr]
-[tr][td]Economic[/td][td]12,000 Economic points, then a 5-turn countdown[/td][/tr]
+[tr][td]Economic[/td][td]8,000 Economic points, then a 5-turn countdown[/td][/tr]
 [tr][td]Military[/td][td]100 Military points (from the settlements you hold, more for conquered ones and capitals), then a 5-turn countdown[/td][/tr]
 [tr][td]Domination[/td][td]Capture every rival's original capital[/td][/tr]
 [/table]

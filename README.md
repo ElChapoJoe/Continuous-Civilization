@@ -92,7 +92,7 @@ The **Distant Lands** across the Ocean are open from the start: you can meet the
 |---|---|
 | 🚀 **Science** | 100 Science victory points and an undamaged Launch Pad, then a 5-turn countdown |
 | 🎭 **Culture** | 350 Culture victory points, then a 5-turn countdown |
-| 💰 **Economic** | 12,000 Economic victory points, then a 5-turn countdown |
+| 💰 **Economic** | 8,000 Economic victory points, then a 5-turn countdown |
 | ⚔️ **Military** | 100 Military victory points (from the settlements you hold, more for conquered ones and capitals), then a 5-turn countdown |
 | 🗡️ **Domination** | Capture every rival's original capital |
 
@@ -116,7 +116,6 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 
 - **Score victory** is decided when the final Age ends, which never happens here.
 - **Triumphs (legacy paths):** two Triumphs can't be completed: one needs Treasure Fleets and the Modern one that grants John Maynard Keynes needs Factory resources, both not yet included. Launch Rocket requires the three earlier space projects instead of the Science legacy path.
-- **AIs waste some Wildcard attribute points.** An AI that has Wildcard points (Ibn Battuta, or from some narrative rewards) spends some of them on Dedications in the attribute screen, which do nothing for an AI; in a test game Ibn Battuta's AI lost about 5 of his 12. The Dedications an AI earns still apply automatically.
 - **Diplomacy costs don't scale by Age.** Shared actions keep Antiquity's Influence costs, which vanilla doubles in Exploration and triples in Modern.
 - **Later-Age resources can be spotted on the map early.** They do nothing until you research them, and their icons are hidden, but the engine still draws their 3D models and builds their own improvement on the tile, for example an Oil Rig on Oil in Antiquity. The improvement starts working once you have the tech. (During an AI autoplay a few of their icons can also appear.)
 - **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look, because the engine draws them from a single game-wide Age. Buildings, wonders and units from later Ages use their own art. [Details](docs/visual-progression-investigation.md).

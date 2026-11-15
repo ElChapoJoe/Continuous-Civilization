@@ -34,11 +34,11 @@ The same game was then continued from turn 138 with the Culture victory switched
 Science (Rome) was won on turn 184. The target is now 350: the strongest Culture civ (Rome, 22 wonders) would cross
 it around turn 171 and win around 176, just ahead of Science; the second-best Culture civ would not have reached it.
 
-## Economic (12,000) and Military (100): measured, not changed
+## Economic: 12,000 to 8,000. Military (100): not changed
 
 - **Economic** grew about 85 points a turn for the leader between turns 140 and 191 (4,076 to 8,324). At that rate
   the leader reaches 12,000 around turn 235, about 50 turns after the Science win. Economic is out of reach in a game
-  that ends on time. A target near 8,000 would match Science in this game; left for the balancing pass.
+  that ends on time. The target is now 8,000, which this game's leader would cross around turn 187, near the Science win.
 - **Military** stayed at 70 or below from turn 160 on (settlements held, no big conquests). That is by design: 100
   is above what an empire scores within its settlement cap, so it takes conquest. No AI went for it here.
 
@@ -91,7 +91,7 @@ Compared with this mod (Online):
 - **Culture.** Vanilla's leader has 336 at the very end. 350 is in the same range, but this mod gets there sooner
   (345 by turn 170 in game 1, 450 by turn 151 in game 2), because wonders and buildings are never lost to an Age
   transition and all Triumphs count from the personal Age on.
-- **Economic.** Vanilla's leader ends with 4,646; this mod's leader had 8,324 at turn 191. 12,000 is far above both.
+- **Economic.** Vanilla's leader ends with 4,646; this mod's leader had 8,324 at turn 191. 12,000 was far above both; hence 8,000.
 - **Military.** Vanilla's leader ends with 77 (Siam reached 100 only after the Score victory); this mod's leaders sat
   at 61-97. 100 matches "takes conquest" in both.
 - **Science points** are not comparable: vanilla's Science victory is the rocket, and vanilla's points come mostly from

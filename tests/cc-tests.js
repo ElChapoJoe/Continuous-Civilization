@@ -327,7 +327,11 @@
   };
   // Ocean crossing and Distant Lands (beta feedback, 72-exploration-rules.sql). Live checks use player pid's units and
   // revealed plots: reveal the map and give the player Cartography (or Shipbuilding mastery for military units) first.
+  // The player a live check reads: the one asked for (or the local player) while alive, else the first living major civ.
+  // In an AI autoplay the local player's civ can be conquered (GameContext.localPlayerID is then -1).
+  const livePlayer = (pid) => (pid >= 0 && Players.get(pid)?.isAlive ? pid : Players.getAliveMajorIds()[0]);
   CC.distantLands = function (pid = 0) {
+    pid = livePlayer(pid);
     const r = { checks: {} };
     r.checks.distantLandsOpen = { pass: GameInfo.Ages.lookup("AGE_ANTIQUITY")?.NoVictoriesSecondaryHemisphere === false };
     const inv = GameInfo.Modifiers.lookup("AGE_ANTIQUITY_MOD_OCEAN_TERRAIN_INVALID");
@@ -385,7 +389,7 @@
     const badUnlocks = A(GameInfo.ProgressionTreeNodeUnlocks).filter((u) => u.TargetKind === "KIND_UNIT" && !GameInfo.Units.lookup(u.TargetType)).length;
     r.checks.noDanglingUnitUnlocks = { pass: badUnlocks === 0, badUnlocks };
     // Phase 3.2: a node with nothing to unlock is "can never unlock" and the tree screen hides it (and its links).
-    const hidden = tech.filter((n) => Game.ProgressionTrees.canEverUnlock(GameContext.localPlayerID, n.$hash).isLocked).map((n) => n.ProgressionTreeNodeType);
+    const hidden = tech.filter((n) => Game.ProgressionTrees.canEverUnlock(livePlayer(GameContext.localPlayerID), n.$hash).isLocked).map((n) => n.ProgressionTreeNodeType);
     r.checks.allModernTechsShown = { pass: hidden.length === 0, hidden };
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
@@ -468,7 +472,7 @@
     r.checks.rocketNeedsSpaceProjects = { pass: !!rocket && !rocket.RequireCompletedLegacyPathType && pre.length === 3, pre };
     r.checks.notSingleAge = { pass: !Game.AgeProgressManager.isSingleAge };
     r.checks.cultureFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_CULTURE_MODERN")) === 350 };
-    r.checks.economicFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_ECONOMIC_MODERN")) === 12000 };
+    r.checks.economicFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_ECONOMIC_MODERN")) === 8000 };
     r.checks.militaryFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_MILITARY_MODERN")) === 100 };
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
