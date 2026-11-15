@@ -7,6 +7,9 @@
 //   * Naval units open the discovery lens while you are in Exploration, as in vanilla's Exploration.
 //   * Unlocks screen: shows only the Ageless tab, as vanilla does in the final Age. Its Civilizations and Rewards
 //     tabs are for Age transitions, which never happen here.
+//   * Victories screen, Culture tab: the bars span the turns played so far (they were scaled to the Age meter,
+//     which never fills here, so every point sat at 0%). Summary tab: the Science goal shows (vanilla hides it in
+//     Antiquity).
 // Left alone on purpose:
 //   * The trade route chooser's Modern mode also changes how routes are made; the engine runs Antiquity's trade rules
 //     here, so its Antiquity mode matches what the game does.
@@ -64,6 +67,48 @@ registerUnitLensSelector((unit) => {
   const def = GameInfo.Units.lookup(unit.type);
   return def?.FormationClass == "FORMATION_CLASS_NAVAL" && localAge() === 1 ? "fxs-discovery-lens" : void 0;
 });
+
+// Victories screen, Culture tab: each civ's bar places its points by the turn they were earned, divided by the Age
+// progress maximum. This mod keeps the Age meter at 0 of a huge maximum (data/10-age-clock.sql) so the Age never
+// ends, which put every point at 0% of the bar. For calls from the victories screen only, the Age progress reads as
+// "turns played so far", so the bar spans the whole game. Everywhere else the engine's values are unchanged.
+try {
+  const apm = Game.AgeProgressManager;
+  const proto = Object.getPrototypeOf(apm);
+  if (!proto.__ccAgeUi) {
+    const fromVictoriesScreen = () => /victories-screen-model\.js/.test(new Error().stack || "");
+    const getMax = proto.getMaxAgeProgressionPoints, getCurrent = proto.getCurrentAgeProgressionPoints;
+    proto.getMaxAgeProgressionPoints = function () {
+      return fromVictoriesScreen() ? Math.max(1, Game.turn) : getMax.call(this);
+    };
+    proto.getCurrentAgeProgressionPoints = function () {
+      return fromVictoriesScreen() ? Math.max(1, Game.turn) : getCurrent.call(this);
+    };
+    Object.defineProperty(proto, "__ccAgeUi", { value: true });
+  }
+} catch (e) {
+  console.error("cc-age-ui: victories screen: " + e);
+}
+
+// Victories screen, Summary tab: vanilla hides the Science goal (shows -1 and a "locked" tooltip) while the game Age
+// is Antiquity, where the space race can't happen. Here it can, so that one check (victories-screen-model.js line 563
+// as of Nov 2026: `GameInfo.Ages.lookup(Game.age)?.AgeType === "AGE_ANTIQUITY"` for the Science class) gets the
+// Modern Age instead. Matched by its line in the call stack: if a game patch moves it, the card just shows -1 again.
+try {
+  const ages = GameInfo.Ages;
+  if (!ages.__ccAgeUi) {
+    const lookup = ages.lookup;
+    ages.lookup = function (key) {
+      if (key === Game.age && /victories-screen-model\.js:563:/.test(new Error().stack || "")) {
+        return lookup.call(this, "AGE_MODERN");
+      }
+      return lookup.call(this, key);
+    };
+    Object.defineProperty(ages, "__ccAgeUi", { value: true });
+  }
+} catch (e) {
+  console.error("cc-age-ui: victories summary: " + e);
+}
 
 /** Unlocks screen: patch its class once it is defined. */
 function patchUnlocks() {

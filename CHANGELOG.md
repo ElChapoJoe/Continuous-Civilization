@@ -26,6 +26,7 @@ Saves from one beta version may not load in the next. Start a new game after upd
 
 ### Fixed
 - Interface parts that vanilla switches by the game Age now follow your personal Age, instead of staying in Antiquity mode all game ([audit](docs/audit-age-gated-mechanics.md) #17): the diplomacy ribbon shows each civilization's religion (and ideology, once chosen) when you hover it; naval units open the discovery lens while you are in Exploration; the Unlocks screen no longer lists next-Age civilizations and rewards (there are no Age transitions). Tested in game. Left as they are on purpose: the trade route chooser (its Antiquity mode matches the trade rules the game runs here) and the continent lens (its later views are about Treasure resources and ruins left by Age transitions, which this mod doesn't have).
+- Victories screen: the Culture tab's bars now span the turns played so far; every civilization's points used to sit in one pile at 0%, because the bars were scaled to the Age meter, which never fills here. The Summary tab shows the Science goal (100) instead of -1 and a "locked" tooltip, which vanilla shows in Antiquity. Tested in game.
 
 ## 0.1.1-beta (21) - fixes from beta feedback
 
