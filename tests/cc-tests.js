@@ -328,6 +328,9 @@
     const gmIds = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
     r.checks.oceanEndsMove = { pass: oceanEnds === 6 && gmIds.includes("CC_MORULE_CC_MO_OCEAN_MOVES"), oceanEnds };
     r.checks.featureProduction = { pass: wr.includes("CC_EXRULE_CC_EX_FEATURE_PRODUCTION") };
+    const gp = (n) => A(GameInfo.GlobalParameters).find((g) => g.Name === n)?.Value;
+    r.checks.oceanDamage = { pass: String(gp("PLOT_WATER_DAMAGE_BASE")) === "11" && String(gp("PLOT_WATER_DAMAGE_RAND")) === "10"
+      && !!GameInfo.Modifiers.lookup("MOD_TECH_EX_NO_OCEAN_DAMAGE"), base: gp("PLOT_WATER_DAMAGE_BASE"), rand: gp("PLOT_WATER_DAMAGE_RAND") };
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };

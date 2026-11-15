@@ -78,6 +78,13 @@ INSERT OR IGNORE INTO UnitMovementClassObstacles (UnitMovementClass, TerrainType
   ('UNIT_MOVEMENT_CLASS_TRACKED', 'TERRAIN_OCEAN', 1), ('UNIT_MOVEMENT_CLASS_RECON', 'TERRAIN_OCEAN', 1),
   ('UNIT_MOVEMENT_CLASS_MOUNTED', 'TERRAIN_OCEAN', 1), ('UNIT_MOVEMENT_CLASS_FOOT', 'TERRAIN_OCEAN', 1);
 
+-- Ocean damage: vanilla Exploration sets PLOT_WATER_DAMAGE_BASE 11 / _RAND 10 (11-21 per turn on Ocean, until the
+-- Shipbuilding tech's MOD_TECH_EX_NO_OCEAN_DAMAGE, imported with the tech tree, protects the player's units);
+-- Antiquity and Modern keep the engine default 0 / 20. Only players in their personal Exploration or later can enter
+-- Ocean here, so Exploration's values apply game-wide (a Modern player who skipped Shipbuilding takes them too).
+UPDATE GlobalParameters SET Value = '11' WHERE Name = 'PLOT_WATER_DAMAGE_BASE';
+UPDATE GlobalParameters SET Value = '10' WHERE Name = 'PLOT_WATER_DAMAGE_RAND';
+
 -- Feature yields (audit #19): vanilla's Exploration and Modern terrain tables give +1 Production more on Oasis and
 -- Watering Hole (2 instead of 1) and +1 on Marsh, Mangrove and Tundra Bog (none in Antiquity). The table is global,
 -- so it is added per player from their personal Exploration on (stays through Modern).

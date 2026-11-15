@@ -71,9 +71,10 @@ everyone. Effort is a rough guess.
 
 1. **How `ScaleByGameAge` scales** (#2): by the global Age (assumed) or the player's, and by how much. Read a leader
    tooltip (Isabella, Hatshepsut) for a player in personal Modern.
-2. **Ocean attrition for embarked units.** Exploration sets `PLOT_WATER_DAMAGE_BASE` 11 / `_RAND` 10
-   (`age-exploration/data/gameplay-systems.xml:19-20`); Antiquity uses the engine default, unknown. Now that land
-   units can cross the Ocean, check the damage per turn on Ocean.
+2. **Ocean attrition for embarked units**, answered: the engine default is `PLOT_WATER_DAMAGE_BASE` 0 / `_RAND` 20
+   (Antiquity and Modern); Exploration sets 11 / 10 (`age-exploration/data/gameplay-systems.xml:19-20`). Since 0.2.0
+   `72-exploration-rules.sql` uses Exploration's values game-wide (only players in Exploration or later reach Ocean);
+   Shipbuilding's `MOD_TECH_EX_NO_OCEAN_DAMAGE` protects units as in vanilla. Tested: a Carrack took 17 on Ocean.
 3. **Overbuilding** (#8), answered: the engine never offers a building tile (`calculateAllBuildingsPlacements` lists only improvements as overbuilt); `ui/cc-overbuild.js` works around it. Was: whether the engine refuses to place a building on a tile with an Antiquity building, as
    the UI code suggests.
 4. **Treasure Fleet action** (#1): what Establish Treasure Fleet (unlocked at Cartography by `78`) does without the
