@@ -124,3 +124,36 @@ civic trees for its kind and personal Age at the end (own tree in its own Age, T
 Against Civ VI's turn limit for Online (250), wins around 200-250 would fill 80-100% of it; this game ended at 192.
 In autoplay vanilla's end-game screen fails to open (it reads the local player, who is an observer during autoplay);
 in a normal game the human slot exists.
+
+## Full run 2: with celebration and wonder scoring by Age, overbuilding, Ocean rules (2026-11-15)
+
+A fresh game with every later 0.2.0 change: Culture points for wonders by their Age (4 / 8 / 12) and for
+celebrations by personal Age (2 / 4 / 6), overbuilding, Ocean movement, damage and feature yields as in vanilla.
+Same settings (Online, Small Continents, Emperor), different AI civs: Rome, Abbasids, Great Britain, America,
+Songhai, Russia. AI autoplay to turn 179. No crash; no mod or database errors in the logs; all 23 test suites pass on
+the final turn. Saved as `CC-0.2.0-full-run2-T179`.
+
+| Turn | Culture 1st / 2nd | Science 1st | Economic 1st | Military 1st |
+|---|---|---|---|---|
+| 86 | 56 / 34 | 27 | 540 | 33 |
+| 102 | 120 / 51 | 37 | 1,146 | 50 |
+| 123 | 182 / 133 | 69 | 2,362 | 50 |
+| 131 | 192 / 144 | 82 | 4,058 | 53 |
+| 142 | 224 / 171 | 98 | 4,883 | 66 |
+| 153 | 279 / 209 | 104 | 5,880 | 66 |
+| 171 | 312 / 224 | 107 | 6,349 | 66 |
+
+**Russia won a Science victory on turn 157**, 35 turns earlier than full run 1 (192). Russia also led Culture (about
+290 at turn 157, 312 at 171), so the leader would have reached 350 around turn 175-180. America was second through
+walls: a Dedication's +2 per fortification gave it 82 points from 41 walls.
+
+Where Russia's 312 Culture points came from (turn 171): celebrations 102 (Antiquity row 19 x 2, Exploration 18 x 2,
+Modern 14 x 2; before 0.2.0's celebration fix only the first 38 would have counted), Manifesto 56 (14 x 4), wonders
+about 90 (4 each, plus 8 more for each of 5 Exploration/Modern wonders), Future Civic 20, natural wonder and relics
+16, others. The new scoring adds roughly a third to the Culture leader's points.
+
+Songhai's Economic jumped from 2,362 to 4,058 between turns 123 and 131 and reached 6,349 by 171, the fastest
+Economic seen so far, still short of 8,000. Military stayed at 66 or below.
+
+Compared with run 1 the two wins came 35 turns apart (157 and 192) with the same settings, so the target tuning
+reads one game at a time only loosely; Culture stayed behind Science in both, by about 20 turns in this one.
