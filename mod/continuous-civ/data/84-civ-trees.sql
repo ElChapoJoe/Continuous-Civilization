@@ -9,6 +9,11 @@
 --   2) Each tree is revealed to its civilization once that civ is in the tree's personal Age (Exploration trees in
 --      its Exploration, Modern trees in its Modern), with the same effect vanilla uses.
 -- Antiquity's Test of Time tree (the Origins civics) stays, as in vanilla's Antiquity for these civs.
+--   3) Test of Time for civs that are not of an Age (vanilla gives its shared tree to TRAIT_ANACHRONISTIC_CIV, the civs
+--      not of the current Age): the Exploration Test of Time tree is revealed to a civ in its personal Exploration that
+--      is not an Exploration civ (Antiquity civs, with their Renaissance civic; Modern civs, with their Exploration
+--      civics), and the Modern one to a civ in its personal Modern that is not a Modern civ. Both trees hold vanilla's
+--      per-civ civics (RequiredTraitType) and Syncretism.
 
 -- The Modern tree file uses a requirement that vanilla defines in civilizations-modern.xml (not imported): Russia's
 -- REQSET_TUNDRA_TOWN needs "city center on Tundra". Defined here as vanilla does (the set itself is in base-standard).
@@ -66,3 +71,41 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value)
 INSERT INTO GameModifiers (ModifierId) SELECT 'CC_REVEALRULE_' || TreeType FROM cc_civ_trees;
 
 DROP TABLE cc_civ_trees;
+
+-- 3) Test of Time trees by personal Age, for civs not of that Age.
+DROP TABLE IF EXISTS cc_tot_trees;
+CREATE TABLE cc_tot_trees (TreeType TEXT PRIMARY KEY, Age TEXT, AgeType TEXT);
+INSERT INTO cc_tot_trees (TreeType, Age, AgeType)
+  SELECT ProgressionTreeType, CASE WHEN ProgressionTreeType = 'TREE_CIVICS_EX_TEST_OF_TIME' THEN 'EXPLORATION' ELSE 'MODERN' END,
+         CASE WHEN ProgressionTreeType = 'TREE_CIVICS_EX_TEST_OF_TIME' THEN 'AGE_EXPLORATION' ELSE 'AGE_MODERN' END
+  FROM ProgressionTrees WHERE ProgressionTreeType IN ('TREE_CIVICS_EX_TEST_OF_TIME', 'TREE_CIVICS_MO_TEST_OF_TIME');
+UPDATE ProgressionTrees SET AgeType = 'AGE_ANTIQUITY' WHERE ProgressionTreeType IN (SELECT TreeType FROM cc_tot_trees);
+-- "Is a civ of that Age": one requirement per civilization of the Age (its civ trait), used inverted.
+DROP TABLE IF EXISTS cc_age_civ_traits;
+CREATE TABLE cc_age_civ_traits (AgeType TEXT, TraitType TEXT, PRIMARY KEY (AgeType, TraitType));
+INSERT OR IGNORE INTO cc_age_civ_traits (AgeType, TraitType)
+  SELECT l.Age, 'TRAIT_' || substr(l.CivilizationType, length('CIVILIZATION_') + 1)
+  FROM LegacyCivilizations l WHERE l.Age IN ('AGE_EXPLORATION', 'AGE_MODERN');
+DELETE FROM cc_age_civ_traits WHERE TraitType NOT IN (SELECT TraitType FROM Traits);
+INSERT OR IGNORE INTO Requirements (RequirementId, RequirementType, Inverse)
+  SELECT 'CC_REQ_NOT_TRAIT_' || TraitType, 'REQUIREMENT_PLAYER_HAS_CIVILIZATION_OR_LEADER_TRAIT', 1 FROM cc_age_civ_traits;
+INSERT OR IGNORE INTO RequirementArguments (RequirementId, Name, Value)
+  SELECT 'CC_REQ_NOT_TRAIT_' || TraitType, 'TraitType', TraitType FROM cc_age_civ_traits;
+INSERT INTO RequirementSets (RequirementSetId, RequirementSetType)
+  SELECT 'CC_REQSET_TOTTREE_' || TreeType, 'REQUIREMENTSET_TEST_ALL' FROM cc_tot_trees;
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId)
+  SELECT 'CC_REQSET_TOTTREE_' || TreeType, 'CC_REQ_IN_' || Age FROM cc_tot_trees;
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId)
+  SELECT 'CC_REQSET_TOTTREE_' || t.TreeType, 'CC_REQ_NOT_TRAIT_' || c.TraitType
+  FROM cc_tot_trees t JOIN cc_age_civ_traits c ON c.AgeType = t.AgeType;
+INSERT INTO Modifiers (ModifierId, ModifierType)
+  SELECT 'CC_REVEAL_' || TreeType, 'CC_MODTYPE_PLAYER_REVEAL_CULTURE_TREE' FROM cc_tot_trees;
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+  SELECT 'CC_REVEAL_' || TreeType, 'ProgressionTreeType', TreeType FROM cc_tot_trees;
+INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId)
+  SELECT 'CC_REVEALRULE_' || TreeType, 'CC_MODTYPE_MAJORS_ATTACH', 'CC_REQSET_TOTTREE_' || TreeType FROM cc_tot_trees;
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+  SELECT 'CC_REVEALRULE_' || TreeType, 'ModifierId', 'CC_REVEAL_' || TreeType FROM cc_tot_trees;
+INSERT INTO GameModifiers (ModifierId) SELECT 'CC_REVEALRULE_' || TreeType FROM cc_tot_trees;
+DROP TABLE cc_tot_trees;
+DROP TABLE cc_age_civ_traits;

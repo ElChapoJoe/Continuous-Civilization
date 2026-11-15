@@ -80,6 +80,34 @@
 			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
 			<ModInUse>sengoku</ModInUse>
 		</Criteria>
+		<Criteria id="antiquity-with-assyria">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>assyria</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-babylon">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>babylon</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-carthage">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>carthage</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-gaul">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>gaul</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-heian">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>heian</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-silla">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>silla</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-tonga">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>tonga</ModInUse>
+		</Criteria>
 	</ActionCriteria>
 	<ActionGroups>
 		<!-- 1. Snapshot Antiquity state and remove primary-key collisions (generated). -->
@@ -140,6 +168,16 @@
 					<!-- Exploration civs' own civic trees; data/84-civ-trees.sql reveals each to its civ in its personal Exploration. -->
 					<Item>{age-exploration}data/progression-trees-culture-unique.xml</Item>
 					<Item>{age-exploration}data/progression-trees-culture-unique-gameeffects.xml</Item>
+					<!-- Test of Time, Exploration: the shared tree for civs not of this Age, its traditions, the Antiquity civs'
+					     Renaissance civics and the Exploration civs' Modern capstones (revealed by personal Age in 84). -->
+					<!-- Civ ability effects vanilla loads only in Exploration; 75-civ-abilities.sql attaches them by personal Age. -->
+					<Item>{age-exploration}data/civilizations-gameeffects.xml</Item>
+					<Item>{age-exploration}data/progression-trees-culture-tot-common.xml</Item>
+					<Item>{age-exploration}data/progression-trees-culture-tot-common-gameeffects.xml</Item>
+					<Item>{age-exploration}data/traditions-tot-exploration.xml</Item>
+					<Item>{age-exploration}data/traditions-tot-gameeffects-exploration.xml</Item>
+					<Item>{age-antiquity}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{age-antiquity}data/progression-trees-culture-unique-ex-gameeffects.xml</Item>
 					<Item>{age-exploration}data/diplomacy-actions.xml</Item>
 					<Item>{age-exploration}data/diplomacy-gameeffects.xml</Item>
 				</UpdateDatabase>
@@ -174,6 +212,20 @@
 					<!-- Modern civs' own civic trees; data/84-civ-trees.sql reveals each in its civ's personal Modern. -->
 					<Item>{age-modern}data/progression-trees-culture-unique.xml</Item>
 					<Item>{age-modern}data/progression-trees-culture-unique-gameeffects.xml</Item>
+					<!-- Test of Time, Modern: the shared tree, the Antiquity and Exploration civs' Modern capstones, and the
+					     Modern civs' Exploration civics (in the Exploration Test of Time tree above). -->
+					<!-- Civ ability effects vanilla loads only in Exploration / Modern; 75-civ-abilities.sql attaches them. -->
+					<Item>{age-modern}data/civilizations-exploration-gameeffects.xml</Item>
+					<Item>{age-modern}data/civilizations-gameeffects.xml</Item>
+					<Item>{age-modern}data/civilizations-modern-gameeffects.xml</Item>
+					<Item>{age-modern}data/progression-trees-culture-tot-common.xml</Item>
+					<Item>{age-modern}data/progression-trees-culture-tot-common-gameeffects.xml</Item>
+					<Item>{age-antiquity}data/progression-trees-culture-unique-mo.xml</Item>
+					<Item>{age-antiquity}data/progression-trees-culture-unique-mo-gameeffects.xml</Item>
+					<Item>{age-exploration}data/progression-trees-culture-unique-mo.xml</Item>
+					<Item>{age-exploration}data/progression-trees-culture-unique-mo-gameeeffects.xml</Item>
+					<Item>{age-modern}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{age-modern}data/progression-trees-culture-unique-ex-gameeffects.xml</Item>
 					<Item>{age-modern}data/governments.xml</Item>
 					<Item>{age-modern}data/golden-ages.xml</Item>
 					<Item>{age-modern}data/golden-ages-gameeffects.xml</Item>
@@ -275,6 +327,8 @@
 					<Item>{bulgaria}data/constructibles.xml</Item>
 					<Item>{bulgaria}data/constructibles-gameeffects.xml</Item>
 					<Item>{bulgaria}data/progression-trees-culture-unique.xml</Item>
+					<Item>{bulgaria}data/progression-trees-culture-unique-mo.xml</Item>
+					<Item>{bulgaria}data/civilizations-gameeffects.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -287,6 +341,8 @@
 					<Item>{shawnee-tecumseh}data/constructibles.xml</Item>
 					<Item>{shawnee-tecumseh}data/constructibles-gameeffects.xml</Item>
 					<Item>{shawnee-tecumseh}data/progression-trees-culture-unique.xml</Item>
+					<Item>{shawnee-tecumseh}data/progression-trees-culture-unique-mo.xml</Item>
+					<Item>{shawnee-tecumseh}data/civilizations-gameeffects.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -299,6 +355,7 @@
 					<Item>{great-britain}data/constructibles.xml</Item>
 					<Item>{great-britain}data/constructibles-gameeffects.xml</Item>
 					<Item>{great-britain}data/progression-trees-culture-unique.xml</Item>
+					<Item>{great-britain}data/civilizations-gameeffects.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -311,6 +368,8 @@
 					<Item>{nepal}data/constructibles-modern.xml</Item>
 					<Item>{nepal}data/constructibles-gameeffects.xml</Item>
 					<Item>{nepal}data/progression-trees-culture-unique.xml</Item>
+					<Item>{nepal}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{nepal}data/civilizations-gameeffects.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -321,6 +380,8 @@
 			<Actions>
 				<UpdateDatabase>
 					<Item>{dai-viet}data/progression-trees-culture-unique.xml</Item>
+					<Item>{dai-viet}data/progression-trees-culture-unique-mo.xml</Item>
+					<Item>{dai-viet}data/civilizations-gameeffects.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -329,6 +390,8 @@
 			<Actions>
 				<UpdateDatabase>
 					<Item>{england}data/progression-trees-culture-unique.xml</Item>
+					<Item>{england}data/progression-trees-culture-unique-mo.xml</Item>
+					<Item>{england}data/civilizations-gameeffects.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -337,6 +400,7 @@
 			<Actions>
 				<UpdateDatabase>
 					<Item>{goryeo}data/progression-trees-culture-unique.xml</Item>
+					<Item>{goryeo}data/progression-trees-culture-unique-mo.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -345,6 +409,8 @@
 			<Actions>
 				<UpdateDatabase>
 					<Item>{iceland}data/progression-trees-culture-unique.xml</Item>
+					<Item>{iceland}data/progression-trees-culture-unique-mo.xml</Item>
+					<Item>{iceland}data/civilizations-gameeffects.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -361,6 +427,7 @@
 			<Actions>
 				<UpdateDatabase>
 					<Item>{ottomans}data/progression-trees-culture-unique.xml</Item>
+					<Item>{ottomans}data/progression-trees-culture-unique-ex.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -369,6 +436,8 @@
 			<Actions>
 				<UpdateDatabase>
 					<Item>{pirate-republic}data/progression-trees-culture-unique.xml</Item>
+					<Item>{pirate-republic}data/progression-trees-culture-unique-mo.xml</Item>
+					<Item>{pirate-republic}data/civilizations-gameeffects.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -377,6 +446,8 @@
 			<Actions>
 				<UpdateDatabase>
 					<Item>{qajar}data/progression-trees-culture-unique.xml</Item>
+					<Item>{qajar}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{qajar}data/civilizations-gameeffects.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -385,6 +456,78 @@
 			<Actions>
 				<UpdateDatabase>
 					<Item>{sengoku}data/progression-trees-culture-unique.xml</Item>
+					<Item>{sengoku}data/progression-trees-culture-unique-mo.xml</Item>
+					<Item>{sengoku}data/civilizations-gameeffects.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC assyria: its Test of Time civics (owners only). -->
+		<ActionGroup id="cc-import-dlc-assyria" scope="game" criteria="antiquity-with-assyria">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{assyria}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{assyria}data/progression-trees-culture-unique-mo.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC babylon: its Test of Time civics (owners only). -->
+		<ActionGroup id="cc-import-dlc-babylon" scope="game" criteria="antiquity-with-babylon">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{babylon}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{babylon}data/progression-trees-culture-unique-mo.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC carthage: its Test of Time civics (owners only). -->
+		<ActionGroup id="cc-import-dlc-carthage" scope="game" criteria="antiquity-with-carthage">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{carthage}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{carthage}data/progression-trees-culture-unique-mo.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC gaul: its Test of Time civics (owners only). -->
+		<ActionGroup id="cc-import-dlc-gaul" scope="game" criteria="antiquity-with-gaul">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{gaul}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{gaul}data/progression-trees-culture-unique-mo.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC heian: its Test of Time civics (owners only). -->
+		<ActionGroup id="cc-import-dlc-heian" scope="game" criteria="antiquity-with-heian">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{heian}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{heian}data/progression-trees-culture-unique-mo.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC silla: its Test of Time civics (owners only). -->
+		<ActionGroup id="cc-import-dlc-silla" scope="game" criteria="antiquity-with-silla">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{silla}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{silla}data/progression-trees-culture-unique-mo.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC tonga: its Test of Time civics (owners only). -->
+		<ActionGroup id="cc-import-dlc-tonga" scope="game" criteria="antiquity-with-tonga">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{tonga}data/progression-trees-culture-unique-ex.xml</Item>
+					<Item>{tonga}data/progression-trees-culture-unique-mo.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -437,6 +580,7 @@
 					<Item>data/70-personal-age.sql</Item>
 					<Item>data/72-exploration-rules.sql</Item>
 					<Item>data/74-modern-rules.sql</Item>
+					<Item>data/75-civ-abilities.sql</Item>
 					<Item>data/76-victories.sql</Item>
 					<Item>data/78-diplomacy.sql</Item>
 					<Item>data/79-leader-attributes.sql</Item>

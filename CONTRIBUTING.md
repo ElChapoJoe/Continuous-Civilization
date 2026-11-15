@@ -17,7 +17,7 @@ The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game 
 | Path | Contents |
 |---|---|
 | `mod/continuous-civ/` | The mod: `.modinfo`, SQL data changes (`data/`), text (`text/`), UI scripts (`ui/`) |
-| `tools/` | Generators: `gen_dedupe.py` (resolves clashes between Ages' data), `gen_modern_resources.py`, `gen_dedications.py` (Dedication cards), `survey_imports.py`, `age-audit.js`. Dev loop (PowerShell, see below): `deploy.ps1`, `restart-civ.ps1`, `wait-civ.ps1`, `watch-autoplay.ps1`, `scan-logs.ps1`, `civ-status.ps1` (shared paths in `civ7-common.ps1`) |
+| `tools/` | Generators: `gen_dedupe.py` (resolves clashes between Ages' data), `gen_modern_resources.py`, `gen_dedications.py` (Dedication cards), `gen_civ_abilities.py` (civ abilities per Age, with `civ_abilities_logic.sql`), `survey_imports.py`, `age-audit.js`. Dev loop (PowerShell, see below): `deploy.ps1`, `restart-civ.ps1`, `wait-civ.ps1`, `watch-autoplay.ps1`, `scan-logs.ps1`, `civ-status.ps1` (shared paths in `civ7-common.ps1`) |
 | `tests/cc-tests.js` | In-game test suites for the game's debug console (`CC.db()`, `CC.modernTrees()`, `CC.victories()`, `CC.diplomacy()`, `CC.worldAge()` and more); `tests/run-all-suites.js` runs them all and lists failing checks |
 | `tests/cc-dev.js` | Debug-console helpers: `CCDev.status()`, `.victory()`, `.costs()`, `.load()`, `.save()`, `.newGame()`, `.autoplay()`, `.grant()` and more |
 | `docs/` | Engine investigation, phase plans, test reports and README images |
@@ -29,6 +29,7 @@ The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game 
   python -I tools/gen_dedupe.py
   python -I tools/gen_modern_resources.py
   python -I tools/gen_dedications.py
+  python -I tools/gen_civ_abilities.py
   ```
 - Dev loop (run the scripts with `powershell -ExecutionPolicy Bypass -File tools\<script>.ps1`):
   1. `civ-status.ps1`: game running?, UI page (menu or game), a stuck crash reporter, whether the deployed mod matches the project, newest saves and crash dumps.

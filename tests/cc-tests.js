@@ -622,6 +622,19 @@
     r.checks.treesImported = { pass: bad.length === 0, bad };
     const rules = A(GameInfo.Modifiers).filter((m) => m.ModifierId.startsWith("CC_REVEALRULE_TREE_")).length;
     r.checks.revealRules = { pass: rules >= 20, rules };
+    // Test of Time trees of Exploration and Modern, for civs not of that Age, with the per-civ civics in them.
+    const tot = ["TREE_CIVICS_EX_TEST_OF_TIME", "TREE_CIVICS_MO_TEST_OF_TIME"];
+    const totBad = tot.filter((t) => GameInfo.ProgressionTrees.lookup(t)?.AgeType !== "AGE_ANTIQUITY" || !GameInfo.Modifiers.lookup("CC_REVEALRULE_" + t));
+    const perCiv = ["NODE_CIVIC_EX_ROMAN_RENAISSANCE", "NODE_CIVIC_EX_SYNCRETISM_CHOICE"].filter((n) => !GameInfo.ProgressionTreeNodes.lookup(n));
+    r.checks.testOfTimeTrees = { pass: totBad.length === 0 && perCiv.length === 0, totBad, missingNodes: perCiv };
+    // Civ abilities per personal Age (75-civ-abilities.sql): Abbasid's Test of Time ability only in Antiquity, its
+    // real one only in Exploration; Rome's Antiquity-only wonder bonus gated; abilities kept in all Ages untouched.
+    const tm = (t) => A(GameInfo.TraitModifiers).filter((x) => x.TraitType === t).map((x) => x.ModifierId);
+    const ab = tm("TRAIT_ABBASID_ABILITY"), rome = tm("TRAIT_ROME_ABILITY");
+    const owner = (id) => GameInfo.Modifiers.lookup(id)?.OwnerRequirementSetId;
+    r.checks.abilitiesByAge = { pass: owner("CC_AB_AQ_TRAIT_MOD_TOT_AQ_GOLD_SPECIALISTS") === "CC_REQSET_ABAGE_AQ" && ab.includes("CC_AB_AQ_TRAIT_MOD_TOT_AQ_GOLD_SPECIALISTS")
+      && ab.includes("CC_AB_EX_TRAIT_MOD_GOLD_SPECIALISTS") && !ab.includes("TRAIT_MOD_TOT_AQ_GOLD_SPECIALISTS")
+      && rome.includes("TRAIT_MOD_TWELVE_TABLES_TOWN_INFANTRY"), abbasid: ab.length, rome: rome.length };
     const live = [];
     for (const id of Players.getAliveMajorIds()) {
       const p = Players.get(id);
