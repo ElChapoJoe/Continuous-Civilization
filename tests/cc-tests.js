@@ -86,7 +86,8 @@
   CC.gating = function (pid) {
     const p = Players.get(pid); const out = { pid, violations: [], trainable: [], buildable: [] };
     const city = p.Cities.getCities()[0]; if (!city) return { pid, pass: null, note: "no city" };
-    const researched = (n) => p.Techs.isNodeUnlocked(node(n).$hash);
+    // Node state works for techs and civics alike (Techs.isNodeUnlocked is false for every civic, e.g. Piety).
+    const researched = (n) => Game.ProgressionTrees.getNodeState(pid, node(n).$hash) >= 4;
     for (const u of exUnlocks("KIND_UNIT")) {
       const d = GameInfo.Units.lookup(u.target); if (!d) continue;
       const ok = Game.CityOperations.canStart(city.id, CityOperationTypes.BUILD, { UnitType: d.$index }, false)?.Success;
@@ -336,20 +337,25 @@
     for (let x = 0; x < GameplayMap.getGridWidth(); x++) for (let y = 0; y < GameplayMap.getGridHeight(); y++) {
       if (!GameplayMap.isWater(x, y) && p.isDistantLands({ x, y }) && p.Diplomacy.isValidLandClaimLocation({ x, y }, true)) claims++;
     }
-    r.checks.distantSettleSpots = { pass: claims > 0, count: claims };
-    // Every land unit with deep-water embarkation must find a path to the nearest Ocean plot (within 3 tiles).
+    // Late in a game the free spots may all be taken; settlements already in the Distant Lands count as proof too.
+    let distantCities = 0;
+    for (const id of Players.getAliveMajorIds()) for (const c of Players.get(id).Cities.getCities()) if (Players.get(id).isDistantLands(c.location)) distantCities++;
+    r.checks.distantSettleSpots = { pass: claims > 0 || distantCities > 0, count: claims, distantCities };
+    // Every land unit with deep-water embarkation must find a path to an unoccupied Ocean plot within 3 tiles (any of
+    // them: a single plot can be blocked by units or borders for reasons unrelated to the Ocean rule).
     const deep = Database.makeHash("UNIT_EMBARKATION_DEEP_WATER");
     const blocked = [], tested = [];
     for (const u of p.Units.getUnits()) {
       if (u.embarkationType !== deep) continue;
       const { x: ux, y: uy } = u.location;
-      let q = null;
-      for (let x = ux - 3; x <= ux + 3 && !q; x++) for (let y = uy - 3; y <= uy + 3; y++) {
-        if (y >= 0 && y < GameplayMap.getGridHeight() && GameplayMap.getPlotDistance(ux, uy, x, y) <= 3 && terr({ x, y }) === "TERRAIN_OCEAN") { q = { x, y }; break; }
+      const targets = [];
+      for (let x = ux - 3; x <= ux + 3; x++) for (let y = uy - 3; y <= uy + 3; y++) {
+        if (y >= 0 && y < GameplayMap.getGridHeight() && GameplayMap.getPlotDistance(ux, uy, x, y) <= 3 && terr({ x, y }) === "TERRAIN_OCEAN"
+          && MapUnits.getUnits(x, y).length === 0) targets.push({ x, y });
       }
-      if (!q) continue;
+      if (!targets.length) continue;
       tested.push(unitName(u.type));
-      if (!(Units.getPathTo(u.id, q)?.plots || []).length) blocked.push(unitName(u.type));
+      if (!targets.some((q) => (Units.getPathTo(u.id, q)?.plots || []).length)) blocked.push(unitName(u.type));
     }
     r.checks.deepWaterUnitsEnterOcean = { pass: tested.length > 0 && blocked.length === 0, tested, blocked };
     r.pass = Object.values(r.checks).every((c) => c.pass);
