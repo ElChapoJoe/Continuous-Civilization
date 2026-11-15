@@ -112,6 +112,9 @@ INSERT INTO TraitModifiers (TraitType, ModifierId) SELECT 'TRAIT_LEADER_MAJOR_CI
 -- 2) The Dedications attribute tree: one node per card, unlocking the card's modifiers.
 INSERT INTO Types (Type, Kind) VALUES
   ('ATTRIBUTE_CC_DEDICATION', 'KIND_ATTRIBUTE'), ('TREE_ATTRIBUTE_CC_DEDICATION', 'KIND_TREE');
+-- Known issue: an AI with Wildcard points spends some on Dedication nodes, first ones it rates highly (Modern
+-- Scientific cards, whose effects include victory points), which do nothing for an AI (Ibn Battuta: about 5 of 12). Neither RevealRequirementSetId (player is human) on
+-- the tree nor AIIgnoreUnlockValue on the unlocks stopped it (tested in autoplay).
 INSERT INTO ProgressionTrees (ProgressionTreeType, Name, PrereqFormat, SystemType, CostProgressionModel, CostProgressionParam1)
   VALUES ('TREE_ATTRIBUTE_CC_DEDICATION', 'LOC_CC_ATTRIBUTE_DEDICATION', 'AND', 'SYSTEM_ATTRIBUTES', 'NO_COST_PROGRESSION', 0);
 INSERT INTO Attributes (AttributeType, Name, Description, ProgressionTreeType)
