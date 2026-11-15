@@ -353,7 +353,9 @@
       if (u.embarkationType !== deep) continue;
       const { x: ux, y: uy } = u.location;
       const targets = [];
-      for (let x = ux - 3; x <= ux + 3; x++) for (let y = uy - 3; y <= uy + 3; y++) {
+      const w = GameplayMap.getGridWidth();
+      for (let rx = ux - 3; rx <= ux + 3; rx++) for (let y = uy - 3; y <= uy + 3; y++) {
+        const x = ((rx % w) + w) % w;   // the map wraps east-west: a unit at x = 0 has neighbours at x = width - 1
         if (y >= 0 && y < GameplayMap.getGridHeight() && GameplayMap.getPlotDistance(ux, uy, x, y) <= 3 && terr({ x, y }) === "TERRAIN_OCEAN"
           && MapUnits.getUnits(x, y).length === 0) targets.push({ x, y });
       }

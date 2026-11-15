@@ -98,3 +98,29 @@ Compared with this mod (Online):
   codices.
 
 One game per side; a second vanilla game would show how much these numbers vary.
+
+## Full run with every 0.2.0 change (2026-11-15)
+
+A fresh game after the world Age, tech/civic catch-up, Influence costs, later civs' civic trees and Test of Time by
+personal Age were added (Online, Small Continents, Emperor; Rome, Abbasids, Prussia, Inca, Great Britain, Persia),
+AI autoplay to turn 220. No crash; no mod or database errors in the logs; all test suites pass on the final turn.
+
+| Turn | World Age | Culture 1st / 2nd | Science 1st | Economic 1st | Military 1st | Launch Pads |
+|---|---|---|---|---|---|---|
+| 27 | Antiquity | 5 / 2 | 2 | 12 | 16 | 0 |
+| 53 | Antiquity | 22 / 18 | 8 | 109 | 20 | 0 |
+| 79 | Exploration (all six in Exploration) | 30 / 29 | 22 | 542 | 32 | 0 |
+| 104 | Modern (3 of 6 in Modern) | 44 / 41 | 26 | 1,373 | 41 | 0 |
+| 128 | Modern | 67 / 48 | 61 | 2,295 | 45 | 0 |
+| 154 | Modern | 202 / 115 | 70 | 3,739 | 63 | 0 |
+| 179 | Modern | 231 / 199 | 88 | 5,734 | 69 | 3 |
+| 214 | Modern | 266 / 241 | 106 | 7,927 | 74 | 9 |
+
+**Rome won a Science victory on turn 192.** Compared with game 1 above (Science on turn 184, Culture 345 by turn 170),
+the game is a little slower and Culture much slower: the leader had 231 at turn 179, so 350 was out of reach before
+Science. Economic reached 7,927 by turn 214, just short of 8,000. Military stayed at 74 or below. Every civ had the
+civic trees for its kind and personal Age at the end (own tree in its own Age, Test of Time trees in the others).
+
+Against Civ VI's turn limit for Online (250), wins around 200-250 would fill 80-100% of it; this game ended at 192.
+In autoplay vanilla's end-game screen fails to open (it reads the local player, who is an observer during autoplay);
+in a normal game the human slot exists.
