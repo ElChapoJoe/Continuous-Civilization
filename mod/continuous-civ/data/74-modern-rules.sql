@@ -54,6 +54,15 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
   ('CC_MO_TOWN_UPGRADE', 'Percent', '-100');
 INSERT INTO cc_modern_rules VALUES ('CC_MO_GROWTH'), ('CC_MO_WORKER_CAP'), ('CC_MO_TOWN_UPGRADE');
 
+-- Ocean movement (audit #18): 72 applies Exploration's rule that entering Ocean ends a unit's move; vanilla Modern
+-- has no such rule, so units of players in their personal Modern ignore it.
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES ('CC_MODTYPE_UNITS_IGNORE_OBSTACLE', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType)
+  VALUES ('CC_MODTYPE_UNITS_IGNORE_OBSTACLE', 'COLLECTION_PLAYER_UNITS', 'EFFECT_UNIT_ADJUST_IGNORE_MOVEMENT_OBSTACLE');
+INSERT INTO Modifiers (ModifierId, ModifierType) VALUES ('CC_MO_OCEAN_MOVES', 'CC_MODTYPE_UNITS_IGNORE_OBSTACLE');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES ('CC_MO_OCEAN_MOVES', 'Obstacle', 'TERRAIN_OCEAN');
+INSERT INTO cc_modern_rules VALUES ('CC_MO_OCEAN_MOVES');
+
 -- AI difficulty bonuses of Modern (age-modern/data/difficulties.xml): +20% yields and production for the AI, and
 -- free Defensive Fortifications (after Military Science, by difficulty), by personal Modern Age (see 72).
 DELETE FROM TraitModifiers WHERE ModifierId LIKE 'MO_HANDICAP_%' AND TraitType = 'TRAIT_LEADER_MAJOR_CIV';

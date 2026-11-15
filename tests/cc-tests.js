@@ -268,7 +268,7 @@
     r.checks.settlementCaps = { pass: capArg("CC_EX_SETTLEMENT_CAP") === "8" && capArg("CC_MO_SETTLEMENT_CAP") === "16" && gm.includes("CC_EXRULE_CC_EX_SETTLEMENT_CAP") && gm.includes("CC_MORULE_CC_MO_SETTLEMENT_CAP"), antiquity: capArg("TRAIT_INITIAL_SETTLEMENT_CAP") };
     const exRules = gm.filter((id) => id.startsWith("CC_EXRULE_")).map((id) => id.slice(10));
     // Rules that carry on into Modern on purpose: the Economic trackers, and the per-Age steps that Modern adds to.
-    const gdp = (id) => /_GDP$/.test(id) || /^CC_EX_(TRADE_RANGE_|EMBARKED_STRENGTH|GROWTH|WORKER_CAP|TOWN_UPGRADE)/.test(id) || /^EX_HANDICAP_.*_WALLS$/.test(id);
+    const gdp = (id) => /_GDP$/.test(id) || /^CC_EX_(TRADE_RANGE_|EMBARKED_STRENGTH|GROWTH|WORKER_CAP|TOWN_UPGRADE|FEATURE_PRODUCTION)/.test(id) || /^EX_HANDICAP_.*_WALLS$/.test(id);
     const ending = exRules.filter((id) => !gdp(id)).map((id) => GameInfo.Modifiers.lookup(id));
     const notEnding = ending.filter((m) => m && m.SubjectRequirementSetId !== "CC_REQSET_NOT_IN_MODERN" && !(m.SubjectRequirementSetId || "").startsWith("CC_REQSET_EXRULE_")).map((m) => m.ModifierId + ":" + m.SubjectRequirementSetId);
     r.checks.explorationRulesEndAtModern = { pass: notEnding.length === 0, notEnding };
@@ -322,6 +322,12 @@
     r.checks.antiquityYieldsEnd = { pass: y5?.SubjectRequirementSetId === "CC_REQSET_NOT_IN_EXPLORATION" && !y5?.Permanent };
     const gdp = ["TRAIT_BONUS_RESOURCE_GDP", "TRAIT_CITY_RESOURCE_GDP", "TRAIT_GOLD_BUILDING_GDP", "TRAIT_IMPORTED_RESOURCE_GDP"];
     r.checks.economicGdpTrackers = { pass: gdp.every((id) => wr.includes("CC_EXRULE_" + id)), missing: gdp.filter((id) => !wr.includes("CC_EXRULE_" + id)) };
+    // Audit #18/#19: Exploration's "Ocean ends the move" rows, lifted in personal Modern (74), and the feature
+    // Production step from personal Exploration on (rules attach in games started on this version).
+    const oceanEnds = A(GameInfo.UnitMovementClassObstacles).filter((o) => o.TerrainType === "TERRAIN_OCEAN" && o.EndsTurn).length;
+    const gmIds = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
+    r.checks.oceanEndsMove = { pass: oceanEnds === 6 && gmIds.includes("CC_MORULE_CC_MO_OCEAN_MOVES"), oceanEnds };
+    r.checks.featureProduction = { pass: wr.includes("CC_EXRULE_CC_EX_FEATURE_PRODUCTION") };
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };

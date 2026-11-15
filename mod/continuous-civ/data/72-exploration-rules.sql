@@ -69,6 +69,40 @@ INSERT INTO ModifierStrings (ModifierId, Context, Text) VALUES
 INSERT INTO cc_exploration_rules (ModifierId, EndsAtModern) VALUES
   ('CC_EX_TRADE_RANGE_LAND', 0), ('CC_EX_TRADE_RANGE_SEA', 0), ('CC_EX_EMBARKED_STRENGTH', 0);
 
+-- Ocean movement (audit #18): in vanilla Exploration, entering Ocean ends a unit's move (age-exploration/data/
+-- unit-movement.xml); Modern has no such rule. The obstacle table is game-wide, so Exploration's rows apply to
+-- everyone (players in Antiquity can't enter Ocean anyway) and 74-modern-rules.sql lifts them for players in their
+-- personal Modern, as vanilla Modern.
+INSERT OR IGNORE INTO UnitMovementClassObstacles (UnitMovementClass, TerrainType, EndsTurn) VALUES
+  ('UNIT_MOVEMENT_CLASS_NAVAL', 'TERRAIN_OCEAN', 1), ('UNIT_MOVEMENT_CLASS_WHEELED', 'TERRAIN_OCEAN', 1),
+  ('UNIT_MOVEMENT_CLASS_TRACKED', 'TERRAIN_OCEAN', 1), ('UNIT_MOVEMENT_CLASS_RECON', 'TERRAIN_OCEAN', 1),
+  ('UNIT_MOVEMENT_CLASS_MOUNTED', 'TERRAIN_OCEAN', 1), ('UNIT_MOVEMENT_CLASS_FOOT', 'TERRAIN_OCEAN', 1);
+
+-- Feature yields (audit #19): vanilla's Exploration and Modern terrain tables give +1 Production more on Oasis and
+-- Watering Hole (2 instead of 1) and +1 on Marsh, Mangrove and Tundra Bog (none in Antiquity). The table is global,
+-- so it is added per player from their personal Exploration on (stays through Modern).
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES ('CC_MODTYPE_PLAYER_PLOT_YIELD', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType)
+  VALUES ('CC_MODTYPE_PLAYER_PLOT_YIELD', 'COLLECTION_PLAYER_PLOT_YIELDS', 'EFFECT_PLOT_ADJUST_YIELD');
+INSERT INTO RequirementSets (RequirementSetId, RequirementSetType) VALUES ('CC_REQSET_EX_FEATURE_PRODUCTION', 'REQUIREMENTSET_TEST_ANY');
+INSERT INTO Requirements (RequirementId, RequirementType) VALUES
+  ('CC_REQ_FEATURE_OASIS', 'REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES'), ('CC_REQ_FEATURE_WATERING_HOLE', 'REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES'),
+  ('CC_REQ_FEATURE_MARSH', 'REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES'), ('CC_REQ_FEATURE_MANGROVE', 'REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES'),
+  ('CC_REQ_FEATURE_TUNDRA_BOG', 'REQUIREMENT_PLOT_FEATURE_TYPE_MATCHES');
+INSERT INTO RequirementArguments (RequirementId, Name, Value) VALUES
+  ('CC_REQ_FEATURE_OASIS', 'FeatureType', 'FEATURE_OASIS'), ('CC_REQ_FEATURE_WATERING_HOLE', 'FeatureType', 'FEATURE_WATERING_HOLE'),
+  ('CC_REQ_FEATURE_MARSH', 'FeatureType', 'FEATURE_MARSH'), ('CC_REQ_FEATURE_MANGROVE', 'FeatureType', 'FEATURE_MANGROVE'),
+  ('CC_REQ_FEATURE_TUNDRA_BOG', 'FeatureType', 'FEATURE_TUNDRA_BOG');
+INSERT INTO RequirementSetRequirements (RequirementSetId, RequirementId) VALUES
+  ('CC_REQSET_EX_FEATURE_PRODUCTION', 'CC_REQ_FEATURE_OASIS'), ('CC_REQSET_EX_FEATURE_PRODUCTION', 'CC_REQ_FEATURE_WATERING_HOLE'),
+  ('CC_REQSET_EX_FEATURE_PRODUCTION', 'CC_REQ_FEATURE_MARSH'), ('CC_REQSET_EX_FEATURE_PRODUCTION', 'CC_REQ_FEATURE_MANGROVE'),
+  ('CC_REQSET_EX_FEATURE_PRODUCTION', 'CC_REQ_FEATURE_TUNDRA_BOG');
+INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId)
+  VALUES ('CC_EX_FEATURE_PRODUCTION', 'CC_MODTYPE_PLAYER_PLOT_YIELD', 'CC_REQSET_EX_FEATURE_PRODUCTION');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_EX_FEATURE_PRODUCTION', 'YieldType', 'YIELD_PRODUCTION'), ('CC_EX_FEATURE_PRODUCTION', 'Amount', '1');
+INSERT INTO cc_exploration_rules (ModifierId, EndsAtModern) VALUES ('CC_EX_FEATURE_PRODUCTION', 0);
+
 -- City balance that vanilla sets per Age in global tables (audit #9), which keep Antiquity's values here. Each is
 -- matched per player with an effect instead, as a step that stays through Modern (74 adds Modern's step):
 --   Growth: AgeGrowthBalances Antiquity 5/20/400, Exploration 30/50/600, Modern 60/100/850 (flat/linear/quadratic),
