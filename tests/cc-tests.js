@@ -493,6 +493,17 @@
       return !(reqsOf(set).includes(need) || (/^CC_REQSET_TRIUMPH_/.test(set) && reqsOf(set).includes(need)));
     }).map((m) => m.LegacyType);
     r.checks.gatedByPersonalAge = { pass: lm.length > 0 && ungated.length === 0, triggers: lm.length, ungated: ungated.slice(0, 10) };
+    // Wonders Triumphs count only their own Age's wonders (by tag), not every wonder (all are tagged Antiquity here).
+    const args = A(GameInfo.RequirementArguments);
+    const wonderReqs = ["REQSET_LEGACY_EX_CULTURAL_2_1", "REQSET_LEGACY_MO_CULTURAL_2_1"].map((id) => ({
+      type: GameInfo.Requirements.lookup(id)?.RequirementType, tag: args.find((a) => a.RequirementId === id && a.Name === "BuildingTag")?.Value }));
+    const tagged = (tag) => A(GameInfo.TypeTags).filter((t) => t.Tag === tag).map((t) => t.Type);
+    const aqTagged = [...tagged("CC_WONDER_EXPLORATION"), ...tagged("CC_WONDER_MODERN")]
+      .filter((w) => A(GameInfo.ProgressionTreeNodeUnlocks).some((u) => u.TargetType === w && /_AQ_/.test(u.ProgressionTreeNodeType)));
+    r.checks.wonderTriumphsByAge = { pass: wonderReqs[0].tag === "CC_WONDER_EXPLORATION" && wonderReqs[1].tag === "CC_WONDER_MODERN"
+      && wonderReqs.every((w) => w.type === "REQUIREMENT_PLAYER_HAS_AT_LEAST_NUM_BUILDINGS")
+      && tagged("CC_WONDER_EXPLORATION").length >= 10 && tagged("CC_WONDER_MODERN").length >= 10 && aqTagged.length === 0,
+      ex: tagged("CC_WONDER_EXPLORATION").length, mo: tagged("CC_WONDER_MODERN").length, aqTagged };
     // UI (ui/cc-triumphs.js): progress shown without the personal-Age requirement's share, e.g. 0/20, not 0/200.
     const proto = leg && Object.getPrototypeOf(leg);
     const shown = leg ? later.filter((l) => leg.isValidLegacy(l.$hash)).map((l) => leg.getProgress(l.$hash)?.progress?.[0]?.total) : [];

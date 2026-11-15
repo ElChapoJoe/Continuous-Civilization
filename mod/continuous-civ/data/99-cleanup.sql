@@ -17,6 +17,7 @@ DROP TABLE IF EXISTS cc_age_scaled;
 DROP TABLE IF EXISTS cc_age_scaled_copies;
 DROP TABLE IF EXISTS cc_triumph_ages;
 DROP TABLE IF EXISTS cc_triumph_sets;
+DROP TABLE IF EXISTS cc_wonder_triumph_reqs;
 DROP TABLE IF EXISTS cc_dedication_cards;
 DROP TABLE IF EXISTS cc_dedication_effects;
 DROP TABLE IF EXISTS cc_dedication_triumphs;
