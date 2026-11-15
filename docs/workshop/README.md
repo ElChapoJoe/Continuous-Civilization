@@ -10,7 +10,7 @@ Workshop item: [https://steamcommunity.com/sharedfiles/filedetails/?id=383877774
 | Title | `Continuous Civilization (Beta)` |
 | Preview image | [`docs/images/workshop-preview.jpg`](../images/workshop-preview.jpg): the logo, a carved plaster medallion C with a skyline from castle to skyscrapers on marble, 512 x 512 (rendered by `tools/blender/cc_logo_medallion.py`; see `tools/blender/README.md`). Replaces the 2026-11-14 "C of the Ages" art |
 | Description | [`description.txt`](description.txt), in Steam's formatting codes (paste it as is) |
-| Gallery images | All 16:9 at native resolution (about 1780 x 1000), in this order: `workshop-title-card.jpg` (from `tools/blender/cc_banner.py --mode card`), `empire.jpg`, `tech-tree.jpg`, `overbuild.jpg`, `triumphs.jpg`, `dedications.jpg`, `victories.jpg` |
+| Gallery images | No title card (the logo and the description banner already show the name and slogan). All 16:9 at native resolution (about 1780 x 1000), in this order: `empire.jpg`, `tech-tree.jpg`, `overbuild.jpg`, `triumphs.jpg`, `dedications.jpg`, `victories.jpg` |
 | Banner in the description | `description.txt` starts with `docs/images/workshop-banner.jpg` (the slogan over the city on its gold line; `tools/blender/cc_banner.py --mode wide`). The name is not repeated in the description: Steam's title and the logo show it, loaded from the public GitHub repo |
 | Visibility | The uploader offers Public, Friends Only and Private. **Friends Only** for a closed beta with Steam friends, **Public** to open it up (visibility can be changed later on the item's Steam page) |
 | Change note (first upload) | `0.1.0-beta: first public beta.` |
