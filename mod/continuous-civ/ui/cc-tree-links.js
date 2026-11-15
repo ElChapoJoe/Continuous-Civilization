@@ -175,7 +175,7 @@ function relayout(grid) {
   const pred = (v) => g.predecessors(v) || [], succ = (v) => g.successors(v) || [];
   const byId = new Map(cards.map((c) => [c.isDummy ? c.name : c.nodeType.toString(), c]));
   const before = readLayers(g);
-  const { layers, crossings } = reduceCrossings(before, pred, succ);
+  const { layers } = reduceCrossings(before, pred, succ);
   layers.forEach((l) => l.forEach((v, i) => (g.node(v).order = i)));
   const rows = assignRows(layers, pred, succ, (v) => !!byId.get(v)?.isDummy, (v) => span(byId.get(v)));
   let maxRow = 0;
@@ -186,7 +186,6 @@ function relayout(grid) {
     maxRow = Math.max(maxRow, card.row);
   }
   td.rows = Math.max(td.rows, maxRow + 4 + td.extraRows);
-  console.log(`cc-tree-links: relayout ${cards.length} cards, crossings ${totalCrossings(before, succ)} -> ${crossings}`);
   return true;
 }
 
