@@ -2,7 +2,7 @@
 (function () {
   const suites = ["db", "gating", "resources", "civics", "personalAge", "modernRules", "batchA", "batchB", "exRules",
     "distantLands", "modernTrees", "modernContent", "modernSystems", "parkLinks", "victories", "triumphs", "dedications",
-    "diplomacy", "worldAge", "civTrees", "ageScaling", "missingContent"];
+    "diplomacy", "worldAge", "civTrees", "ageScaling", "missingContent", "overbuild"];
   const out = { pass: true, suites: {}, failing: {} };
   for (const s of suites) {
     let r;

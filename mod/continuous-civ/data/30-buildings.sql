@@ -1,5 +1,14 @@
 -- Continuous Civilization - Exploration and Modern buildings in a permanent Antiquity.
 
+-- 0) Remember each imported constructible's vanilla Age before it is re-tagged below: CC_AGE_EXPLORATION or
+--    CC_AGE_MODERN (no tag = Antiquity). ui/cc-overbuild.js uses it to let a player in a later personal Age build over
+--    older buildings, as vanilla allows after an Age transition.
+INSERT OR IGNORE INTO Tags (Tag, Category) VALUES ('CC_AGE_EXPLORATION', 'CONSTRUCTIBLE_TAG'), ('CC_AGE_MODERN', 'CONSTRUCTIBLE_TAG');
+INSERT OR IGNORE INTO TypeTags (Type, Tag)
+  SELECT ConstructibleType, CASE Age WHEN 'AGE_EXPLORATION' THEN 'CC_AGE_EXPLORATION' ELSE 'CC_AGE_MODERN' END
+  FROM Constructibles WHERE Age IN ('AGE_EXPLORATION', 'AGE_MODERN')
+    AND ConstructibleType NOT IN (SELECT ConstructibleType FROM cc_pre_constructibles);
+
 -- 1) Engine rule (verified Phase 1): only constructibles whose Age is the current Age (or NULL) can be
 --    built. Re-tag everything that was imported from Exploration.
 UPDATE Constructibles SET Age = 'AGE_ANTIQUITY'

@@ -127,7 +127,7 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 - **A few numbers stay at Antiquity's values**, because the engine reads them from the one game Age with no per-player version: the Happiness needed for celebrations and for Joyous/Ecstatic settlements, and war weariness. (Growth costs, the specialist cap, town upgrade costs, narrative rewards, and leader, memento and attribute-tree bonuses now follow your personal Age.)
 - **Later-Age civilizations' unique Settler, Merchant, Scout and Army Commander replacements are available from the start** (Norman Sokeman, Mughal Zamindar, Mongolian Noyan, Bugandan Mwami, Inca Chasqui, Ming Mandarin, Songhai Tajiro, Qing Hangshang): the engine makes a unique unit available as soon as the unit it replaces is, not at its own tech.
 - **AI civilizations can buy some buildings in towns before their tech** (towns with a building-purchase ability, such as Augustus's or a Factory Town); the purchase screen blocks it for you.
-- **Older buildings never become obsolete**, so they can't be overbuilt with later-Age buildings.
+- **The AI doesn't overbuild.** You can build later-Age buildings over older ones once you're in a later Age, but AI civilizations keep building on new tiles.
 - **No crises** happen.
 - **Not yet included:** Treasure Fleets and Factory resources, some Exploration and Modern wonders that come with DLC civilization packs (wonder packs and four civilization-pack wonders are included), and DLC story events.
 - Full list with details: [Age-gating audit](docs/audit-age-gated-mechanics.md).

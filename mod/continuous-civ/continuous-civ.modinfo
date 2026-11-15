@@ -607,6 +607,7 @@
 					<Item>ui/cc-city-state-bonuses.js</Item>
 					<Item>ui/cc-religion.js</Item>
 					<Item>ui/cc-age-ui.js</Item>
+					<Item>ui/cc-overbuild.js</Item>
 					<Item>ui/cc-triumphs.js</Item>
 					<Item>ui/cc-dedications.js</Item>
 					<Item>ui/cc-dedication-popup.js</Item>

@@ -692,6 +692,20 @@
 
   // Missing content (cc-import-dlc-*, cc-import-difficulty): DLC wonders of the later Ages (only if the pack is
   // installed and enabled), and the AI's later-Age difficulty bonuses attached by personal Age.
+  // Overbuilding by personal Age (30-buildings.sql tags, ui/cc-overbuild.js): Exploration and Modern buildings keep
+  // their vanilla Age as a tag, no Antiquity building is tagged, and the dialog text exists.
+  CC.overbuild = function () {
+    const r = { checks: {} };
+    const tags = A(GameInfo.TypeTags);
+    const ex = tags.filter((t) => t.Tag === "CC_AGE_EXPLORATION").map((t) => t.Type);
+    const mo = tags.filter((t) => t.Tag === "CC_AGE_MODERN").map((t) => t.Type);
+    const aq = ["BUILDING_LIBRARY", "BUILDING_BARRACKS", "BUILDING_MARKET", "BUILDING_ALTAR"].filter((b) => ex.includes(b) || mo.includes(b));
+    r.checks.vanillaAgeTags = { pass: ex.includes("BUILDING_TAVERN") && ex.includes("BUILDING_UNIVERSITY") && mo.includes("BUILDING_MUSEUM")
+      && mo.includes("BUILDING_FACTORY") && aq.length === 0 && !ex.some((b) => mo.includes(b)), ex: ex.length, mo: mo.length, aqTagged: aq };
+    r.checks.dialogText = { pass: Locale.compose("LOC_CC_OVERBUILD_BODY", "A", "B") !== "LOC_CC_OVERBUILD_BODY" };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
   CC.missingContent = function () {
     const r = { checks: {} };
     const dlc = { "asia-wonders": ["WONDER_GRAND_BAZAAR", "WONDER_WAT_XIENG_THONG", "WONDER_UBUDIAH_MOSQUE"],
