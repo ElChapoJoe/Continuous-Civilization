@@ -56,6 +56,7 @@ Gate choices (all tunable in one table each):
 - Governments (`35-governments.sql`): `cc_government_unlocks` (Theocracy at Piety, Plutocracy at Mercantilism, Feudal Monarchy at Authority), `cc_ai_government_rules` (AI switch and revert rules).
 - Exploration rules (`72-exploration-rules.sql`, `cc_exploration_rules`).
 - Personal Age (`70-personal-age.sql`, `cc_exploration_roots`): a player is "in Exploration" after any of Cartography, Astronomy, Machinery.
+- World Age (end of `70-personal-age.sql`): `CC_REQSET_WORLD_IN_EXPLORATION` / `_MODERN` are true once ceil(m/2) of the m living majors are in that personal Age (one set per m = 1-16, counted with `REQUIREMENT_COLLECTION_COUNT_ATLEAST` over `COLLECTION_MAJOR_PLAYERS`). Growth and town-upgrade steps (`72`/`74`) and Influence cost steps (`78`) hang on them; `CC_CATCHUP_*` give techs/civics ahead of the world Age -20% efficiency and behind it +20%.
 - Later-Age resources (`65-modern-resources.sql`, `cc_resource_unlocks`): resource to activating tech. If you change it, update the tech names in `text/65-modern-resources-text.sql`.
 
 ## Developer workflow

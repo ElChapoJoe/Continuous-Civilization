@@ -67,3 +67,6 @@ INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId)
 INSERT INTO ModifierArguments (ModifierId, Name, Value)
   SELECT 'CC_MORULE_' || ModifierId, 'ModifierId', ModifierId FROM cc_modern_rules;
 INSERT INTO GameModifiers (ModifierId) SELECT 'CC_MORULE_' || ModifierId FROM cc_modern_rules;
+-- Cost steps follow the world Age (see 72-exploration-rules.sql).
+UPDATE Modifiers SET SubjectRequirementSetId = 'CC_REQSET_WORLD_IN_MODERN'
+  WHERE ModifierId IN ('CC_MORULE_CC_MO_GROWTH', 'CC_MORULE_CC_MO_TOWN_UPGRADE');

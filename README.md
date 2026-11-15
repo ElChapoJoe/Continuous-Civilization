@@ -61,8 +61,13 @@ Requires Civilization VII (tested on 1.5.1). No game files are included or chang
 | Age | You enter it by researching any of | What changes for you |
 |---|---|---|
 | Antiquity | (start) | Vanilla Antiquity rules |
-| Exploration | Cartography, Astronomy, Machinery | Crossing the Ocean (civilians and commanders after Cartography, all land units after Shipbuilding mastery), deep-ocean ships, embarkation, settlement cap of at least 8, base yields +10 Gold / +20 Science, Culture and Influence, more resource slots and envoys, longer trade routes, stronger embarked units, leader attribute points; growth costs, town upgrade costs and the specialist cap rise as in vanilla Exploration, and Age-scaled bonuses (leader abilities, mementos, attribute nodes) double |
-| Modern | Academics, Steam Engine, Military Science | Settlement cap of at least 16, base yields +15 Gold / +30 Science, Culture and Influence, Modern resource slots and town focuses, longer trade routes, stronger embarked units, more leader attribute points; Modern growth costs, town upgrade costs and specialist cap, and Age-scaled bonuses triple |
+| Exploration | Cartography, Astronomy, Machinery | Crossing the Ocean (civilians and commanders after Cartography, all land units after Shipbuilding mastery), deep-ocean ships, embarkation, settlement cap of at least 8, base yields +10 Gold / +20 Science, Culture and Influence, more resource slots and envoys, longer trade routes, stronger embarked units, leader attribute points; the specialist cap rises as in vanilla Exploration, and Age-scaled bonuses (leader abilities, mementos, attribute nodes) double |
+| Modern | Academics, Steam Engine, Military Science | Settlement cap of at least 16, base yields +15 Gold / +30 Science, Culture and Influence, Modern resource slots and town focuses, longer trade routes, stronger embarked units, more leader attribute points; Modern specialist cap, and Age-scaled bonuses triple |
+
+### World Age
+Costs that vanilla raises in later Ages follow a shared **world Age**, as Civilization VI's world eras do: the world enters Exploration (Modern) once at least half of the living civilizations are in that personal Age. Then everyone's city growth costs (about 1.9x, then 3.3x), town upgrade costs (2x, then 3x) and Influence costs of diplomatic actions (2x, then 3x) rise together, so the first civilization to advance isn't charged more than its rivals.
+
+Techs and civics also cost 20% more when they are from an Age ahead of the world's, and 20% less when from an Age behind it (Civ VI's catch-up), so a leader slows a little and a civilization left behind catches up.
 
 The **Distant Lands** across the Ocean are open from the start: you can meet the civilizations there, and settle their land once your Exploration lets you cross.
 

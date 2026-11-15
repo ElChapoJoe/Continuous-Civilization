@@ -593,6 +593,26 @@
 
   // Global-Age values raised per player (audit #5, #6, #7: 72, 74, 79). Live checks use player pid's first city and
   // identity: compare before and after granting Cartography and then a Modern root tech.
+  // World Age (70-personal-age.sql, after Civ VI's world eras): half the living majors in an Age moves the world there.
+  // Live checks: the "exactly N majors" hook has every major as subject when N civs are alive (6-civ games), the
+  // catch-up modifiers list nodes, and the cost steps (growth, town upgrades, Influence) hang on the world sets.
+  CC.worldAge = function () {
+    const r = { checks: {} };
+    const subj = (id) => { try { return Game.Modifiers.getModifierSubjects(Game.getHash(id))?.length ?? 0; } catch (e) { return -1; } };
+    const alive = Players.getAliveMajorIds().length;
+    if (alive === 6) r.checks.countsMajors = { pass: subj("CC_TEST_SIX_MAJORS") === 6, subjects: subj("CC_TEST_SIX_MAJORS") };
+    const arg = (id, n) => A(GameInfo.ModifierArguments).find((x) => x.ModifierId === id && x.Name === n)?.Value;
+    const ids = ["TECH_EX_AHEAD", "TECH_MO_AHEAD", "TECH_AQ_BEHIND", "TECH_EX_BEHIND", "CIVIC_EX_AHEAD", "CIVIC_MO_AHEAD", "CIVIC_AQ_BEHIND", "CIVIC_EX_BEHIND"];
+    const empty = ids.filter((i) => !(arg("CC_CATCHUP_NODE_" + i, "ProgressionTreeNodeType") || "").includes("NODE_"));
+    r.checks.catchUpNodes = { pass: empty.length === 0, empty };
+    const set = (id) => GameInfo.Modifiers.lookup(id)?.SubjectRequirementSetId;
+    const onWorld = { growthEx: set("CC_EXRULE_CC_EX_GROWTH"), townMo: set("CC_MORULE_CC_MO_TOWN_UPGRADE"), dipEx: set("CC_DIPCOSTRULE_EX_DIPLOMACY_ACTION_DENOUNCE") };
+    r.checks.costsOnWorldAge = { pass: onWorld.growthEx === "CC_REQSET_WORLD_IN_EXPLORATION" && onWorld.townMo === "CC_REQSET_WORLD_IN_MODERN"
+      && onWorld.dipEx === "CC_REQSET_WORLD_IN_EXPLORATION", ...onWorld };
+    r.checks.workerCapStaysPersonal = { pass: set("CC_EXRULE_CC_EX_WORKER_CAP") === "CC_REQSET_TEST_IN_EXPLORATION" };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
   CC.ageScaling = function (pid = 0) {
     const r = { checks: {} };
     const gm = A(GameInfo.GameModifiers).map((g) => g.ModifierId);

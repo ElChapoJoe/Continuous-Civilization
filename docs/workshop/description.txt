@@ -21,6 +21,9 @@ What if Civilization VII let you guide your empire through history without ever 
 [*][b]Exploration[/b] starts when you research Cartography, Astronomy or Machinery: crossing the Ocean (civilians and commanders after Cartography, all land units after Shipbuilding mastery), deep-ocean ships, a settlement cap of at least 8, higher base yields, more resource slots and envoys, longer trade routes, stronger embarked units and leader attribute points.
 [*][b]Modern[/b] starts when you research Academics, Steam Engine or Military Science: a settlement cap of at least 16, higher base yields, Modern resource slots and town focuses, longer trade routes, stronger embarked units and more attribute points.
 [/list]
+[h2]World Age[/h2]
+Costs that vanilla raises in later Ages (city growth, town upgrades, Influence costs of diplomacy) follow a shared world Age, as in Civilization VI: they rise for everyone once half of the civilizations are in that Age, so the leader isn't charged more for advancing. Techs and civics from an Age ahead of the world's cost 20% more, those behind it 20% less.
+
 The [b]Distant Lands[/b] across the Ocean are open from the start: you can meet the civilizations there, and settle their land once your Exploration lets you cross.
 
 [h2]Content from every Age[/h2]

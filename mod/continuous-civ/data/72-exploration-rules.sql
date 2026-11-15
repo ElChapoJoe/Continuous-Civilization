@@ -142,6 +142,10 @@ UPDATE Modifiers SET SubjectRequirementSetId = 'CC_REQSET_NOT_IN_MODERN', Perman
 INSERT INTO ModifierArguments (ModifierId, Name, Value)
   SELECT 'CC_EXRULE_' || ModifierId, 'ModifierId', ModifierId FROM cc_exploration_rules;
 INSERT INTO GameModifiers (ModifierId) SELECT 'CC_EXRULE_' || ModifierId FROM cc_exploration_rules;
+-- Cost steps follow the world Age instead (70-personal-age.sql, after Civ VI's world eras): everyone pays them once
+-- half the civs are in Exploration, so the first civ to advance isn't charged more than its rivals.
+UPDATE Modifiers SET SubjectRequirementSetId = 'CC_REQSET_WORLD_IN_EXPLORATION'
+  WHERE ModifierId IN ('CC_EXRULE_CC_EX_GROWTH', 'CC_EXRULE_CC_EX_TOWN_UPGRADE');
 
 -- Antiquity's base yields (+5 Gold, +10 Science/Culture/Influence) end once a player is in Exploration, where
 -- the Exploration ones above take over (as when a vanilla civ changes Age). Not permanent, so they detach.

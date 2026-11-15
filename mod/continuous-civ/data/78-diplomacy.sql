@@ -31,9 +31,10 @@ INSERT OR IGNORE INTO ProgressionTreeNodeUnlocks (ProgressionTreeNodeType, Targe
 
 DROP TABLE cc_new_dip_actions;
 
--- Influence costs by personal Age. Vanilla's DiplomaticActionInfluenceCosts are set per Age, about 2x in Exploration
--- and 3x in Modern; here the shared actions keep Antiquity's (00-snapshot / 50-restore). Each player gets the step
--- through the per-action cost effect instead: a negative Percent raises the cost (-100 = double). Exploration adds
+-- Influence costs by world Age (70-personal-age.sql: half the civs in that Age, after Civ VI's world eras), so the
+-- first civ to advance isn't charged more than its rivals. Vanilla's DiplomaticActionInfluenceCosts are set per Age,
+-- about 2x in Exploration and 3x in Modern; here the shared actions keep Antiquity's (00-snapshot / 50-restore).
+-- Every major player gets the step through the per-action cost effect instead: a negative Percent raises the cost (-100 = double). Exploration adds
 -- -100 and Modern another -100 (3x). The Exploration-only actions above already carry Exploration's costs, so they
 -- only get Modern's step (-50 = 1.5x); Modern-only ones carry Modern's. Free and -1 ("not by Influence") costs skip.
 INSERT OR IGNORE INTO Types (Type, Kind) VALUES ('CC_MODTYPE_PLAYER_DIP_COST', 'KIND_MODIFIER');
@@ -63,10 +64,10 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value)
   SELECT 'CC_DIPCOST_' || Age || '_' || DiplomacyActionType, 'ActionType', DiplomacyActionType FROM cc_dip_cost_steps;
 INSERT INTO ModifierArguments (ModifierId, Name, Value)
   SELECT 'CC_DIPCOST_' || Age || '_' || DiplomacyActionType, 'Percent', Percent FROM cc_dip_cost_steps;
--- Game-wide wrappers attach each step to every major player in that personal Age (70-personal-age.sql's test sets).
+-- Game-wide wrappers attach each step to every major player once the world is in that Age.
 INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId)
   SELECT 'CC_DIPCOSTRULE_' || Age || '_' || DiplomacyActionType, 'CC_MODTYPE_MAJORS_ATTACH',
-    CASE Age WHEN 'EX' THEN 'CC_REQSET_TEST_IN_EXPLORATION' ELSE 'CC_REQSET_TEST_IN_MODERN' END FROM cc_dip_cost_steps;
+    CASE Age WHEN 'EX' THEN 'CC_REQSET_WORLD_IN_EXPLORATION' ELSE 'CC_REQSET_WORLD_IN_MODERN' END FROM cc_dip_cost_steps;
 INSERT INTO ModifierArguments (ModifierId, Name, Value)
   SELECT 'CC_DIPCOSTRULE_' || Age || '_' || DiplomacyActionType, 'ModifierId', 'CC_DIPCOST_' || Age || '_' || DiplomacyActionType
   FROM cc_dip_cost_steps;
