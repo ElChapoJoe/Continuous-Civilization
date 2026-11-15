@@ -57,7 +57,7 @@ Tested on Civilization VII 1.5.1, single player.
 
 [h2]Known limitations[/h2]
 [list]
-[*]The Score victory can't be won: it's decided when the final Age ends, which never happens here.
+[*]No turn limit: a game runs until someone wins. The Score victory can't be won (vanilla decides it when the final Age ends, which never happens here).
 [*]Dedications are chosen in a Choose Dedications window (3 per new personal Age) instead of on the Age-transition screen. Launch Rocket requires the three earlier space projects instead of the Science legacy path.
 [*]Later-Age resources do nothing until you research them and their icons are hidden, but their 3D models and their own improvements (an Oil Rig on Oil) can be seen on the map early.
 [*]Town houses, roads and bridges keep their Antiquity look; later-Age buildings, wonders and units use their own art.

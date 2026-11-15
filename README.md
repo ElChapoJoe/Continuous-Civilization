@@ -119,7 +119,7 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 
 ## Known limitations
 
-- **Score victory** is decided when the final Age ends, which never happens here.
+- **No turn limit and no Score victory:** a game runs until someone wins (vanilla decides Score when the final Age ends, which never happens here).
 - **Triumphs (legacy paths):** two Triumphs can't be completed: one needs Treasure Fleets and the Modern one that grants John Maynard Keynes needs Factory resources, both not yet included. Launch Rocket requires the three earlier space projects instead of the Science legacy path.
 - **Later-Age resources can be spotted on the map early.** They do nothing until you research them, and their icons are hidden, but the engine still draws their 3D models and builds their own improvement on the tile, for example an Oil Rig on Oil in Antiquity. The improvement starts working once you have the tech. (During an AI autoplay a few of their icons can also appear.)
 - **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look, because the engine draws them from a single game-wide Age. Buildings, wonders and units from later Ages use their own art. [Details](docs/visual-progression-investigation.md).
