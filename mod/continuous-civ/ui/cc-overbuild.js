@@ -323,6 +323,14 @@ function patchInterfaceMode() {
       console.error("cc-overbuild: highlight " + e);
     }
   };
+  // A placement dialog (ours or vanilla's) closed from outside, e.g. by DialogBoxManager.clear() when another screen
+  // pops up, never calls its buttons' callbacks, so "a plot is already being proposed" stayed set and clicks on tiles
+  // did nothing until the screen was left. With no dialog open, the flag is cleared before the click is handled.
+  const vanillaSelect = mode.selectPlot.bind(mode);
+  mode.selectPlot = function (plot, previousPlot) {
+    if (this.isPlotProposed && !document.querySelector("screen-dialog-box")) this.isPlotProposed = false;
+    return vanillaSelect(plot, previousPlot);
+  };
   const vanillaPropose = mode.proposePlot.bind(mode);
   mode.proposePlot = function (plot, accept, reject) {
     const victim = overbuildPlots.get(GameplayMap.getIndexFromLocation(plot));
