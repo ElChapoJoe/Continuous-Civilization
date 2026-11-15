@@ -30,3 +30,45 @@ INSERT OR IGNORE INTO ProgressionTreeNodeUnlocks (ProgressionTreeNodeType, Targe
     AND EXISTS (SELECT 1 FROM DiplomacyActions d WHERE d.DiplomacyActionType = n.DiplomacyActionType);
 
 DROP TABLE cc_new_dip_actions;
+
+-- Influence costs by personal Age. Vanilla's DiplomaticActionInfluenceCosts are set per Age, about 2x in Exploration
+-- and 3x in Modern; here the shared actions keep Antiquity's (00-snapshot / 50-restore). Each player gets the step
+-- through the per-action cost effect instead: a negative Percent raises the cost (-100 = double). Exploration adds
+-- -100 and Modern another -100 (3x). The Exploration-only actions above already carry Exploration's costs, so they
+-- only get Modern's step (-50 = 1.5x); Modern-only ones carry Modern's. Free and -1 ("not by Influence") costs skip.
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES ('CC_MODTYPE_PLAYER_DIP_COST', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType)
+  VALUES ('CC_MODTYPE_PLAYER_DIP_COST', 'COLLECTION_OWNER', 'EFFECT_DIPLOMACY_ADJUST_DIPLOMATIC_ACTION_TYPE_EFFICIENCY');
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES ('CC_MODTYPE_MAJORS_ATTACH', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType)
+  VALUES ('CC_MODTYPE_MAJORS_ATTACH', 'COLLECTION_MAJOR_PLAYERS', 'EFFECT_ATTACH_MODIFIERS');
+
+DROP TABLE IF EXISTS cc_dip_cost_steps;
+CREATE TABLE cc_dip_cost_steps (DiplomacyActionType TEXT, Age TEXT, Percent INTEGER);
+INSERT INTO cc_dip_cost_steps
+  SELECT c.DiplomacyActionType, a.Age, CASE WHEN c.DiplomacyActionType IN
+      ('DIPLOMACY_ACTION_ESPIONAGE_OPEN_THE_GATES', 'DIPLOMACY_ACTION_ESPIONAGE_CONVERT_POPULATION',
+       'DIPLOMACY_ACTION_ESPIONAGE_SABOTAGE_WORKERS', 'DIPLOMACY_ACTION_DEMAND_TRIBUTE') THEN -50 ELSE -100 END
+  FROM DiplomaticActionInfluenceCosts c, (SELECT 'EX' AS Age UNION ALL SELECT 'MO') a
+  WHERE MAX(IFNULL(c.InfCostNoRelationship, 0), IFNULL(c.InfCostHostile, 0), IFNULL(c.InfCostUnfriendly, 0),
+            IFNULL(c.InfCostNeutral, 0), IFNULL(c.InfCostFriendly, 0), IFNULL(c.InfCostHelpful, 0)) > 0
+    AND c.DiplomacyActionType NOT IN ('DIPLOMACY_ACTION_ESPIONAGE_SABOTAGE_SHIPPING', 'DIPLOMACY_ACTION_ESPIONAGE_FAKE_ARTIFACTS',
+       'DIPLOMACY_ACTION_ESPIONAGE_INFILTRATE_ENEMY_POSITIONS', 'DIPLOMACY_ACTION_ESPIONAGE_SABOTAGE_SPACE_PROGRAM',
+       'DIPLOMACY_ACTION_ESPIONAGE_IDEOLOGICAL_REVOLT');
+DELETE FROM cc_dip_cost_steps WHERE Age = 'EX' AND Percent = -50;
+
+INSERT INTO Modifiers (ModifierId, ModifierType)
+  SELECT 'CC_DIPCOST_' || Age || '_' || DiplomacyActionType, 'CC_MODTYPE_PLAYER_DIP_COST' FROM cc_dip_cost_steps;
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+  SELECT 'CC_DIPCOST_' || Age || '_' || DiplomacyActionType, 'ActionType', DiplomacyActionType FROM cc_dip_cost_steps;
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+  SELECT 'CC_DIPCOST_' || Age || '_' || DiplomacyActionType, 'Percent', Percent FROM cc_dip_cost_steps;
+-- Game-wide wrappers attach each step to every major player in that personal Age (70-personal-age.sql's test sets).
+INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId)
+  SELECT 'CC_DIPCOSTRULE_' || Age || '_' || DiplomacyActionType, 'CC_MODTYPE_MAJORS_ATTACH',
+    CASE Age WHEN 'EX' THEN 'CC_REQSET_TEST_IN_EXPLORATION' ELSE 'CC_REQSET_TEST_IN_MODERN' END FROM cc_dip_cost_steps;
+INSERT INTO ModifierArguments (ModifierId, Name, Value)
+  SELECT 'CC_DIPCOSTRULE_' || Age || '_' || DiplomacyActionType, 'ModifierId', 'CC_DIPCOST_' || Age || '_' || DiplomacyActionType
+  FROM cc_dip_cost_steps;
+INSERT INTO GameModifiers (ModifierId) SELECT 'CC_DIPCOSTRULE_' || Age || '_' || DiplomacyActionType FROM cc_dip_cost_steps;
+DROP TABLE cc_dip_cost_steps;

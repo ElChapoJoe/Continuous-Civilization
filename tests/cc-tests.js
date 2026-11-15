@@ -567,6 +567,14 @@
     const cost = (a) => A(GameInfo.DiplomaticActionInfluenceCosts).find((c) => c.DiplomacyActionType === a);
     const war = cost("DIPLOMACY_ACTION_DECLARE_WAR")?.InfCostNeutral, spy = cost("DIPLOMACY_ACTION_COUNTER_SPY")?.InfCostNeutral;
     r.checks.antiquityCosts = { pass: war === 60 && spy === 40, war, spy };
+    // Influence costs by personal Age (78-diplomacy.sql): -100% in Exploration and -100% more in Modern for shared
+    // actions; Exploration-only actions only get Modern's -50%.
+    const arg = (id, n) => A(GameInfo.ModifierArguments).find((x) => x.ModifierId === id && x.Name === n)?.Value;
+    r.checks.costSteps = { pass: arg("CC_DIPCOST_EX_DIPLOMACY_ACTION_DECLARE_WAR", "Percent") == -100
+      && arg("CC_DIPCOST_MO_DIPLOMACY_ACTION_DECLARE_WAR", "Percent") == -100
+      && arg("CC_DIPCOST_MO_DIPLOMACY_ACTION_DEMAND_TRIBUTE", "Percent") == -50
+      && !GameInfo.Modifiers.lookup("CC_DIPCOST_EX_DIPLOMACY_ACTION_DEMAND_TRIBUTE")
+      && !GameInfo.Modifiers.lookup("CC_DIPCOST_MO_DIPLOMACY_ACTION_ESPIONAGE_FAKE_ARTIFACTS") };
     const ruins = GameInfo.Constructibles.lookup("IMPROVEMENT_RUINS"), ri = GameInfo.Improvements.lookup("IMPROVEMENT_RUINS");
     r.checks.ruinsAreDiscoveries = { pass: !!ruins?.Discovery && !ruins?.Archaeology && !!ruins?.CanBeHidden && !!ri?.RemoveOnEntry };
     r.pass = Object.values(r.checks).every((c) => c.pass);

@@ -65,7 +65,7 @@ everyone. Effort is a rough guess.
 | Age-start policies (`StartingPolicies`) | All 13 are unlocked by civics already in the merged tree (Antiquity's for Exploration's set, Exploration's for Modern's) |
 | Religion and pantheon capabilities | Both loaded (`age-antiquity`/`age-exploration` `gamecapabilities.xml`) |
 | Exploration-only belief chooser script (`age-exploration/ui/belief-chooser`) | Not used by anything; the real pickers are in base-standard |
-| Victories, legacy paths, Modern archaeology, diplomacy costs | `76-victories.sql`; README known limitations |
+| Victories, legacy paths, Modern archaeology, diplomacy costs (Influence costs follow the personal Age since 0.2.0, `78-diplomacy.sql`) | `76-victories.sql`; README known limitations |
 
 ## Could not decide without playing
 
