@@ -44,6 +44,42 @@
 			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
 			<ModInUse>nepal</ModInUse>
 		</Criteria>
+		<Criteria id="antiquity-with-dai-viet">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>dai-viet</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-england">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>england</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-goryeo">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>goryeo</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-iceland">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>iceland</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-joseon">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>joseon</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-ottomans">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>ottomans</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-pirate-republic">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>pirate-republic</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-qajar">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>qajar</ModInUse>
+		</Criteria>
+		<Criteria id="antiquity-with-sengoku">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ModInUse>sengoku</ModInUse>
+		</Criteria>
 	</ActionCriteria>
 	<ActionGroups>
 		<!-- 1. Snapshot Antiquity state and remove primary-key collisions (generated). -->
@@ -101,6 +137,9 @@
 					<Item>{age-exploration}data/narrative-display.xml</Item>
 					<Item>{age-exploration}data/narrative-sifting.xml</Item>
 					<Item>{age-exploration}data/civilizations-common-gameeffects.xml</Item>
+					<!-- Exploration civs' own civic trees; data/84-civ-trees.sql reveals each to its civ in its personal Exploration. -->
+					<Item>{age-exploration}data/progression-trees-culture-unique.xml</Item>
+					<Item>{age-exploration}data/progression-trees-culture-unique-gameeffects.xml</Item>
 					<Item>{age-exploration}data/diplomacy-actions.xml</Item>
 					<Item>{age-exploration}data/diplomacy-gameeffects.xml</Item>
 				</UpdateDatabase>
@@ -132,6 +171,9 @@
 					<Item>{age-modern}data/units.xml</Item>
 					<Item>{age-modern}data/units-gameeffects.xml</Item>
 					<Item>{age-modern}data/civilizations-common-gameeffects.xml</Item>
+					<!-- Modern civs' own civic trees; data/84-civ-trees.sql reveals each in its civ's personal Modern. -->
+					<Item>{age-modern}data/progression-trees-culture-unique.xml</Item>
+					<Item>{age-modern}data/progression-trees-culture-unique-gameeffects.xml</Item>
 					<Item>{age-modern}data/governments.xml</Item>
 					<Item>{age-modern}data/golden-ages.xml</Item>
 					<Item>{age-modern}data/golden-ages-gameeffects.xml</Item>
@@ -232,6 +274,7 @@
 				<UpdateDatabase>
 					<Item>{bulgaria}data/constructibles.xml</Item>
 					<Item>{bulgaria}data/constructibles-gameeffects.xml</Item>
+					<Item>{bulgaria}data/progression-trees-culture-unique.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -243,6 +286,7 @@
 				<UpdateDatabase>
 					<Item>{shawnee-tecumseh}data/constructibles.xml</Item>
 					<Item>{shawnee-tecumseh}data/constructibles-gameeffects.xml</Item>
+					<Item>{shawnee-tecumseh}data/progression-trees-culture-unique.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -254,6 +298,7 @@
 				<UpdateDatabase>
 					<Item>{great-britain}data/constructibles.xml</Item>
 					<Item>{great-britain}data/constructibles-gameeffects.xml</Item>
+					<Item>{great-britain}data/progression-trees-culture-unique.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -265,6 +310,81 @@
 				<UpdateDatabase>
 					<Item>{nepal}data/constructibles-modern.xml</Item>
 					<Item>{nepal}data/constructibles-gameeffects.xml</Item>
+					<Item>{nepal}data/progression-trees-culture-unique.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<!-- DLC civilizations' own Exploration / Modern civic trees (owners only; vanilla loads each only in its Age).
+		     data/84-civ-trees.sql reveals each to its civ in the matching personal Age. Not tested in game. -->
+		<ActionGroup id="cc-import-dlc-dai-viet" scope="game" criteria="antiquity-with-dai-viet">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{dai-viet}data/progression-trees-culture-unique.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-import-dlc-england" scope="game" criteria="antiquity-with-england">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{england}data/progression-trees-culture-unique.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-import-dlc-goryeo" scope="game" criteria="antiquity-with-goryeo">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{goryeo}data/progression-trees-culture-unique.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-import-dlc-iceland" scope="game" criteria="antiquity-with-iceland">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{iceland}data/progression-trees-culture-unique.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-import-dlc-joseon" scope="game" criteria="antiquity-with-joseon">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{joseon}data/progression-trees-culture-unique.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-import-dlc-ottomans" scope="game" criteria="antiquity-with-ottomans">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{ottomans}data/progression-trees-culture-unique.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-import-dlc-pirate-republic" scope="game" criteria="antiquity-with-pirate-republic">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{pirate-republic}data/progression-trees-culture-unique.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-import-dlc-qajar" scope="game" criteria="antiquity-with-qajar">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{qajar}data/progression-trees-culture-unique.xml</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-import-dlc-sengoku" scope="game" criteria="antiquity-with-sengoku">
+			<Properties><LoadOrder>650</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>{sengoku}data/progression-trees-culture-unique.xml</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -324,6 +444,7 @@
 					<Item>data/81-age-scaled-bonuses.sql</Item>
 					<Item>data/82-dedication-cards.sql</Item>
 					<Item>data/83-dedications.sql</Item>
+					<Item>data/84-civ-trees.sql</Item>
 					<Item>data/90-prune-dangling.sql</Item>
 					<Item>data/99-cleanup.sql</Item>
 				</UpdateDatabase>

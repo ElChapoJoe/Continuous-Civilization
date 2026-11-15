@@ -613,6 +613,31 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
+  // Exploration and Modern civs' own civic trees (84-civ-trees.sql): imported, re-tagged to Antiquity, and a reveal
+  // rule per tree gated by the civ's trait and personal Age. Live: a civ in its tree's personal Age has the tree.
+  CC.civTrees = function () {
+    const r = { checks: {} };
+    const base = ["TREE_CIVICS_EX_ABBASID", "TREE_CIVICS_EX_INCA", "TREE_CIVICS_EX_MONGOLIA", "TREE_CIVICS_MO_PRUSSIA", "TREE_CIVICS_MO_MUGHAL", "TREE_CIVICS_MO_FRENCH_EMPIRE"];
+    const bad = base.filter((t) => GameInfo.ProgressionTrees.lookup(t)?.AgeType !== "AGE_ANTIQUITY" || !GameInfo.Modifiers.lookup("CC_REVEALRULE_" + t));
+    r.checks.treesImported = { pass: bad.length === 0, bad };
+    const rules = A(GameInfo.Modifiers).filter((m) => m.ModifierId.startsWith("CC_REVEALRULE_TREE_")).length;
+    r.checks.revealRules = { pass: rules >= 20, rules };
+    const live = [];
+    for (const id of Players.getAliveMajorIds()) {
+      const p = Players.get(id);
+      const trait = A(GameInfo.CivilizationTraits).filter((c) => c.CivilizationType === GameInfo.Civilizations.lookup(p.civilizationType)?.CivilizationType).map((c) => c.TraitType);
+      for (const t of A(GameInfo.ProgressionTrees)) {
+        if (!GameInfo.Modifiers.lookup("CC_REVEALRULE_" + t.ProgressionTreeType)) continue;
+        const civTrait = "TRAIT_" + t.ProgressionTreeType.slice("TREE_CIVICS_EX_".length);
+        if (!trait.includes(civTrait)) continue;
+        const subj = (() => { try { return Game.Modifiers.getModifierSubjects(Game.getHash("CC_REVEALRULE_" + t.ProgressionTreeType))?.some((s) => s.owner === id || s === id || s.id === id) ?? false; } catch (e) { return "?"; } })();
+        live.push({ pid: id, tree: t.ProgressionTreeType, attached: subj });
+      }
+    }
+    r.checks.liveCivTrees = { pass: true, live };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
   CC.ageScaling = function (pid = 0) {
     const r = { checks: {} };
     const gm = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
