@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner.svg" alt="Continuous Civilization" width="100%">
+  <img src="docs/images/banner.jpg" alt="Continuous Civilization: a white plaster city from castle to skyscrapers on a gold line, on marble" width="100%">
 </p>
 
 <p align="center">
