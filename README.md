@@ -125,6 +125,8 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 - **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look, because the engine draws them from a single game-wide Age. Buildings, wonders and units from later Ages use their own art. [Details](docs/visual-progression-investigation.md).
 - **Ruins** stay Antiquity discoveries all game, so Modern archaeology can't use them.
 - **A few numbers stay at Antiquity's values**, because the engine reads them from the one game Age with no per-player version: the Happiness needed for celebrations and for Joyous/Ecstatic settlements, and war weariness. (Growth costs, the specialist cap, town upgrade costs, narrative rewards, and leader, memento and attribute-tree bonuses now follow your personal Age.)
+- **Later-Age civilizations' unique Settler, Merchant, Scout and Army Commander replacements are available from the start** (Norman Sokeman, Mughal Zamindar, Mongolian Noyan, Bugandan Mwami, Inca Chasqui, Ming Mandarin, Songhai Tajiro, Qing Hangshang): the engine makes a unique unit available as soon as the unit it replaces is, not at its own tech.
+- **AI civilizations can buy some buildings in towns before their tech** (towns with a building-purchase ability, such as Augustus's or a Factory Town); the purchase screen blocks it for you.
 - **Older buildings never become obsolete**, so they can't be overbuilt with later-Age buildings.
 - **No crises** happen.
 - **Not yet included:** Treasure Fleets and Factory resources, some Exploration and Modern wonders that come with DLC civilization packs (wonder packs and four civilization-pack wonders are included), and DLC story events.

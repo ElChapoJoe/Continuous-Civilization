@@ -10,12 +10,14 @@
 //   * Victories screen, Culture tab: the bars span the turns played so far (they were scaled to the Age meter,
 //     which never fills here, so every point sat at 0%). Summary tab: the Science goal shows (vanilla hides it in
 //     Antiquity).
+//   * Purchases: a town can't buy a building whose tech or civic you lack (the engine allows it for tag-purchase
+//     towns; local player only).
 // Left alone on purpose:
 //   * The trade route chooser's Modern mode also changes how routes are made; the engine runs Antiquity's trade rules
 //     here, so its Antiquity mode matches what the game does.
 //   * The continent lens: its Exploration view is about Treasure resources and its Modern view about researching
 //     ruins left by earlier Ages; this mod has neither (no Treasure resources, no Age transitions to leave ruins).
-// Display only.
+// Display only, except the purchase check (see below).
 import { DiploRibbonData } from '/base-standard/ui/diplo-ribbon/model-diplo-ribbon.js';
 import { registerUnitLensSelector } from '/core/ui/lenses/lens-manager.js';
 
@@ -108,6 +110,41 @@ try {
   }
 } catch (e) {
   console.error("cc-age-ui: victories summary: " + e);
+}
+
+// Town purchases of locked buildings. A town that may buy buildings of a tag (Augustus's Culture buildings, Factory and
+// Fort Town focuses, the Carthage, England, Gaul and Joseon abilities) is allowed by the engine to buy such a building
+// before its tech or civic: the answer is Locked, with the missing unlock named, but Success. Vanilla has this within
+// one Age; here every Age's buildings are loaded, so a town could buy Modern buildings in Antiquity (seen: an Opera
+// House before Urbanization). The engine has no per-player block, so the purchase screen and the purchase request
+// treat a locked building as not purchasable, for the local player. The AI is not affected. Same issue in the
+// Continuous Ages mod (U-TOWN-PURCHASE).
+try {
+  const cc = Game.CityCommands;
+  if (!cc.__ccAgeUi) {
+    const isLockedPurchase = (r) => r && r.Success && r.Locked && r.NeededUnlock != null && r.NeededUnlock != -1;
+    const block = (r) => Object.assign({}, r, { Success: false });
+    const canStart = cc.canStart, canStartQuery = cc.canStartQuery, sendRequest = cc.sendRequest;
+    cc.canStart = function (cityId, command, args, test) {
+      const r = canStart.call(this, cityId, command, args, test);
+      return command === CityCommandTypes.PURCHASE && args?.ConstructibleType != null && isLockedPurchase(r) ? block(r) : r;
+    };
+    cc.canStartQuery = function (cityId, command, queryType) {
+      const results = canStartQuery.call(this, cityId, command, queryType);
+      if (command !== CityCommandTypes.PURCHASE || !Array.isArray(results)) return results;
+      return results.map((e) => (isLockedPurchase(e?.result) ? Object.assign({}, e, { result: block(e.result) }) : e));
+    };
+    cc.sendRequest = function (cityId, command, args) {
+      if (command === CityCommandTypes.PURCHASE && args?.ConstructibleType != null) {
+        const r = canStart.call(this, cityId, command, args, false);
+        if (isLockedPurchase(r)) { console.warn("cc-age-ui: refused purchase of a locked building"); return; }
+      }
+      return sendRequest.call(this, cityId, command, args);
+    };
+    Object.defineProperty(cc, "__ccAgeUi", { value: true });
+  }
+} catch (e) {
+  console.error("cc-age-ui: town purchases: " + e);
 }
 
 /** Unlocks screen: patch its class once it is defined. */
