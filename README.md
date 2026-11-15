@@ -28,7 +28,7 @@
   <a href="#faq">FAQ</a>
 </p>
 
-![The merged tech tree, where Exploration's Urban Planning and Gunpowder lead into Modern's Academics, Steam Engine and Military Science](docs/images/tech-tree.jpg)
+![The merged tech tree: Exploration's Urban Planning and Gunpowder lead straight into Modern's Academics, Steam Engine and Military Science](docs/images/tech-tree.jpg)
 
 ## Why play it
 
@@ -38,7 +38,7 @@
 - ⚔️ **Content from every Age.** Units, buildings, governments, religion, resources, diplomacy and espionage from all three Ages, in one game.
 - 🏆 **Every main victory works:** Science, Culture, Economic, Military and Domination.
 
-![A Roman empire on turn 42](docs/images/empire.jpg)
+![Rome on turn 179: its Antiquity Colosseum still stands among the buildings of later Ages](docs/images/empire.jpg)
 
 ## Install
 
@@ -89,7 +89,11 @@ The **Distant Lands** across the Ocean are open from the start: you can meet the
 - **City-states, great people, projects, narratives and discoveries** from all three Ages share one pool.
 - **Ideologies:** Democracy, Fascism and Communism open with Political Theory.
 
-![The Exploration part of the tech tree](docs/images/tech-tree-exploration.jpg)
+![Overbuilding: an Exploration University placed over older buildings, choosing which one it replaces](docs/images/overbuild.jpg)
+
+![Triumphs from every Age on one screen](docs/images/triumphs.jpg)
+
+![The Choose Dedications window, which opens when you enter a new personal Age](docs/images/dedications.jpg)
 
 ## Winning
 
@@ -102,6 +106,8 @@ The **Distant Lands** across the Ocean are open from the start: you can meet the
 | 🗡️ **Domination** | Capture every rival's original capital |
 
 In vanilla, Culture, Economic and Military are won by staying 25% ahead of second place, a check the game only runs inside a real Modern Age. Here they use a fixed target, as Science does. Culture and Economic are set so AI leaders reach them late in the game; Military is set above what an empire scores without conquest. All targets will be tuned from beta feedback.
+
+![The Victories screen with this mod's fixed targets](docs/images/victories.jpg)
 
 ## Beta testers
 
