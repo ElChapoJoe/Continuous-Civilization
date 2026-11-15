@@ -1,6 +1,6 @@
-# Continuous Civilization: Antiquity + Exploration (Phase 2 prototype)
+# Continuous Civilization: technical notes (0.2.0-beta)
 
-The Antiquity Age never ends. The full Exploration technology and civic trees continue directly from the Antiquity trees, and the Modern ones continue from those (Phase 3, in progress), and Exploration units, buildings, wonders, policies and governments unlock through research.
+The Antiquity Age never ends. The full Exploration technology and civic trees continue directly from the Antiquity trees, and the Modern ones continue from those, and Exploration and Modern units, buildings, wonders, policies and governments unlock through research.
 
 - **Civics:** the 12 Exploration main civics plus Exploration Future Civic follow Antiquity's (Economics after Commerce, Piety after Philosophy), with their policies, buildings and wonders. Antiquity Future Civic is removed. The Theology branch opens once you have founded a religion.
 - **More Exploration content (batch A):** Exploration city-states and their suzerain bonuses join Antiquity's from the start; Exploration city and town projects (Town Temple and Inn focuses; Heliocentric Model at Education, Invent Calculus at Urban Planning) with Antiquity's values kept for the shared ones; the Abbasid and Spanish unique great people; Exploration AI priority lists.
@@ -31,13 +31,13 @@ Map generation, terrain, rivers, graphics and all Antiquity rules are vanilla, e
 - **Older buildings never become obsolete** for the engine: every building counts as "current Age", so they keep their adjacency bonuses and the engine never offers to build over them (#8). `ui/cc-overbuild.js` adds overbuilding per player in the placement screen: a full tile whose older building (vanilla Age from the `CC_AGE_EXPLORATION`/`CC_AGE_MODERN` tags of `30-buildings.sql`) is behind both the player's personal Age and the new building's Age becomes a spot (if both buildings there qualify, a first dialog asks which one and the side panel is redrawn for that choice before the confirmation); confirming removes it (`DESTROY_ELEMENT`) and then queues or buys the new building, putting the old one back (`CREATE_ELEMENT`) if the engine refuses. Specialists on the tile stay; a queued replacement leaves the city 1 urban Population short until it is built (buildings count as urban Population). Local player only; the AI doesn't overbuild.
 - **Culture victory points** for wonders follow the wonder's Age and for celebrations the player's personal Age (`80-triumphs.sql`, #12), as in vanilla.
 - **No crises** happen (the Age meter is held near 0%) (#16).
-- **Not yet included** (planned or under consideration): Treasure Fleets and Factory resources (#1), the remaining civilization-pack wonders (England, Dai Viet, Goryeo, Iceland, Sengoku, Joseon, Ottomans, Qajar, Pirate Republic) and DLC story events (#4, #14), later-Age civilizations' own abilities when played from the start (#13), and Ocean ending a unit's move as in vanilla Exploration (#18).
+- **Not yet included** (planned or under consideration): Treasure Fleets and Factory resources (#1), the remaining civilization-pack wonders (England, Dai Viet, Goryeo, Iceland, Sengoku, Joseon, Ottomans, Qajar, Pirate Republic) and DLC story events (#4, #14).
 - **Modern AI file** (`ai-modern.xml`) is not imported: it crashed the game. The AI uses the base military/diplomatic components with Exploration's targets and lists.
 - **Modern diplomacy actions** (espionage etc.) are not imported yet; they re-define Antiquity's diplomacy values (planned with the balance pass).
 
 ## How it works
 
-Gameplay is data-only (modinfo, SQL, and XML references), plus one display-only UI script. No Firaxis files are copied or modified; generated files are rebuilt from the installed game by the tools below.
+Gameplay is data-only (modinfo, SQL, and XML references); UI scripts in `ui/` patch vanilla screens that read the game Age, and add the overbuild, Dedications and government interfaces. No Firaxis files are copied or modified; generated files are rebuilt from the installed game by the tools below.
 
 | Load order | Group | What it does |
 |---|---|---|

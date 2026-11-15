@@ -160,7 +160,7 @@ Likely: Civ VII patches can change the data the mod builds on. Please open an is
 
 - Balance pass from beta feedback: pacing, victory targets.
 - Multiplayer testing.
-- Per-player visual city changes: city art (buildings, houses, roads, bridges) that advances for each player as they research, instead of staying Antiquity's all game. In progress: the engine picks this art from one global Age (see [the investigation](docs/visual-progression-investigation.md)), so we're working on a workaround.
+- Per-player visual city changes: city art (houses, roads, bridges) that advances for each player as they research, instead of staying Antiquity's all game. Paused: the engine picks this art from one global Age ([the investigation](docs/visual-progression-investigation.md)); a prototype got part of the way.
 
 ## Contributing
 
