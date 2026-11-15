@@ -60,3 +60,41 @@ Two games, two different shapes: a wonder builder that would win Culture about 8
 350), and a runaway that wins Culture on turn 152 with Science and Military also close. 350 keeps Culture from
 winning before turn ~150 on Online in both. Whether a runaway should win this way, or this early, is for the
 balancing pass against vanilla game lengths.
+
+## Vanilla reference game (no mods, Online)
+
+Same settings and leaders as the fix check (Sovereign, Continents and Islands, Small map; Augustus, Ibn Battuta,
+Alexander, Lafayette, Friedrich alt, Napoleon), autoplayed with only the base game. Each Age lasted 70 turns
+(Antiquity turns 1-70, Exploration 71-140, Modern 141-210 counted across the game; vanilla restarts the turn counter
+each Age). **The game ended on turn 210 with a Score victory (Siam)**: nobody got the 25% lead that vanilla's Culture,
+Economic and Military victories need, and nobody launched a rocket.
+
+Leaders' victory points (vanilla scores them all game; they carry over between Ages):
+
+| Turn (whole game) | Age | Culture 1st / 2nd | Science 1st | Economic 1st | Military 1st |
+|---|---|---|---|---|---|
+| 40 | Antiquity | 10 / 8 | 3 | 38 | 20 |
+| 60 | Antiquity | 22 / 21 | 12 | 229 | 24 |
+| 72 | Exploration starts | 25 / 24 | 19 | 410 | 32 |
+| 100 | Exploration | 86 / 62 | 19 | 950 | 37 |
+| 130 | Exploration | 131 / 102 | 28 | 1,917 | 47 |
+| 141 | Modern starts | 150 / 134 | 43 | 2,295 | 52 |
+| 160 | Modern | 177 / 173 | 46 | 2,575 | 56 |
+| 180 | Modern | 246 / 231 | 54 | 3,049 | 75 |
+| 200 | Modern | 301 / 273 | 59 | 3,895 | 75 |
+| 210 (end) | Modern | 336 / 299 | 72 | 4,646 | 77 |
+
+Compared with this mod (Online):
+
+- **Game length.** Vanilla ends on turn 210 at the latest. This mod's Science win came on turn 184 (game 1) and the
+  Culture win on turn 152 (game 2), so games end at about the same time or earlier.
+- **Culture.** Vanilla's leader has 336 at the very end. 350 is in the same range, but this mod gets there sooner
+  (345 by turn 170 in game 1, 450 by turn 151 in game 2), because wonders and buildings are never lost to an Age
+  transition and all Triumphs count from the personal Age on.
+- **Economic.** Vanilla's leader ends with 4,646; this mod's leader had 8,324 at turn 191. 12,000 is far above both.
+- **Military.** Vanilla's leader ends with 77 (Siam reached 100 only after the Score victory); this mod's leaders sat
+  at 61-97. 100 matches "takes conquest" in both.
+- **Science points** are not comparable: vanilla's Science victory is the rocket, and vanilla's points come mostly from
+  codices.
+
+One game per side; a second vanilla game would show how much these numbers vary.
