@@ -11,7 +11,7 @@ Workshop item: [https://steamcommunity.com/sharedfiles/filedetails/?id=383877774
 | Preview image | [`docs/images/workshop-preview.jpg`](../images/workshop-preview.jpg): the logo, a carved plaster medallion C with a skyline from castle to skyscrapers on marble, 512 x 512 (rendered by `tools/blender/cc_logo_medallion.py`; see `tools/blender/README.md`). Replaces the 2026-11-14 "C of the Ages" art |
 | Description | [`description.txt`](description.txt), in Steam's formatting codes (paste it as is) |
 | Gallery images | All 16:9 at native resolution (about 1780 x 1000), in this order: `workshop-title-card.jpg` (from `tools/blender/cc_banner.py --mode card`), `empire.jpg`, `tech-tree.jpg`, `overbuild.jpg`, `triumphs.jpg`, `dedications.jpg`, `victories.jpg` |
-| Banner in the description | `description.txt` starts with the title card, loaded from the public GitHub repo (it only shows once the repo is public) |
+| Banner in the description | `description.txt` starts with `docs/images/workshop-banner.jpg` (the city on its gold line, no text; from `tools/blender/cc_banner.py`), loaded from the public GitHub repo |
 | Visibility | The uploader offers Public, Friends Only and Private. **Friends Only** for a closed beta with Steam friends, **Public** to open it up (visibility can be changed later on the item's Steam page) |
 | Change note (first upload) | `0.1.0-beta: first public beta.` |
 | Change note (0.2.0) | `0.2.0-beta: World Age (costs rise for everyone together), Test of Time and every civilization's own civic tree, Triumphs and Dedications from all Ages, overbuilding, Military victory, Culture target 350 and Economic 8,000. Start a new game. Full list: github.com/ElChapoJoe/Continuous-Civilization/blob/main/CHANGELOG.md` |
