@@ -2,7 +2,7 @@
 // In vanilla, a new Age makes the previous Age's buildings obsolete and you can build over them. The engine decides
 // that by the game Age, which never leaves Antiquity here, so no building ever became replaceable and cities had to
 // grow outward for every new building. This script adds it per player, in the building placement screen:
-//   * A tile whose two building slots are full shows as a placement spot when the building you place is from a later
+//   * A tile whose two building slots are full shows as a placement spot (in blue) when the building you place is from a later
 //     Age than one of the buildings there (by its vanilla Age, data/30-buildings.sql tags) and that building's Age is
 //     behind you (personal Age, same root techs as data/70-personal-age.sql). Exploration players can build over
 //     Antiquity buildings, Modern players over Antiquity and Exploration ones.
@@ -216,12 +216,31 @@ function previewChoice(plotIndex, newDef, oldDef) {
   BuildingPlacementManager.selectedPlotIndex = plotIndex;
 }
 
+const OVERBUILD_FILL = 0xC8FF9A5A; // ABGR, same alpha as vanilla's placement colours: a light blue
+
 let patched = false;
 function patchInterfaceMode() {
   if (patched) return;
   const mode = InterfaceMode.getInterfaceModeHandler("INTERFACEMODE_PLACE_BUILDING");
   if (!mode) return;
   patched = true;
+  // Overbuild tiles get their own look: a blue fill (vanilla's farm/improvement tiles are yellow) and a blue hex
+  // outline, like vanilla's outline for unique-quarter tiles.
+  const vanillaDecorate = mode.decorate.bind(mode);
+  mode.decorate = function (overlay) {
+    vanillaDecorate(overlay);
+    try {
+      const plots = [...overbuildPlots.keys()];
+      if (!plots.length) return;
+      this.plotOverlay?.addPlots(plots, { fillColor: OVERBUILD_FILL });
+      for (const plotIndex of plots) {
+        this.uniqueQuarterModelGroup?.addVFXAtPlot("VFX_3dUI_Hex_Highlight_01", plotIndex, { x: 0, y: 0, z: 0 },
+          { angle: 0, constants: { Color3: [0.35, 0.6, 1], Alpha1: 1 } });
+      }
+    } catch (e) {
+      console.error("cc-overbuild: highlight " + e);
+    }
+  };
   const vanillaPropose = mode.proposePlot.bind(mode);
   mode.proposePlot = function (plot, accept, reject) {
     const victim = overbuildPlots.get(GameplayMap.getIndexFromLocation(plot));

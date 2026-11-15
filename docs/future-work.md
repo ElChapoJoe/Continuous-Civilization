@@ -47,5 +47,4 @@ has a full tile with an older building, move it there. Needs an autoplay to conf
 
 ### Smaller
 
-- Replaceable tiles use the same highlight as vanilla's farm/improvement tiles; only hovering shows "will OVERBUILD".
 - Multiplayer is untested (`DESTROY_ELEMENT`/`CREATE_ELEMENT` may be refused there).
