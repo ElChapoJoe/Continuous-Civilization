@@ -65,7 +65,8 @@ function adjust(playerId, legacyType, result) {
   if (p.total === 200) {              // percentage per requirement
     const pct = Math.max(0, Math.min(100, p.current - (inAge ? 100 : 0)));
     total = g.goal > 0 ? g.goal : g.goal < 0 ? 100 : 1;
-    current = Math.floor(pct * total / 100 + 1e-6);
+    // The engine's percentage is rounded down (1 of 6 = 16), so round back to the nearest count (16% of 6 = 1).
+    current = Math.min(total, Math.round(pct * total / 100));
   } else if (g.goal > 0 && p.total === g.goal) {
     return result;                     // raw units without the Age (e.g. the Wonders Triumphs' 2/6)
   } else {                             // raw units, the Age counted as 1
