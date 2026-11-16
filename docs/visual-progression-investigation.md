@@ -500,3 +500,32 @@ Setup (`tools/order-test.js`): from `CC_Visual_Streets35`, two new urban distric
 - **(32,9) got the same pattern in all three runs, although its district id and constructible id differ between the orders.** So the engine's seed does not come from creation order or from the ids; it is tied to the tile (and survives reloads, round 18). One tile only, the second was not readable in runs 1 and 3.
 - Measurement notes: this 13-tile coastal city scores less clearly than the 35-district inland one (water and shore in the discs); the zoomed view (height 250, radius 140) gave the clearest margins. Two captures of the same game differ by 3-10 grey levels per tile on the bare ground (moving cloud shadows and water), so raw screenshots can't be compared between runs directly. A clip set in the same frame as `restoreAllHexHeight` is lost: `street-probe.js` now clips 0.7 s after its reset.
 - Consequence: the seed is a function of the location (plot, coordinates or world position, possibly with the map or game seed) through a hash not in the tested list. Deterministic, so in principle findable; and if it depends on the coordinates alone it could be measured once and shipped as a table.
+
+## Round 42 (2026-11-15): same coordinates on fresh maps, the pattern belongs to the map
+
+Question: does a tile's street pattern depend on its coordinates alone (then one measured table could ship), or also on the map? All three maps were made fresh on the current game build (the older test saves no longer load: they ask for mod versions that are gone). Setup from the main menu by script: `GameSetup.setGameParameterValue` for `Map` (`pangaea-voronoi.js`), `MapSize` (`MAPSIZE_TINY`, 60 x 38), `MapRandomSeed`, `GameRandomSeed`, then `engine.call("startGame")`. On each map a Founder was spawned at (19,22), the city founded, the second ring bought, and the same 14 Antiquity buildings placed on the same 14 tiles in the same order (`CREATE_ELEMENT`). Mods active: continuous-civ and cc-remap-test (no effect on city art, round 35).
+
+| Tile | Map A (map seed 1001, game seed 2001) | Map C (map seed 1001, game seed 9999) | Map B (map seed 1966606283) |
+|---|---|---|---|
+| 18,20 | A at 60 | A at 60 | **B at 0** |
+| 20,20 | B at 0 | B at 0 | B at 0 |
+| 17,21 | A at 60 | A at 60 | A at 60 |
+| 18,21 | B at 0 | B at 0 | **A at 60** |
+| 19,21 | A at 60 | A at 60 | A at 60 |
+| 20,21 | B at 0 | B at 0 | **A at 0** |
+| 18,22 | A at 0 | A at 0 | A at 0 |
+| 20,22 | B at 0 | B at 0 | B at 0 |
+| 17,23 | B at 60 | B at 60 | **A at 60** |
+| 18,23 | A at 60 | A at 60 | A at 60 |
+| 19,23 | B at 0 | B at 0 | B at 0 |
+| 18,24 | B at 0 | B at 0 | B at 0 |
+| 19,24 | B at 300 | B at 300 | **B at 0** |
+| 20,24 | B at 0 | B at 0 | B at 0 |
+
+- **Same map seed, other game seed: 14 of 14 tiles identical** (including the rare "B at 60" and "B at 300"). The game seed, start positions and unit/city ids play no part.
+- **Other map seed: 9 of 14 identical, 5 differ.** So the coordinates alone do not decide the pattern, and one table for all maps is not possible. The pattern is a property of the map: its seed, or something made from it (terrain, heights).
+- 9 of 14 is more than chance would give if all patterns were equally likely, but the patterns are far from equally likely: 23 of the 28 readings are "A at 60" or "B at 0" (the same engine turn, since script-drawn B sits 300 degrees off). With that skew about 5 matches are expected by chance; 9 is suggestive, not proof, of a part that depends on the coordinates.
+- Terrain of the tiles on map A/C, for a later search (terrain, biome, elevation, rainfall, ground height z): 19,23 flat plains 927/100/26.91; 18,22 hill plains 993/70/29.09; 19,21 flat tropical 652/80/17.84; 18,21 flat tropical 727/90/19.69; 20,22 flat plains 527/50/13.48; 18,23 hill plains 1023/100/29.92; 20,24 flat plains 678/100/18.47; 19,24 flat plains 799/100/22.22; 17,21 hill tropical 905/100/26.81; 20,20 hill tropical 449/100/10.90; 20,21 flat tropical 463/70/11.55; 18,20 flat tropical 701/100/19.47; 18,24 flat plains 773/100/21.27; 17,23 flat plains 1100/100/32.97.
+- Measurement: every reading had a margin of 3.5 or more (most 6-20) after a scorer fix. A passing cloud haze darkens a whole screenshot and had made the old score (mean brightness difference) unreadable; `street_probe_score.py` now compares fine detail only (window minus its own blur, 100 x (1 - correlation)). Camera height 300, radius 140, three views per city. Any window in front of the game spoils the shots (it happened twice).
+- Saves: `CC_Seed_MapA`, `CC_Seed_MapA_city`, `CC_Seed_MapB`, `CC_Seed_MapB_city`, `CC_Seed_MapA_gameseed9999_city`. Labels: `experimental/cc-visual-prototype/tools/street-labels-seedmaps.json`.
+- Consequence: a mod can't ship a lookup table, but because the pattern is fixed by the map seed, the open question narrows to "seed + location -> pattern". Next cheap tests: two map seeds that differ by 1 (does everything change?), and the same seed with another map script or size (is it the seed number or the terrain?).

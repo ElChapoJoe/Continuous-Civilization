@@ -29,6 +29,22 @@ def load(k):
     return (img[::-1] if h > 0 else img).astype(np.float32)   # BGR, top row first
 
 
+def detail(a, k=12):
+    """The window minus a (2k+1)-pixel box blur of itself."""
+    pad = np.pad(a, k, mode="edge")
+    c = np.cumsum(np.cumsum(pad, axis=0), axis=1)
+    c = np.pad(c, ((1, 0), (1, 0)))
+    n = 2 * k + 1
+    blur = (c[n:, n:] - c[:-n, n:] - c[n:, :-n] + c[:-n, :-n]) / (n * n)
+    return a - blur
+
+
+def corr(a, b):
+    a = a - a.mean()
+    b = b - b.mean()
+    return float((a * b).sum() / max(np.sqrt((a * a).sum() * (b * b).sum()), 1e-6))
+
+
 tiles = json.load(open(tiles_path))
 views = len(tiles[0]) - 5
 base0 = load(0)
@@ -53,7 +69,10 @@ for v in range(views):
         if cx - radius < 0 or cy - radius < 0 or cx + radius >= W or cy + radius >= oy + 993:
             continue                                                  # not fully on screen
         win = (slice(cy - radius, cy + radius + 1), slice(cx - radius, cx + radius + 1))
-        d = [float(np.abs(shots[c][win] - shots[0][win])[disc].mean()) for c in range(1, len(CANDS))]
+        # Compare fine detail only (picture minus its own blur), as 100 * (1 - correlation): a passing cloud
+        # shadow or haze changes the brightness of a whole shot and must not count as a different pattern.
+        base = detail(shots[0][win])[disc]
+        d = [100.0 * (1.0 - corr(base, detail(shots[c][win])[disc])) for c in range(1, len(CANDS))]
         order = np.argsort(d)
         best, second = int(order[0]), int(order[1])
         s, a = CANDS[best + 1]

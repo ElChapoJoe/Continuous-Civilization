@@ -1,0 +1,24 @@
+{
+  "note": "Round 42: street pattern per tile, same city at (19,22) on three fresh maps (pangaea-voronoi, tiny). Value = street layout + turn as scored by street_probe_score.py.",
+  "maps": {
+    "A": {"mapSeed": 1001, "gameSeed": 2001},
+    "C": {"mapSeed": 1001, "gameSeed": 9999},
+    "B": {"mapSeed": 1966606283}
+  },
+  "tiles": {
+    "18,20": {"A": "A60", "C": "A60", "B": "B0"},
+    "20,20": {"A": "B0", "C": "B0", "B": "B0"},
+    "17,21": {"A": "A60", "C": "A60", "B": "A60"},
+    "18,21": {"A": "B0", "C": "B0", "B": "A60"},
+    "19,21": {"A": "A60", "C": "A60", "B": "A60"},
+    "20,21": {"A": "B0", "C": "B0", "B": "A0"},
+    "18,22": {"A": "A0", "C": "A0", "B": "A0"},
+    "20,22": {"A": "B0", "C": "B0", "B": "B0"},
+    "17,23": {"A": "B60", "C": "B60", "B": "A60"},
+    "18,23": {"A": "A60", "C": "A60", "B": "A60"},
+    "19,23": {"A": "B0", "C": "B0", "B": "B0"},
+    "18,24": {"A": "B0", "C": "B0", "B": "B0"},
+    "19,24": {"A": "B300", "C": "B300", "B": "B0"},
+    "20,24": {"A": "B0", "C": "B0", "B": "B0"}
+  }
+}
