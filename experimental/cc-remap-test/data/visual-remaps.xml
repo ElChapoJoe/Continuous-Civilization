@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<!-- Probe: which visual remaps does the engine honour for city art? (The game Age stays Antiquity in Continuous
+     Civilization, so the engine always starts from the Antiquity bins.) -->
+<Database>
+  <VisualRemaps>
+    <!-- City layout bins, Antiquity -> Modern. -->
+    <Row><ID>CC_REMAP_MO_2HB</ID><DisplayName>CC test: Modern city blocks</DisplayName><Kind>ART_BIN</Kind><From>BIN_CTY_ANT_Layout_2HB_Full_A</From><To>BIN_CTY_MOD_Layout_2HB_Full_A</To></Row>
+    <Row><ID>CC_REMAP_MO_CENTER</ID><DisplayName>CC test: Modern city centres</DisplayName><Kind>ART_BIN</Kind><From>BIN_CTY_ANT_Layout_City_Center_Full_A</From><To>BIN_CTY_MOD_Layout_City_Center_Full_A</To></Row>
+    <Row><ID>CC_REMAP_MO_PALACE</ID><DisplayName>CC test: Modern palace square</DisplayName><Kind>ART_BIN</Kind><From>BIN_CTY_ANT_Layout_Palace_Full_A</From><To>BIN_CTY_MOD_Layout_Palace_Full_A</To></Row>
+    <Row><ID>CC_REMAP_MO_PALACE_VACANT</ID><DisplayName>CC test: Modern palace square (vacant)</DisplayName><Kind>ART_BIN</Kind><From>BIN_CTY_ANT_Layout_Palace_Vacant_Full_A</From><To>BIN_CTY_MOD_Layout_Palace_Vacant_Full_A</To></Row>
+    <!-- Street sections (bins without an Age in their name), -> Modern. -->
+    <Row><ID>CC_REMAP_MO_STREET_A</ID><DisplayName>CC test: Modern streets A</DisplayName><Kind>ART_BIN</Kind><From>BIN_LAYOUT_CTY_Hex_Section_AB_Road</From><To>BIN_LAYOUT_CTY_MOD_Section_AB_Road</To></Row>
+    <Row><ID>CC_REMAP_MO_STREET_B</ID><DisplayName>CC test: Modern streets B</DisplayName><Kind>ART_BIN</Kind><From>BIN_LAYOUT_CTY_Hex_Section_AB_B_Road</From><To>BIN_LAYOUT_CTY_MOD_Section_AB_Road</To></Row>
+    <!-- House bins, Antiquity -> Modern. -->
+    <Row><ID>CC_REMAP_MO_HOUSE_4X4</ID><DisplayName>CC test: Modern houses 4x4</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_4X4_A</From><To>BIN_MOD_T2_CityBld_4X4_A</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_3X5</ID><DisplayName>CC test: Modern houses 3x5</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_3x5_A</From><To>BIN_MOD_T2_CityBld_3x5_A</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_9X6</ID><DisplayName>CC test: Modern houses 9x6</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_9x6_A</From><To>BIN_MOD_T2_CityBld_9x6_A</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_CORNER</ID><DisplayName>CC test: Modern houses corner</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_Corner_A</From><To>BIN_MOD_T2_CityBld_Corner_A</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_CORNER_M</ID><DisplayName>CC test: Modern houses corner mirrored</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_Corner_A_Mirrored</From><To>BIN_MOD_T2_CityBld_Corner_A_Mirrored</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_2X3</ID><DisplayName>CC test: Modern houses 2x3</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_2X3_A</From><To>BIN_MOD_T2_CityBld_4X4_A</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_2X4</ID><DisplayName>CC test: Modern houses 2x4</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_2X4_A</From><To>BIN_MOD_T2_CityBld_4X4_A</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_4X3</ID><DisplayName>CC test: Modern houses 4x3</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_4X3_A</From><To>BIN_MOD_T2_CityBld_4X4_A</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_6X3</ID><DisplayName>CC test: Modern houses 6x3</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_6x3_A</From><To>BIN_MOD_T2_CityBld_6x4_A</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_6X6</ID><DisplayName>CC test: Modern houses 6x6</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_6x6_A</From><To>BIN_MOD_T2_CityBld_5x6_A</To></Row>
+    <Row><ID>CC_REMAP_MO_HOUSE_7X7</ID><DisplayName>CC test: Modern houses 7x7</DisplayName><Kind>ART_BIN</Kind><From>BIN_ANT_T2_CityBld_7x7_A</From><To>BIN_MOD_T2_CityBld_5x6_A</To></Row>
+    <!-- Controls: a building's art bin, and a building type. -->
+    <Row><ID>CC_REMAP_PROBE_BIN</ID><DisplayName>CC probe: Granary bin as Museum</DisplayName><Kind>ART_BIN</Kind><From>BIN_Granary_Scaled</From><To>BIN_Museum_Scaled</To></Row>
+    <Row><ID>CC_REMAP_PROBE_BIN2</ID><DisplayName>CC probe: Granary bin as Museum (unscaled)</DisplayName><Kind>ART_BIN</Kind><From>BIN_Granary</From><To>BIN_Museum</To></Row>
+    <Row><ID>CC_REMAP_PROBE_BUILDING</ID><DisplayName>CC probe: Bath drawn as Factory</DisplayName><Kind>BUILDING</Kind><From>BUILDING_BATH</From><To>BUILDING_FACTORY</To></Row>
+  </VisualRemaps>
+</Database>

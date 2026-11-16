@@ -427,3 +427,19 @@ Paused at this point; summary and next candidates are in `experimental/cc-visual
 - Resumed after the 0.2.0 release (branch merged with main). Idea: the only decal that paints over the engine's Antiquity streets is the sand-coloured high-priority dirt patch (round 19); if `tintColor1/2` recoloured it grey, it could stand in for Modern paving.
 - Result: **tint has no effect on decals.** Three patches (untinted, grey 0x505050, pure red) on bare tiles and on city tiles came out the same sand colour. Tint only reaches 3D models (banners, awnings).
 - So the ground stays at round 20's conclusion: no paving asset, no recolourable cover. The street-ground gap is closed only by density (buildings covering the ground), as vanilla does.
+
+## Round 35 (2026-11-15): visual remaps from a mod, and plot overlays as a ground repaint
+
+Question: what is the best possible way to get per-player city art? Two engine features not tried before.
+
+### Visual remaps added by a mod: no effect on city art
+- The engine keeps each Age's city layouts in separately named bins (`BIN_CTY_ANT_Layout_2HB_Full_A`, `..._City_Center_Full_A`, `..._Palace_Full_A`, `..._Palace_Vacant_Full_A`, and the same for `EXP` and `MOD`), which is the case option D needed. Scripts can also switch remaps: `VisualRemaps.getAvailableRemaps()`, `setRemapState(id, VisualRemapSelection.Enabled|Disabled|Default)`, `saveConfiguration()`.
+- Probe mod `experimental/cc-remap-test` (`UpdateVisualRemaps` in game and shell scope): 20 rows. `ART_BIN` Antiquity to Modern for the four layout bins, the two street-section bins (`BIN_LAYOUT_CTY_Hex_Section_AB_Road`, `..._AB_B_Road`) and the eleven house bins (`BIN_ANT_T2_CityBld_*`); controls `ART_BIN` `BIN_Granary(_Scaled)` to `BIN_Museum(_Scaled)` and `BUILDING` `BUILDING_BATH` to `BUILDING_FACTORY`.
+- The rows load (listed by `getAvailableRemaps`, state `Default`). Set to `Enabled` in game: no change. Saved and the save reloaded: no change. Enabled at the main menu after a full restart, then the save loaded: **no change**, the city is pixel-for-pixel the Antiquity one (same-camera shots). The controls did nothing either, and `addModelAtPlot("BIN_Granary")` still drew a granary.
+- Conclusion: remaps a mod adds are not applied to city art in 1.5.1 (the base game's three are tied to owned content). This closes option D (a global art era) as well as any per-player trick built on switching remaps.
+
+### Plot overlays cover the engine's street paint
+- `WorldUI.createOverlayGroup(name, priority).addPlotOverlay().addPlots([plot], { fillColor: 0xAABBGGRR })` is the fill the game uses for tile highlights. On a clipped city tile an opaque fill **covers the engine's street decals completely, in any colour**; at 60% alpha the old streets show as faint ghosts (`sandbox-shots/48-plot-overlay-covers-street-decals.png`). Unlike the decal eraser of round 19 it is not limited to sand and it reaches the tile's edges.
+- It also covers what our own layouts paint on the ground: with the fill on, our houses and buildings show but our streets do not, in Modern and Exploration (`sandbox-shots/49-plot-overlay-with-our-houses.png`). The fill is one flat colour per tile.
+- Open: streets on top of the fill. Candidates: a partly transparent fill that mutes the faint Antiquity paths more than our higher-contrast paving; street pieces that are real meshes (raised, so the fill does not reach them); the other overlay kinds (`addSpriteOverlay().addSpriteAtPlot`, `addBorderOverlay` styles), not yet working.
+- Also listed for later: `Camera.pickWorldPos` (might hit the engine's houses, which would reveal the street pattern the engine chose on a tile).
