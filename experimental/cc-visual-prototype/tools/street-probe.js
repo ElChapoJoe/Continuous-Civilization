@@ -48,8 +48,9 @@
       if (!d || (d.type !== DistrictTypes.URBAN && d.type !== DistrictTypes.CITY_CENTER)) continue;
       tiles.push({ x: d.location.x, y: d.location.y, did: id.id, centre: d.type === DistrictTypes.CITY_CENTER,
         cons: d.getConstructibleIds().map((c) => c.id) });
-      WorldUI.clipHexHeight(d.location, 0);
     }
+    // Clip a moment later: stop() above restores all clips, and a restore in the same frame also undoes new clips.
+    setTimeout(() => { for (const t of tiles) WorldUI.clipHexHeight({ x: t.x, y: t.y }, 0); }, 700);
     WorldUI.setUnitVisibility(false);
     group = WorldUI.createModelGroup("ccStreetProbe");
     for (const el of document.body.children) { hidden.push([el, el.style.visibility]); el.style.visibility = "hidden"; }

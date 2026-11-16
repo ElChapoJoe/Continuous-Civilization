@@ -486,3 +486,17 @@ Idea: the engine's street pattern per tile is stable across reloads, so it comes
 - That fits the engine's tiles as "variant from the seed, plus a whole-tile turn of 0 or 60 degrees": A0 and B300 unturned, A60 and B0 turned by 60 (as Modern tiles turn 0 or 60, round 14).
 - **The engine's seed is not a simple function of the tile** (`tools/street_seed_search.py`): with the exact rule (bit 14 xor bit 15 = street B) over the 24 measured tiles, 5,199 candidate seed rules (plot, x, y, district and constructible ids and combinations, alone and with the map seed, through 25 hashes and six pair hashes) reach at most 21 of 24, the same as control bit positions (22 of 24). District ids and plot numbers themselves are too small to set bits 14-15 at all, so the engine's seed is a hashed or random 32-bit value.
 - Next diagnostic: is the seed drawn at creation (random, then saved) or derived from game state? Build the same district twice from one save and compare; build two districts in both orders.
+
+## Round 41 (2026-11-15): build-order test for the engine's seed
+
+Setup (`tools/order-test.js`): from `CC_Visual_Streets35`, two new urban districts on Roma's free tiles (32,10) and (32,9) with the debug `CREATE_ELEMENT` operation, then the street probe on Roma. Three runs, each from a fresh load of the same save.
+
+| Run | Order | District id at (32,9) | (32,9) pattern | (32,10) pattern |
+|---|---|---|---|---|
+| 1 | (32,10) first | 3211312 | B at 60 (margin 1.7) | unclear (1.1) |
+| 2 | (32,10) first | 3211312 | B at 60 (3.0; one weak reading) | A at 60 (2.8 and 2.2) |
+| 3 | (32,9) first | 3145775 | B at 60 (2.0) | unclear (1.1, 1.0) |
+
+- **(32,9) got the same pattern in all three runs, although its district id and constructible id differ between the orders.** So the engine's seed does not come from creation order or from the ids; it is tied to the tile (and survives reloads, round 18). One tile only, the second was not readable in runs 1 and 3.
+- Measurement notes: this 13-tile coastal city scores less clearly than the 35-district inland one (water and shore in the discs); the zoomed view (height 250, radius 140) gave the clearest margins. Two captures of the same game differ by 3-10 grey levels per tile on the bare ground (moving cloud shadows and water), so raw screenshots can't be compared between runs directly. A clip set in the same frame as `restoreAllHexHeight` is lost: `street-probe.js` now clips 0.7 s after its reset.
+- Consequence: the seed is a function of the location (plot, coordinates or world position, possibly with the map or game seed) through a hash not in the tested list. Deterministic, so in principle findable; and if it depends on the coordinates alone it could be measured once and shipped as a table.
