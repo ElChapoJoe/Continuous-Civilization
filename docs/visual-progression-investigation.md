@@ -716,3 +716,11 @@ Map seed 8008, **Continents** script, standard: 135 cities, 1,245 urban tiles, 7
 - 917 tiles labelled per pass, median margin 5.0 (bare) / 4.8 (wooded). Bare and wooded share the turn on all 917.
 - Against map 7007 on the 206 shared coordinates: bare 163 the same, wooded 163 the same; **all 43 differences are river tiles on one of the two maps**. So the per-coordinate table holds at Standard size as on small (0 conflicts off rivers over two maps and two scripts).
 - Standard table now **1,878 of 4,536 plots** (bare), 1,875 (wooded).
+
+## Round 55 (2026-11-16): a third Standard map (Fractal)
+
+Map seed 9009, **Fractal** script, standard: every usable land tile urban; 47 views with 4 or more new coordinates (about 62 minutes per pass). New coordinates, river tiles and every sixth known tile exported: 695 tiles labelled per pass, median margin 5.0 (bare) / 4.9 (wooded).
+
+- Bare and wooded keep the same pairing as on maps 7007 and 8008 (bare A0/B300 with wooded A0/B0, bare A60/B0 with wooded A60/B60) on every tile.
+- Against map 7007 (96 shared coordinates) and map 8008 (103): **all 28 differences are river tiles on one of the maps**. 0 conflicts off rivers over three Standard maps and three scripts (Pangaea, Continents, Fractal).
+- Standard table now **2,392 of 4,536 plots** (bare), 2,391 (wooded); 117 river tiles on this map left out.
