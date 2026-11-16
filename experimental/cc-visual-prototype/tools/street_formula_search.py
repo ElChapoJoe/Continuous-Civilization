@@ -148,6 +148,16 @@ def inputs(t, seed):
     return out
 
 
+PAIR = {
+    "pair_fnv": lambda a, b: fnv_bytes(struct.pack("<II", a & M32, b & M32)),
+    "pair_murmur": lambda a, b: murmur3(struct.pack("<II", a & M32, b & M32)),
+    "pair_murmur_seeded": lambda a, b: murmur3(struct.pack("<I", a & M32), b & M32),
+    "pair_crc": lambda a, b: zlib.crc32(struct.pack("<II", a & M32, b & M32)),
+    "pair_jenkins": lambda a, b: jenkins(struct.pack("<II", a & M32, b & M32)),
+    "pair_boost": lambda a, b: (a ^ (b + 0x9E3779B9 + (a << 6) + (a >> 2))) & M32,
+}
+
+
 def purity(keys, lab):
     groups = {}
     for k, l in zip(keys, lab):
@@ -161,14 +171,6 @@ def runs(order, lab):
 
 
 results = []
-PAIR = {
-    "pair_fnv": lambda a, b: fnv_bytes(struct.pack("<II", a & M32, b & M32)),
-    "pair_murmur": lambda a, b: murmur3(struct.pack("<II", a & M32, b & M32)),
-    "pair_murmur_seeded": lambda a, b: murmur3(struct.pack("<I", a & M32), b & M32),
-    "pair_crc": lambda a, b: zlib.crc32(struct.pack("<II", a & M32, b & M32)),
-    "pair_jenkins": lambda a, b: jenkins(struct.pack("<II", a & M32, b & M32)),
-    "pair_boost": lambda a, b: (a ^ (b + 0x9E3779B9 + (a << 6) + (a >> 2))) & M32,
-}
 
 
 def evaluate(name, hs):
@@ -185,28 +187,33 @@ def evaluate(name, hs):
         results.append((N - (r - classes), N - (r - classes), "%s sorted runs %d [%s]" % (name, r, lab_name)))
 
 
-for seed in SEEDS:
-    ins = [inputs(t, seed) for t in tiles]
-    for key in ins[0]:
-        vals = [i[key] for i in ins]
-        for hn, hf in INT_HASHES.items():
-            evaluate("%s(%s)%s" % (hn, key, " seed %d" % seed if seed else ""), [hf(v) for v in vals])
-    base_keys = ["x", "y", "plot", "did", "did_lo", "cid", "cid_lo"]
-    for a, b in itertools.permutations(base_keys, 2):
-        for pn, pf in PAIR.items():
-            evaluate("%s(%s,%s)" % (pn, a, b), [pf(i[a], i[b]) for i in ins])
-    if seed:
-        for a in base_keys:
+def main():
+    for seed in SEEDS:
+        ins = [inputs(t, seed) for t in tiles]
+        for key in ins[0]:
+            vals = [i[key] for i in ins]
+            for hn, hf in INT_HASHES.items():
+                evaluate("%s(%s)%s" % (hn, key, " seed %d" % seed if seed else ""), [hf(v) for v in vals])
+        base_keys = ["x", "y", "plot", "did", "did_lo", "cid", "cid_lo"]
+        for a, b in itertools.permutations(base_keys, 2):
             for pn, pf in PAIR.items():
-                evaluate("%s(%s,seed %d)" % (pn, a, seed), [pf(i[a], seed) for i in ins])
-                evaluate("%s(seed %d,%s)" % (pn, seed, a), [pf(seed, i[a]) for i in ins])
+                evaluate("%s(%s,%s)" % (pn, a, b), [pf(i[a], i[b]) for i in ins])
+        if seed:
+            for a in base_keys:
+                for pn, pf in PAIR.items():
+                    evaluate("%s(%s,seed %d)" % (pn, a, seed), [pf(i[a], seed) for i in ins])
+                    evaluate("%s(seed %d,%s)" % (pn, seed, a), [pf(seed, i[a]) for i in ins])
 
-print(len(results), "hypotheses tested")
-for lab_name in ("full", "AB"):
-    best = sorted((r for r in results if "[%s]" % lab_name in r[2]), key=lambda r: -r[0])[:8]
-    print("best for", lab_name, "(tiles explained of %d):" % N)
-    for score, p, desc in best:
-        print("  %5.1f  %s" % (score, desc))
+    print(len(results), "hypotheses tested")
+    for lab_name in ("full", "AB"):
+        best = sorted((r for r in results if "[%s]" % lab_name in r[2]), key=lambda r: -r[0])[:8]
+        print("best for", lab_name, "(tiles explained of %d):" % N)
+        for score, p, desc in best:
+            print("  %5.1f  %s" % (score, desc))
 
-print("\nby district order:", " ".join(full[i] for i in sorted(range(N), key=lambda i: tiles[i]["did"])))
-print("by plot index:    ", " ".join(full[i] for i in sorted(range(N), key=lambda i: tiles[i]["y"] * WIDTH + tiles[i]["x"])))
+    print("\nby district order:", " ".join(full[i] for i in sorted(range(N), key=lambda i: tiles[i]["did"])))
+    print("by plot index:    ", " ".join(full[i] for i in sorted(range(N), key=lambda i: tiles[i]["y"] * WIDTH + tiles[i]["x"])))
+
+
+if __name__ == "__main__":
+    main()
