@@ -606,3 +606,21 @@ Swap 1 (features changed before building): the three wooded tiles of map A clear
 - This matches the layout bins (round 31): Antiquity houses have four plain variants and two `_FOL` variants used on tiles with forest, sagebrush steppe, savanna woodland, taiga or rainforest. Mangrove is not in that list, and the mangrove tile of map E read the bare value. Same seed, other variant list, so a different pick.
 - The art follows feature changes live, so the overlay can read features each time it redraws.
 - Consequence: per coordinate the mod needs two values (bare and wooded). Both can be measured on one city by toggling vegetation. Save `CC_Seed_VegSwap`.
+
+## Round 45 (2026-11-16): a whole map measured; the street choice is three bits per tile
+
+New whole-map rig, so the table no longer needs one test city at a time:
+- `tools/table-map.js` (`CCTable`): founds cities over the whole map with the tuner's `CREATE_ELEMENT` `CITY` (no distance rule), buys every land tile within 3 (`city.purchasePlot` reaches distance 3), and puts an empty urban district on each (`CREATE_ELEMENT` `DISTRICT`, `DISTRICT_URBAN`). Empty urban districts get the street decal like built ones. Such districts are missing from `city.Districts.getIds()`, so the rig and the probe scan the map instead. `CCTable.wood(on)` makes every urban tile forest or bare (`WorldBuilder.MapPlots.setFeature`); `CCTable.views(h)` lists camera spots; `CCTable.pack()` exports each tile's screen position in its most central view.
+- `street-probe.js` takes `cityIndex -1` (every district of the local player) and counts past 60 states (marker green channel = state / 60).
+- Camera height 900 instead of 300: one view covers about 200 tiles, scored with a 46-pixel disc. Checked first on the 14-tile test city: heights 600 and 900 both gave 14 of 14 the same labels as the close-up, margins 4-14.
+- `tools/table_score.py` scores a whole-map run from the packed positions.
+- Converting water to land with `WorldBuilder.MapPlots.setTerrain` changes the game data but not the drawn terrain, so the table can only cover land.
+
+Map seed 1001 (tiny Pangaea, 60 x 38): 65 cities, 600 urban tiles, 24 camera views, 13 states each at 6 s: 31 minutes per pass, one pass bare and one wooded.
+
+- **600 of 600 tiles labelled; 25 of 25 known bare tiles and 15 of 15 known wooded tiles (rounds 42-44) agree.** Margins: median 5, 6 tiles under 2 per pass.
+- Bare tiles: four labels in almost equal shares, A at 0: 151, A at 60: 149, B at 0: 159, B at 300: 135 (plus 3 stray readings). Wooded tiles: A at 0: 138, A at 60: 149, B at 0: 151, B at 60: 161.
+- **Structure**: script-drawn B sits 300 degrees off (round 40), so A at 0 and B at 300 are one engine turn, A at 60 and B at 0 the other (bare); wooded, A0/B0 and A60/B60. On all 593 tiles with both readings clear, **the bare and the wooded pattern share the turn**; the A/B pick of the two is independent (each pair of bare/wooded labels occurs 63-85 times). So per coordinate the engine decides a turn bit, a bare A/B bit and a wooded A/B bit.
+- No pattern in space: neighbouring tiles have the same label 24% of the time (chance 25%), and no x/y modulus helps. `street_formula_search.py` on the 594 clear tiles (939,120 hash hypotheses, map and game seed included) explains at best 219: chance level. The engine's hash stays unknown; a measured table is the way.
+- Table: `experimental/cc-visual-prototype/tools/street-table-tiny-1001.json` (per tile: bare label, margin, wooded label, margin).
+- Open: the map-size check (does a small or standard map give the same bits at the same x, y?), coverage of the coordinates that are water on this map, the city-centre tiles (palace layouts, not measured).

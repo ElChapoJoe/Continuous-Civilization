@@ -3,7 +3,8 @@
 // clipped so only ground paint shows, then each candidate (street A or B at six turns) is drawn over all tiles in
 // turn while an outside script screenshots the window; the candidate that changes a tile's picture least is the
 // engine's own. A coloured square in the corner tells the screenshot script which state is on screen.
-//   CCStreetProbe.start(cityIndex, views, seconds)   views: [[x, y, dy], ...] tile to centre each camera on
+//   CCStreetProbe.start(cityIndex, views, seconds)   views: [[x, y, dy, height], ...] tile to centre each camera on;
+//                                                     cityIndex -1 = every city of the local player
 //   CCStreetProbe.info()                              tiles, their screen positions per state, the candidate list
 //   CCStreetProbe.stop()
 (function () {
@@ -27,7 +28,7 @@
     }
     group.clear();
     if (cand) for (const t of tiles) group.addModelAtPlot(STREETS[cand[0]], { x: t.x, y: t.y }, { x: 0, y: 0, z: 0 }, { placement: T, angle: cand[1] });
-    marker.style.backgroundColor = `rgb(${10 + k * 4}, 0, 255)`;
+    marker.style.backgroundColor = `rgb(${10 + (k % 60) * 4}, ${Math.floor(k / 60) * 3}, 255)`;   // state = (r - 10) / 4 + 60 * g / 3
   }
 
   function record() {
@@ -41,10 +42,18 @@
   function start(cityIndex, viewList, seconds = 5) {
     stop();
     views = viewList;
-    const city = Players.get(GameContext.localPlayerID).Cities.getCities()[cityIndex];
+    const me = GameContext.localPlayerID, all = Players.get(me).Cities.getCities();
+    let list;
+    if (cityIndex < 0) {   // scan the map: districts made by CREATE_ELEMENT DISTRICT are missing from city.Districts
+      list = [];
+      for (let y = 0; y < GameplayMap.getGridHeight(); y++) for (let x = 0; x < GameplayMap.getGridWidth(); x++) {
+        const d = GameplayMap.getOwner(x, y) == me && Districts.getAtLocation({ x, y });
+        if (d) list.push(d);
+      }
+    } else list = all[cityIndex].Districts.getIds().map((id) => Districts.get(id));
     tiles = [];
-    for (const id of city.Districts.getIds()) {
-      const d = Districts.get(id);
+    for (const d of list) {
+      const id = d && d.id;
       if (!d || (d.type !== DistrictTypes.URBAN && d.type !== DistrictTypes.CITY_CENTER)) continue;
       tiles.push({ x: d.location.x, y: d.location.y, did: id.id, centre: d.type === DistrictTypes.CITY_CENTER,
         cons: d.getConstructibleIds().map((c) => c.id) });
