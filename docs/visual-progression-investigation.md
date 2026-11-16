@@ -624,3 +624,13 @@ Map seed 1001 (tiny Pangaea, 60 x 38): 65 cities, 600 urban tiles, 24 camera vie
 - No pattern in space: neighbouring tiles have the same label 24% of the time (chance 25%), and no x/y modulus helps. `street_formula_search.py` on the 594 clear tiles (939,120 hash hypotheses, map and game seed included) explains at best 219: chance level. The engine's hash stays unknown; a measured table is the way.
 - Table: `experimental/cc-visual-prototype/tools/street-table-tiny-1001.json` (per tile: bare label, margin, wooded label, margin).
 - Open: the map-size check (does a small or standard map give the same bits at the same x, y?), coverage of the coordinates that are water on this map, the city-centre tiles (palace layouts, not measured).
+
+## Round 46 (2026-11-16): the A/B pick depends on the map size, the turn does not
+
+Map seed 1001 again, Pangaea, but **small** (74 x 46) instead of tiny. The rig filled the part with x < 60 and y < 38 (84 cities, 721 urban tiles, `CCTable.bounds`); one bare pass, 24 views. 225 of those tiles are coordinates measured on the tiny map in round 45 (only those were exported: the tiny table's coordinates were sent to the console as a script file, so the export stays small).
+
+- **Turn: 210 of 219 clear tiles agree** with the tiny table (the 9 others have margins 4-7, so probably real; not explained yet).
+- **A/B pick: 113 of 219 agree: chance.** The differences are almost all A at 0 against B at 300, or B at 0 against A at 60: same turn, other street layout.
+- The plot index (y * width + x) doesn't carry it over either: comparing small (x, y) with the tiny tile of the same plot index gives chance for both bits (26 and 32 of 61), the swapped coordinates too.
+- So the engine's A/B pick uses the map size (or something that changes with it), while maps of the same size agree (four seeds and two map scripts in rounds 42-44). A shipped table needs one A/B layer per map size, plus one turn layer that may be shared.
+- The game's setup screen had Small selected when this session started, so the user's usual size is probably Small; it is measured next.

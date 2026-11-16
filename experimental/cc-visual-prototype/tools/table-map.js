@@ -2,6 +2,7 @@
 // Turns every usable land tile of the map into an urban district of the local player, so tools/street-probe.js can
 // read the street pattern of every coordinate from a high camera.
 //   CCTable.plan()          land tiles, chosen city centres (every land tile within 3 of a centre)
+//   CCTable.bounds = [x0, y0, x1, y1]   optional: only tiles inside this box (inclusive)
 //   CCTable.run()           founds the cities, buys the tiles, places an empty urban district on each (async)
 //   CCTable.status()        progress
 //   CCTable.wood(on)        all target tiles wooded (FEATURE_FOREST) or bare (no feature); art refreshes at once
@@ -18,6 +19,8 @@
   function plan() {
     targets = [];
     for (let y = 0; y < H(); y++) for (let x = 0; x < W(); x++) {
+      const b = globalThis.CCTable && CCTable.bounds;
+      if (b && (x < b[0] || y < b[1] || x > b[2] || y > b[3])) continue;
       if (usable(x, y) && (GameplayMap.getOwner(x, y) == -1 || GameplayMap.getOwner(x, y) == me())) targets.push([x, y]);
     }
     centres = Players.get(me()).Cities.getCities().map((c) => [c.location.x, c.location.y]);
