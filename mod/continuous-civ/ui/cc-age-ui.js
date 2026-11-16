@@ -1,6 +1,6 @@
 // Continuous Civilization - interface parts that vanilla switches by the game Age (UI side; audit #17).
 // The game Age never leaves Antiquity here, so these screens stayed in Antiquity mode all game. This script makes
-// them follow the local player's personal Age (same root techs as data/70-personal-age.sql) or, where the information
+// them follow the local player's personal Age (same root techs as data/3-merge/70-personal-age.sql) or, where the information
 // is about other players, show it whenever it exists:
 //   * Diplomacy ribbon: shows each civ's religion (vanilla: Exploration only) and ideology (vanilla: Modern only)
 //     whenever they have one.
@@ -71,7 +71,7 @@ registerUnitLensSelector((unit) => {
 });
 
 // Victories screen, Culture tab: each civ's bar places its points by the turn they were earned, divided by the Age
-// progress maximum. This mod keeps the Age meter at 0 of a huge maximum (data/10-age-clock.sql) so the Age never
+// progress maximum. This mod keeps the Age meter at 0 of a huge maximum (data/3-merge/10-age-clock.sql) so the Age never
 // ends, which put every point at 0% of the bar. For calls from the victories screen only, the Age progress reads as
 // "turns played so far", so the bar spans the whole game. Everywhere else the engine's values are unchanged.
 try {

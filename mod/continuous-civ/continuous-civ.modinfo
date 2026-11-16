@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<Mod id="continuous-civ" version="22" xmlns="ModInfo">
+<Mod id="continuous-civ" version="23" xmlns="ModInfo">
 	<Properties>
 		<Name>Continuous Civilization</Name>
 		<Description>One uninterrupted campaign: the Antiquity Age never ends, and the Exploration technology and civic trees, governments, units and buildings continue directly from Antiquity, followed by Modern. Each player moves into the next Age on their own as they research.</Description>
@@ -110,22 +110,28 @@
 		</Criteria>
 	</ActionCriteria>
 	<ActionGroups>
-		<!-- 1. Snapshot Antiquity state and remove primary-key collisions (generated). -->
+		<!-- Load stages, each in its own folder under data/ and text/:
+		     1-pre     (cc-pre, 400): snapshot Antiquity and remove the rows the imports re-define;
+		     2-import  (cc-import-*, 500-700): Exploration, Modern and DLC content straight from the installed
+		               game (no copied Firaxis data), with snapshots and dedupes between the Ages;
+		     3-merge   (cc-merge, 1000): one continuous Antiquity game (trees, personal Age, rules, victories).
+		     Files marked GENERATED come from tools/gen_*.py. -->
+		<!-- 1. Snapshot Antiquity state and remove primary-key collisions. -->
 		<ActionGroup id="cc-pre" scope="game" criteria="antiquity-age-current">
 			<Properties><LoadOrder>400</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
-					<Item>data/00-snapshot.sql</Item>
-					<Item>data/00-pre-dedupe.sql</Item>
-					<Item>data/00-pre-park-ids.sql</Item>
-					<Item>data/01-park-modifiers.sql</Item>
+					<Item>data/1-pre/1-snapshot.sql</Item>
+					<Item>data/1-pre/2-dedupe-exploration.sql</Item>
+					<Item>data/1-pre/3-park-modifier-ids.sql</Item>
+					<Item>data/1-pre/4-park-modifiers.sql</Item>
 				</UpdateDatabase>
 				<UpdateText>
-					<Item>text/00-pre-dedupe-text.sql</Item>
+					<Item>text/1-pre/park-resource-tooltips.sql</Item>
 				</UpdateText>
 			</Actions>
 		</ActionGroup>
-		<!-- 2. Import Exploration content straight from the installed age module (no copied Firaxis data). -->
+		<!-- 2a. Import Exploration content straight from the installed age module (no copied Firaxis data). -->
 		<ActionGroup id="cc-import-exploration" scope="game" criteria="antiquity-age-current">
 			<Properties><LoadOrder>500</LoadOrder></Properties>
 			<Actions>
@@ -165,7 +171,7 @@
 					<Item>{age-exploration}data/narrative-display.xml</Item>
 					<Item>{age-exploration}data/narrative-sifting.xml</Item>
 					<Item>{age-exploration}data/civilizations-common-gameeffects.xml</Item>
-					<!-- Exploration civs' own civic trees; data/84-civ-trees.sql reveals each to its civ in its personal Exploration. -->
+					<!-- Exploration civs' own civic trees; data/3-merge/84-civ-trees.sql reveals each to its civ in its personal Exploration. -->
 					<Item>{age-exploration}data/progression-trees-culture-unique.xml</Item>
 					<Item>{age-exploration}data/progression-trees-culture-unique-gameeffects.xml</Item>
 					<!-- Test of Time, Exploration: the shared tree for civs not of this Age, its traditions, the Antiquity civs'
@@ -189,14 +195,14 @@
 				</UpdateText>
 			</Actions>
 		</ActionGroup>
-		<!-- 3. Import Modern content (Phase 3). 09-dedupe-* (generated) first removes rows the Exploration import
+		<!-- 2b. Import Modern content. modern-2-dedupe (generated) first removes rows the Exploration import
 		     already added that Modern re-defines, so the later Age's version wins. -->
 		<ActionGroup id="cc-import-modern" scope="game" criteria="antiquity-age-current">
 			<Properties><LoadOrder>600</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
-					<Item>data/08-pre-modern-import.sql</Item>
-					<Item>data/09-dedupe-cc-import-modern.sql</Item>
+					<Item>data/2-import/modern-1-snapshot.sql</Item>
+					<Item>data/2-import/modern-2-dedupe.sql</Item>
 					<Item>{age-modern}data/progression-trees-tech.xml</Item>
 					<Item>{age-modern}data/progression-trees-tech-gameeffects.xml</Item>
 					<Item>{age-modern}data/progression-trees-culture-common.xml</Item>
@@ -209,7 +215,7 @@
 					<Item>{age-modern}data/units.xml</Item>
 					<Item>{age-modern}data/units-gameeffects.xml</Item>
 					<Item>{age-modern}data/civilizations-common-gameeffects.xml</Item>
-					<!-- Modern civs' own civic trees; data/84-civ-trees.sql reveals each in its civ's personal Modern. -->
+					<!-- Modern civs' own civic trees; data/3-merge/84-civ-trees.sql reveals each in its civ's personal Modern. -->
 					<Item>{age-modern}data/progression-trees-culture-unique.xml</Item>
 					<Item>{age-modern}data/progression-trees-culture-unique-gameeffects.xml</Item>
 					<!-- Test of Time, Modern: the shared tree, the Antiquity and Exploration civs' Modern capstones, and the
@@ -253,16 +259,16 @@
 					<Item>{age-modern}data/legacy-path-gameeffects.xml</Item>
 					<Item>{age-modern}data/diplomacy-actions.xml</Item>
 					<Item>{age-modern}data/diplomacy-gameeffects.xml</Item>
-					<Item>data/09-restore-cc-import-modern.sql</Item>
+					<Item>data/2-import/modern-3-restore.sql</Item>
 				</UpdateDatabase>
 				<UpdateText>
-					<Item>text/08-pre-modern-text.sql</Item>
-					<Item>text/09-dedupe-cc-import-modern-text.sql</Item>
+					<Item>text/2-import/modern-1-keep-tooltips.sql</Item>
+					<Item>text/2-import/modern-2-dedupe.sql</Item>
 					<Item>{age-modern}text/en_us/TechnologiesText.xml</Item>
 					<Item>{age-modern}text/en_us/ProjectsText.xml</Item>
 					<Item>{age-modern}text/en_us/ResourcesText.xml</Item>
 					<Item>{age-modern}text/en_us/ResourcesText-v2.xml</Item>
-					<Item>text/09-restore-modern-resources-text.sql</Item>
+					<Item>text/2-import/modern-3-restore-tooltips.sql</Item>
 				</UpdateText>
 			</Actions>
 		</ActionGroup>
@@ -374,7 +380,7 @@
 			</Actions>
 		</ActionGroup>
 		<!-- DLC civilizations' own Exploration / Modern civic trees (owners only; vanilla loads each only in its Age).
-		     data/84-civ-trees.sql reveals each to its civ in the matching personal Age. Not tested in game. -->
+		     data/3-merge/84-civ-trees.sql reveals each to its civ in the matching personal Age. Not tested in game. -->
 		<ActionGroup id="cc-import-dlc-dai-viet" scope="game" criteria="antiquity-with-dai-viet">
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
@@ -542,17 +548,15 @@
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
-		<!-- 4. Resource effects last among the imports: 05 snapshots the modifier list, and 60 treats every
+		<!-- 2c. Resource effects last among the imports: resources-snapshot records the modifier list, and 60 treats every
 		     modifier added after it as a resource effect, so every other import must load before this group. -->
 		<ActionGroup id="cc-import-resources" scope="game" criteria="antiquity-age-current">
 			<Properties><LoadOrder>700</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
-					<Item>data/09-dedupe-cc-import-resources.sql</Item>
-					<Item>data/05-pre-resource-import.sql</Item>
+					<Item>data/2-import/resources-snapshot.sql</Item>
 					<Item>{age-exploration}data/resources-gameeffects.xml</Item>
 					<Item>{age-exploration}data/resources-gameeffects-v2.xml</Item>
-					<Item>data/09-restore-cc-import-resources.sql</Item>
 				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
@@ -561,43 +565,40 @@
 			<Properties><LoadOrder>1000</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
-					<Item>data/06-restore-cascades.sql</Item>
-					<Item>data/10-age-clock.sql</Item>
-					<Item>data/20-tech-tree.sql</Item>
-					<Item>data/21-modern-tech-tree.sql</Item>
-					<Item>data/25-civic-tree.sql</Item>
-					<Item>data/26-modern-civic-tree.sql</Item>
-					<Item>data/30-buildings.sql</Item>
-					<Item>data/35-governments.sql</Item>
-					<Item>data/36-batch-a.sql</Item>
-					<Item>data/37-batch-b.sql</Item>
-					<Item>data/40-units.sql</Item>
-					<Item>data/50-restore-antiquity-globals.sql</Item>
-					<Item>data/55-restore-parked-modifiers.sql</Item>
-					<Item>data/60-resources.sql</Item>
-					<Item>data/64-modern-resource-data.sql</Item>
-					<Item>data/65-modern-resources.sql</Item>
-					<Item>data/70-personal-age.sql</Item>
-					<Item>data/72-exploration-rules.sql</Item>
-					<Item>data/74-modern-rules.sql</Item>
-					<Item>data/75-civ-abilities.sql</Item>
-					<Item>data/76-victories.sql</Item>
-					<Item>data/78-diplomacy.sql</Item>
-					<Item>data/79-leader-attributes.sql</Item>
-					<Item>data/80-triumphs.sql</Item>
-					<Item>data/81-age-scaled-bonuses.sql</Item>
-					<Item>data/82-dedication-cards.sql</Item>
-					<Item>data/83-dedications.sql</Item>
-					<Item>data/84-civ-trees.sql</Item>
-					<Item>data/90-prune-dangling.sql</Item>
-					<Item>data/99-cleanup.sql</Item>
+					<Item>data/3-merge/00-restore-cascades.sql</Item>
+					<Item>data/3-merge/10-age-clock.sql</Item>
+					<Item>data/3-merge/20-tech-tree.sql</Item>
+					<Item>data/3-merge/25-civic-tree.sql</Item>
+					<Item>data/3-merge/30-buildings.sql</Item>
+					<Item>data/3-merge/35-governments.sql</Item>
+					<Item>data/3-merge/36-great-people-city-states.sql</Item>
+					<Item>data/3-merge/37-narratives.sql</Item>
+					<Item>data/3-merge/40-units.sql</Item>
+					<Item>data/3-merge/50-restore-antiquity-globals.sql</Item>
+					<Item>data/3-merge/55-restore-parked-modifiers.sql</Item>
+					<Item>data/3-merge/60-resources.sql</Item>
+					<Item>data/3-merge/64-modern-resource-data.sql</Item>
+					<Item>data/3-merge/65-modern-resources.sql</Item>
+					<Item>data/3-merge/70-personal-age.sql</Item>
+					<Item>data/3-merge/72-exploration-rules.sql</Item>
+					<Item>data/3-merge/74-modern-rules.sql</Item>
+					<Item>data/3-merge/75-civ-abilities.sql</Item>
+					<Item>data/3-merge/76-victories.sql</Item>
+					<Item>data/3-merge/78-diplomacy.sql</Item>
+					<Item>data/3-merge/79-leader-attributes.sql</Item>
+					<Item>data/3-merge/80-triumphs.sql</Item>
+					<Item>data/3-merge/81-age-scaled-bonuses.sql</Item>
+					<Item>data/3-merge/82-dedication-cards.sql</Item>
+					<Item>data/3-merge/83-dedications.sql</Item>
+					<Item>data/3-merge/84-civ-trees.sql</Item>
+					<Item>data/3-merge/90-prune-dangling.sql</Item>
+					<Item>data/3-merge/95-prune-dangling-fk.sql</Item>
+					<Item>data/3-merge/99-cleanup.sql</Item>
 				</UpdateDatabase>
 				<UpdateText>
-					<Item>text/35-governments-text.sql</Item>
-					<Item>text/55-restore-parked-text.sql</Item>
-					<Item>text/65-modern-resources-text.sql</Item>
-					<Item>text/72-age-rules-text.sql</Item>
-					<Item>text/83-dedications-text.sql</Item>
+					<Item>text/3-merge/strings.sql</Item>
+					<Item>text/3-merge/restore-parked-tooltips.sql</Item>
+					<Item>text/3-merge/resource-tooltips.sql</Item>
 				</UpdateText>
 				<!-- Hide Modern resource icons from a player until they research the activating tech. -->
 				<UIScripts>

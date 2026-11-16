@@ -1,6 +1,6 @@
 // Run every CC.* check suite (tests/cc-tests.js must be loaded first) and summarise: pass per suite, failing checks.
 (function () {
-  const suites = ["db", "gating", "resources", "civics", "personalAge", "modernRules", "batchA", "batchB", "exRules",
+  const suites = ["db", "gating", "resources", "civics", "personalAge", "modernRules", "greatPeopleCityStates", "narratives", "exRules",
     "distantLands", "modernTrees", "modernContent", "modernSystems", "parkLinks", "victories", "triumphs", "dedications",
     "diplomacy", "worldAge", "civTrees", "ageScaling", "missingContent", "overbuild"];
   const out = { pass: true, suites: {}, failing: {} };

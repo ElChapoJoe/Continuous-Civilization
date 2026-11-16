@@ -66,3 +66,4 @@ DROP TABLE IF EXISTS cc_pre_modern_constructibles;
 DROP TABLE IF EXISTS cc_modern_civic_roots;
 DROP TABLE IF EXISTS cc_age_rewrites;
 DROP TABLE IF EXISTS cc_exploration_rules;
+DROP TABLE IF EXISTS cc_age_attributes;

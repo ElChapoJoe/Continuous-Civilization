@@ -228,8 +228,8 @@ After that the gameplay DB passed validation and the game ran 26 autoplayed turn
 ```
 continuous-civ/
   continuous-civ.modinfo
-  data/00-pre-dedupe.sql        -- generated: DELETE colliding PKs (LoadOrder 400)
-  text/00-pre-dedupe-text.sql   -- generated: DELETE colliding LOC tags (LoadOrder 400)
+  data/1-pre/2-dedupe-exploration.sql        -- generated: DELETE colliding PKs (LoadOrder 400)
+  text/1-pre/park-resource-tooltips.sql   -- generated: DELETE colliding LOC tags (LoadOrder 400)
   data/90-age-clock.sql         -- EndsAge = 0; MaxPoints_* = 1e6; event points = 0 (LoadOrder 1000)
   data/91-graft-techs.sql       -- EX nodes -> TREE_TECHS_AQ; roots require last AQ techs;
                                 --   move/remove AQ Future Tech

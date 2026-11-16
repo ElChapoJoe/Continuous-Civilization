@@ -17,3 +17,8 @@ DELETE FROM ProgressionTreeNodeUnlocks WHERE TargetKind = 'KIND_DIPLOMATIC_ACTIO
 -- imported in a later Phase 3 step). The FK on RequiredGovernmentType would fail validation otherwise.
 DELETE FROM ProgressionTreeNodeUnlocks
   WHERE RequiredGovernmentType IS NOT NULL AND RequiredGovernmentType NOT IN (SELECT GovernmentType FROM Governments);
+
+-- Great Work slots of buildings that are not in the database. The Ottomans DLC puts the Camii's slots in its
+-- culture-tree file (imported into Antiquity above) but defines the Camii itself only in the Modern Age, so
+-- every game with that DLC in use failed FK validation ("BUILDING_CAMII does not exist in Constructibles").
+DELETE FROM Constructible_GreatWorks WHERE ConstructibleType NOT IN (SELECT ConstructibleType FROM Constructibles);

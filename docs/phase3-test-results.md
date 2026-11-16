@@ -19,7 +19,7 @@
 
 ## 3.2 Modern buildings and units (2026-11-12)
 
-- Imports (cc-import-modern): constructibles (+ gameeffects, no-persist), constructible-modifiers (+ gameeffects), units (+ gameeffects). `08-pre-modern-import.sql` snapshots Units/Constructibles so `30`/`40` tell Exploration's additions from Modern's. 6 worker-yield rows re-defined by Modern are handled by the generated `09-dedupe-cc-import-modern.sql` (`50` still restores Antiquity's).
+- Imports (cc-import-modern): constructibles (+ gameeffects, no-persist), constructible-modifiers (+ gameeffects), units (+ gameeffects). `modern-1-snapshot.sql` snapshots Units/Constructibles so `30`/`40` tell Exploration's additions from Modern's. 6 worker-yield rows re-defined by Modern are handled by the generated `modern-2-dedupe.sql` (`50` still restores Antiquity's).
 - Gates: Line Infantry, Field Cannon, Cuirassier, Mortar, Frigate at Military Science; Grocer and City Park at Urbanization; Mountain improvement at Industrialization. Catch-alls: Modern units at Military Science, Modern buildings (mostly civ-unique, from Modern civs' own civic trees, not imported) at Urbanization. Upgrades: Pikeman and Arquebusier -> Line Infantry, Lancer -> Cuirassier, Bombard -> Field Cannon, Galleon -> Frigate.
 - **Verified live:** database validates; all suites pass, new `CC.modernContent()` and `CC.modernTrees().allModernTechsShown` (no Modern tech reports "can never unlock" any more). The tech screen shows Academics, Steam Engine, Military Science, Urbanization and Nuclear Fission again.
 
@@ -82,7 +82,7 @@ Also noted: wonders, celebrations and unique quarters score by Age (4/8/12 for w
 
 - 300-turn AI autoplay (Rome, Mexico, Han, Persia, Egypt, Russia) crashed natively at turn 173, right after the autosave; loading that autosave and pressing Begin hung the game, so it reproduces.
 - At turn 171 every civ had exactly one city, settlement cap 1-2, no Exploration tech, Science 2-34 per turn; Mexico had been eliminated. Long run 5 (Phase 2) had several cities each and 4 of 6 civs at Machinery by turn 151.
-- **Cause:** `01-park-modifiers.sql` parks (deletes) Antiquity modifiers that an import re-defines; the delete cascades into the rows linking them to traits, governments, traditions, abilities (`TraitModifiers` etc., FK ON DELETE CASCADE), and `55` put back the modifiers but not those links. Since the Exploration civ-common import (last step of Phase 2, after long run 5), `TRAIT_ANTIQUITY_CIV` lost 6 of its 19 modifiers: the +3 settlement cap, capital and city resource caps, Gold/Happiness for unassigned resources, and the base +10 Science/Culture/Influence.
+- **Cause:** `4-park-modifiers.sql` parks (deletes) Antiquity modifiers that an import re-defines; the delete cascades into the rows linking them to traits, governments, traditions, abilities (`TraitModifiers` etc., FK ON DELETE CASCADE), and `55` put back the modifiers but not those links. Since the Exploration civ-common import (last step of Phase 2, after long run 5), `TRAIT_ANTIQUITY_CIV` lost 6 of its 19 modifiers: the +3 settlement cap, capital and city resource caps, Gold/Happiness for unassigned resources, and the base +10 Science/Culture/Influence.
 - **Fix:** `01` snapshots the link rows of parked ids (9 link tables), `55` also snapshots the imported versions' links before deleting them, then restores both. New test `CC.parkLinks()` (all 19 vanilla `TRAIT_ANTIQUITY_CIV` modifiers attached; cap still 3). Verified: all 13 suites pass.
 - The crash itself was a separate problem (below).
 
@@ -90,7 +90,7 @@ Also noted: wonders, celebrations and unique quarters score by Age (4/8/12 for w
 
 - On the link-fixed build the run crashed natively at turn ~87 (`EXCEPTION_ACCESS_VIOLATION`, heap frames; reproduced twice from the turn-86 autosave, at turns 87 and 89). Civs had 1-2 cities at turn 85 although settlers were buildable and caps were 4-6.
 - **Cause:** the later-Age AI files rewrite the major-civ AI from turn 1. `ai-exploration.xml` (since Phase 2) swaps the base `Military`, `Diplomatic` and `Tactical` components for their Exploration versions; `ai-modern.xml` (added in 3.4) additionally adds `Military_Modern` and removes the diplomatic component.
-- **Fix:** `ai-modern.xml` is no longer imported (verified: the turn-86 save then ran 22 turns past both crash points); `36-batch-a.sql` puts the base Military/Diplomatic/Tactical components back (Exploration targets and lists stay). Test: `CC.modernSystems().aiBaseComponents`.
+- **Fix:** `ai-modern.xml` is no longer imported (verified: the turn-86 save then ran 22 turns past both crash points); `36-great-people-city-states.sql` puts the base Military/Diplomatic/Tactical components back (Exploration targets and lists stay). Test: `CC.modernSystems().aiBaseComponents`.
 
 ### Third attempt: long run 6, 300 turns, clean (version 19 + AI fix)
 

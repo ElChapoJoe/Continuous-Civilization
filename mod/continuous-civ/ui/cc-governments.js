@@ -1,5 +1,5 @@
 // Continuous Civilization - Exploration governments in a permanent Antiquity (UI side).
-// Gameplay side: data/35-governments.sql. The engine accepts a government change at any time after Chiefdom;
+// Gameplay side: data/3-merge/35-governments.sql. The engine accepts a government change at any time after Chiefdom;
 // vanilla only offers it through the government chooser at the start of an Age. This script:
 //   * adds the Exploration governments the local player has unlocked (by civic) to the chooser's list;
 //   * opens the chooser when the local player completes a civic that unlocks one;

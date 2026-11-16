@@ -1,6 +1,6 @@
 // Continuous Civilization - Dedication picker popup (UI side).
 // Vanilla offers Dedications on the Age-transition screen; that screen can't run mid-game (the advanced-start deck is
-// closed after turn 1). data/83-dedications.sql turns Dedications into a Dedications attribute tree with 3 points per
+// closed after turn 1). data/3-merge/83-dedications.sql turns Dedications into a Dedications attribute tree with 3 points per
 // new personal Age. This popup is the vanilla-like front end: when the local player has Dedication points and
 // earned Dedications they haven't taken, it lists them as cards and they pick up to as many as they have points.
 // Picking buys the node (BUY_ATTRIBUTE_TREE_NODE, a normal operation). "Later" closes it; the Dedications tab of

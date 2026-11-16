@@ -29,7 +29,7 @@ UPDATE Resource_Distribution
   SET MaxResourceTypes = MaxResourceTypes + (SELECT COUNT(*) FROM cc_new_resources)
   WHERE AgeType = 'AGE_ANTIQUITY';
 
--- 3) Effects. Modifiers added by the resource GameEffects import (see 05-pre-resource-import.sql) whose
+-- 3) Effects. Modifiers added by the resource GameEffects import (see resources-snapshot.sql) whose
 --    ResourceType argument is one of the new resources get switched on; the rest of that import (Exploration's
 --    versions of Antiquity resource effects) is deleted, since nothing would ever use it.
 DROP TABLE IF EXISTS cc_res_mods;

@@ -1,4 +1,4 @@
--- Continuous Civilization - runs BEFORE the Exploration import (LoadOrder 400), before 00-pre-dedupe.sql.
+-- Continuous Civilization - runs BEFORE the Exploration import (LoadOrder 400), before 2-dedupe-exploration.sql.
 -- 1) Remember which units/constructibles already existed, so later steps can tell what was imported.
 -- 2) Back up Antiquity "global" balance rows that Exploration's constructibles-no-persist.xml overrides;
 --    50-restore-antiquity-globals.sql puts them back. All cc_* tables are dropped in 99-cleanup.sql.
