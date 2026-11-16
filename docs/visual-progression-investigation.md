@@ -578,3 +578,31 @@ Site (43,13):
 - Measurement cost: about 5 minutes per 14 tiles, so a full 60 x 38 table (2,280 tiles) by this method would take about 14 hours of captures; a faster reader (many tiles per screenshot from higher up, or a formula fitted to a few hundred tiles) is the next thing to build.
 - Engine notes: the game's `localStorage` returns one stored value for every key (it made map D's land check wrong; masks now stay in memory). A load sent while the "Begin Game" screen of another load is up is ignored, and a third one crashed the game. Right after a restart, loading these saves fails with "missing ownership entitlements: Napoleon" (linked-account content not registered); making the map again from its seed works.
 - Saves: `CC_Seed_MapD_1002_city`, `CC_Seed_MapE_continents1001_city`, `CC_Seed_MapA_two_cities`.
+
+## Round 44 (2026-11-16): wooded tiles follow a second fixed table; the feature type doesn't matter
+
+The game's map-editor calls work from the debug console: `WorldBuilder.MapPlots.setFeature(featureIndex, {x, y})` (also `setTerrain`, `setBiome`, `setResource`, `setOwnership`, ...; `FeatureTypes.NO_FEATURE` removes). So vegetation can be added and removed on the same tiles of the same map, no second map needed. Map seed 1001 (map A) regenerated from its seed, same city and buildings at (19,22).
+
+Swap 1 (features changed before building): the three wooded tiles of map A cleared, seven bare tiles given rainforest, forest, savanna woodland or taiga. Swap 2 (features changed after building, the art refreshed at once): the type changed on four tiles, and the tiles that were wooded on maps A, B and E given vegetation again.
+
+| Tile | Bare (table of rounds 42-43) | Wooded, swap 1 | Wooded, swap 2 | Wooded on maps A/B/E |
+|---|---|---|---|---|
+| 18,20 | B at 0 | | A at 60 (rainforest) | A at 60 (A, rainforest) |
+| 20,20 | B at 0 | A at 60 (rainforest) | A at 60 (forest) | |
+| 17,21 | A at 60 | B at 60 (taiga) | B at 60 (savanna) | |
+| 18,21 | B at 0 | | A at 60 (savanna) | A at 60 (B savanna, E rainforest) |
+| 19,21 | A at 60 | A at 60 (rainforest) | A at 60 (rainforest) | |
+| 20,21 | A at 0 | | B at 0 (rainforest) | B at 0 (A, rainforest) |
+| 18,22 | A at 0 | B at 0 (forest) | B at 0 (rainforest) | |
+| 17,23 | A at 60 | | B at 60 (savanna) | B at 60 (A, savanna) |
+| 18,23 | A at 60 | | A at 60 (rainforest) | A at 60 (B, E savanna) |
+| 19,23 | B at 0 | B at 60 (forest) | B at 60 (forest) | |
+| 18,24 | B at 0 | A at 60 (savanna) | A at 60 (forest) | |
+| 19,24 | B at 300 | | B at 0 (savanna) | B at 0 (B, savanna) |
+| 20,24 | B at 0 | B at 60 (savanna) | B at 60 (savanna) | |
+
+- Clearing the vegetation gave the bare-table value on all three tiles; untouched tiles kept their pattern.
+- **Wooded tiles are a second fixed table**: 6 of 6 agree with the readings of the same coordinates on other maps, with other wooded feature types. The type (forest, rainforest, savanna woodland, taiga) changed nothing on 4 of 4 tiles.
+- This matches the layout bins (round 26): Antiquity houses have four plain variants and two `_FOL` variants used on tiles with forest, sagebrush steppe, savanna woodland, taiga or rainforest. Mangrove is not in that list, and the mangrove tile of map E read the bare value. Same seed, other variant list, so a different pick.
+- The art follows feature changes live, so the overlay can read features each time it redraws.
+- Consequence: per coordinate the mod needs two values (bare and wooded). Both can be measured on one city by toggling vegetation. Save `CC_Seed_VegSwap`.
