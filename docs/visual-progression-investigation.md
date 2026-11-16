@@ -529,3 +529,52 @@ Question: does a tile's street pattern depend on its coordinates alone (then one
 - Measurement: every reading had a margin of 3.5 or more (most 6-20) after a scorer fix. A passing cloud haze darkens a whole screenshot and had made the old score (mean brightness difference) unreadable; `street_probe_score.py` now compares fine detail only (window minus its own blur, 100 x (1 - correlation)). Camera height 300, radius 140, three views per city. Any window in front of the game spoils the shots (it happened twice).
 - Saves: `CC_Seed_MapA`, `CC_Seed_MapA_city`, `CC_Seed_MapB`, `CC_Seed_MapB_city`, `CC_Seed_MapA_gameseed9999_city`. Labels: `experimental/cc-visual-prototype/tools/street-labels-seedmaps.json`.
 - Consequence: a mod can't ship a lookup table, but because the pattern is fixed by the map seed, the open question narrows to "seed + location -> pattern". Next cheap tests: two map seeds that differ by 1 (does everything change?), and the same seed with another map script or size (is it the seed number or the terrain?).
+
+## Round 43 (2026-11-15): the pattern is fixed by the coordinates, except on tiles with vegetation
+
+Two more fresh maps and a second site on map A (all tiny, 60 x 38). New helper `tools/seed-city.js` (`CCSeedCity`) builds the same test city on any map and gives the probe rows for the scorer.
+
+- Map D: map seed 1002, Pangaea. (19,22) is ocean there, so the city went to (43,13), where 10 radius-2 tiles are buildable on both A and D; map A got a second city on the same spot.
+- Map E: map seed 1001 again, but the Continents script. The game refused a city on (19,22) ("no valid constructions"), so the centre is (19,23); 9 of its tiles were already measured on A and B.
+
+Site (19,22), pattern and feature of the tile on each map:
+
+| Tile | Map A (1001 Pangaea) | Map B (1966606283 Pangaea) | Map E (1001 Continents) |
+|---|---|---|---|
+| 18,20 | A at 60, rainforest | B at 0, none | |
+| 20,20 | B at 0, none | B at 0, none | |
+| 17,21 | A at 60, none | A at 60, none | |
+| 18,21 | B at 0, none | A at 60, savanna woodland | A at 60, rainforest |
+| 19,21 | A at 60, none | A at 60, none | |
+| 20,21 | B at 0, rainforest | A at 0, none (mountain) | A at 0, mangrove |
+| 18,22 | A at 0, none | A at 0, none | A at 0, none |
+| 20,22 | B at 0, watering hole | B at 0, watering hole | B at 0, none |
+| 17,23 | B at 60, savanna woodland | A at 60, floodplain | A at 60, none |
+| 18,23 | A at 60, none | A at 60, savanna woodland | A at 60, savanna woodland |
+| 19,23 | B at 0, none | B at 0, none | (centre) |
+| 18,24 | B at 0, none | B at 0, none | B at 0, none |
+| 19,24 | B at 300, none | B at 0, savanna woodland | B at 300, none |
+| 20,24 | B at 0, none | B at 0, floodplain | B at 0, none |
+
+Site (43,13):
+
+| Tile | Map A (1001) | Map D (1002) |
+|---|---|---|
+| 42,11 | B at 60, forest | B at 0, none |
+| 42,12 | B at 300, oasis | B at 300, none |
+| 43,12 | A at 0, none | A at 0, none |
+| 44,12 | A at 0, oasis | A at 0, savanna woodland |
+| 45,12 | A at 60, none | A at 60, none |
+| 44,13 | A at 0, none | A at 0, oasis |
+| 43,14 | A at 0, none | A at 0, watering hole |
+| 44,14 | A at 60, none | B at 60, savanna woodland |
+| 45,14 | A at 60, oasis | A at 60, none |
+| 44,15 | B at 0, none | B at 0, none |
+
+- **Whenever neither map has vegetation on the tile (forest, rainforest, savanna woodland), the pattern is the same: 16 of 16 tile pairs, across four map seeds and two map scripts.** Oasis, watering hole, floodplain, hills and a mountain made no difference. E agrees with B (another seed) on 8 of 9 tiles and with A (same seed) on only 6 of 9: the map seed itself is not an input.
+- **Every disagreement (7) has vegetation on at least one side.** Of the 9 tile pairs with vegetation on a side, 7 differ and 2 agree (18,23 and 44,12), which is about what a re-rolled pattern would give by chance.
+- Round 42 read this as "the pattern belongs to the map"; the map only matters through where its vegetation is. That also explains 14 of 14 with another game seed: same terrain.
+- So for tiles without vegetation the engine's seed is a pure function of the coordinates (not found by the hash search, but measurable): **a table measured once could ship with the mod**, at least for this map size. Open: whether the table depends on the map size; what vegetated tiles get (a second fixed table, per feature type, or something else: 18,21 has savanna on B and rainforest on E and both read A at 60; mangrove may not count as vegetation); the turn. The readings here are mostly "A at 60" and "B at 0" at one site and "A at 0" at the other, so the turn is not independent of the place either.
+- Measurement cost: about 5 minutes per 14 tiles, so a full 60 x 38 table (2,280 tiles) by this method would take about 14 hours of captures; a faster reader (many tiles per screenshot from higher up, or a formula fitted to a few hundred tiles) is the next thing to build.
+- Engine notes: the game's `localStorage` returns one stored value for every key (it made map D's land check wrong; masks now stay in memory). A load sent while the "Begin Game" screen of another load is up is ignored, and a third one crashed the game. Right after a restart, loading these saves fails with "missing ownership entitlements: Napoleon" (linked-account content not registered); making the map again from its seed works.
+- Saves: `CC_Seed_MapD_1002_city`, `CC_Seed_MapE_continents1001_city`, `CC_Seed_MapA_two_cities`.
