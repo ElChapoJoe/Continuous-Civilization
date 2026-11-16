@@ -590,6 +590,7 @@
 					<Item>data/83-dedications.sql</Item>
 					<Item>data/84-civ-trees.sql</Item>
 					<Item>data/90-prune-dangling.sql</Item>
+					<Item>data/95-prune-dangling-fk.sql</Item>
 					<Item>data/99-cleanup.sql</Item>
 				</UpdateDatabase>
 				<UpdateText>

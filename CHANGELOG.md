@@ -8,6 +8,7 @@ Saves from one beta version may not load in the next. Start a new game after upd
 
 ### Fixed
 - Games failed to start with "Content Configuration Validation Failed" when the Ottomans DLC was in the game (Database.log: `Invalid Reference on Constructible_GreatWorks.ConstructibleType - "BUILDING_CAMII" does not exist in Constructibles`). The mod imports the Ottomans' culture tree, whose file also gives the Camii its Great Work slots, but the DLC defines the Camii building itself only in the Modern Age, which never loads here. Great Work slots of buildings that aren't in the game are now dropped. Reproduced with the same error and verified fixed in game; not yet tested by an owner of the Ottomans DLC. (Reported on the Workshop.)
+- Safety net for DLC and mod combinations that were never tested: at the end of loading, any row that refers to something missing from the database (a building, unit, modifier, tag and so on) is removed instead of stopping the game from starting. In a normal setup it removes nothing; adds about 2 seconds to game setup. What it removed is kept in the `cc_pruned_fk` table for bug reports. Mods that load after this mod are not covered.
 
 ## 0.2.0-beta (22) - World Age, Test of Time, Triumphs and Dedications
 
