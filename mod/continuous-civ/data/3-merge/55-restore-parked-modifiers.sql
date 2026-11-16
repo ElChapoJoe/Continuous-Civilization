@@ -1,4 +1,4 @@
--- Continuous Civilization - put back the Antiquity modifiers parked by 01-park-modifiers.sql.
+-- Continuous Civilization - put back the Antiquity modifiers parked by 4-park-modifiers.sql.
 -- First remove Exploration's same-id versions together with the requirement sets only they use.
 -- Their link rows (traits, governments, traditions... that the imports attached to these ids) cascade away with
 -- the delete, so they are snapshotted first and put back at the end, with Antiquity's (snapshotted in 01).

@@ -1,4 +1,4 @@
--- Continuous Civilization - tech note on Exploration and Modern resource tooltips (data/65-modern-resources.sql).
+-- Continuous Civilization - tech note on Exploration and Modern resource tooltips (data/3-merge/65-modern-resources.sql).
 -- Keep the tech names in step with cc_resource_unlocks there.
 UPDATE LocalizedText SET Text = Text || '[N]Inactive until you research Urbanization.'
   WHERE Language = 'en_US' AND Tag IN ('LOC_MOD_RESOURCE_COFFEE_TOOLTIP', 'LOC_MOD_RESOURCE_TOBACCO_TOOLTIP', 'LOC_MOD_RESOURCE_CITRUS_TOOLTIP');

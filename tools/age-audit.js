@@ -4,7 +4,7 @@
 //   kind 3  REQUIREMENT_GAME_AGE_TYPE_MATCH  ("the current Age is X")
 //   kind 4  REQUIREMENT_IS_AGE_COUNT         ("N Age transitions have happened")
 //   kind 2  rows tagged with a later Age in tables the engine filters by the current Age
-// Requirements already rewritten to the personal Age (data/70-personal-age.sql) are reported separately.
+// Requirements already rewritten to the personal Age (data/3-merge/70-personal-age.sql) are reported separately.
 (function () {
   const A = (t) => { const o = []; if (t) for (const x of t) o.push(x); return o; };
   const CHALLENGE = /^(CHALLENGE_|REQSET_.*_TRIUMPH|.*_TRIUMPHS?_)/;

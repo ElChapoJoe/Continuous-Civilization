@@ -1,4 +1,4 @@
-"""Generates mod/continuous-civ/data/95-prune-dangling-fk.sql from the installed game's gameplay schema.
+"""Generates mod/continuous-civ/data/3-merge/95-prune-dangling-fk.sql from the installed game's gameplay schema.
 
 Safety net for the game's foreign-key validation: after all of the mod's imports and rules, any row whose
 foreign-key column names something that is not in the database is deleted, so a game with DLC or other mods
@@ -15,7 +15,7 @@ import os, re, sys
 
 GAME = sys.argv[1] if len(sys.argv) > 1 else r"G:/SteamLibrary/steamapps/common/Sid Meier's Civilization VII"
 SCHEMA = os.path.join(GAME, "Base/Assets/schema/gameplay/01_GameplaySchema.sql")
-OUT = os.path.join(os.path.dirname(__file__), "..", "mod", "continuous-civ", "data", "95-prune-dangling-fk.sql")
+OUT = os.path.join(os.path.dirname(__file__), "..", "mod", "continuous-civ", "data", "3-merge", "95-prune-dangling-fk.sql")
 PASSES = 2  # deleting a row can leave rows that pointed at it dangling; a second pass catches those
 
 sql = open(SCHEMA, encoding="utf8").read()

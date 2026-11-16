@@ -1,11 +1,11 @@
 // Continuous Civilization - Triumph progress for Exploration and Modern Triumphs (UI side).
-// data/80-triumphs.sql adds a personal-Age requirement to each later-Age Triumph's trigger. With two requirements
+// data/3-merge/80-triumphs.sql adds a personal-Age requirement to each later-Age Triumph's trigger. With two requirements
 // the engine reports the set's progress differently: as a percentage per requirement (0-200, e.g. 105/200 for
 // 1 of 20 relics), in raw units with the Age counted as 1 more (10/74), or for some requirement types in raw units of
 // the goal alone (2/6 Modern wonders, left as is). The Triumphs screen and tracker show that
 // number as is, so getProgress() is wrapped to take the Age requirement's share out and show the real count again
 // (1/20). Display only: whether a Triumph triggers is still decided by the engine.
-// Personal Age uses the same root techs as data/70-personal-age.sql.
+// Personal Age uses the same root techs as data/3-merge/70-personal-age.sql.
 
 function rootHashes(setId) {
   const out = [];

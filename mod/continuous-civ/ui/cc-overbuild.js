@@ -3,8 +3,8 @@
 // that by the game Age, which never leaves Antiquity here, so no building ever became replaceable and cities had to
 // grow outward for every new building. This script adds it per player, in the building placement screen:
 //   * A tile whose two building slots are full shows as a placement spot (in blue) when the building you place is from a later
-//     Age than one of the buildings there (by its vanilla Age, data/30-buildings.sql tags) and that building's Age is
-//     behind you (personal Age, same root techs as data/70-personal-age.sql). Exploration players can build over
+//     Age than one of the buildings there (by its vanilla Age, data/3-merge/30-buildings.sql tags) and that building's Age is
+//     behind you (personal Age, same root techs as data/3-merge/70-personal-age.sql). Exploration players can build over
 //     Antiquity buildings, Modern players over Antiquity and Exploration ones.
 //   * Ageless buildings (which includes every civilization's unique buildings), walls and the Palace are never
 //     replaced, as in vanilla. Buildings with special placement (water, river, bridge) aren't placed this way.

@@ -1,4 +1,4 @@
-"""Generate the per-Age civ ability data for the continuous-civ mod (data/75-civ-abilities.sql).
+"""Generate the per-Age civ ability data for the continuous-civ mod (data/3-merge/75-civ-abilities.sql).
 
 In vanilla each civilization's ability is attached per Age: every module (age-antiquity, age-exploration, age-modern,
 each civ DLC) has civilizations-antiquity.xml, civilizations-exploration.xml and civilizations-modern.xml, and only the
@@ -12,7 +12,7 @@ This script reads (read-only) those files and writes:
                         (an Age with no file for that civ counts as the Age before it)
   copies of the Requirements / RequirementSets the Exploration and Modern files define (INSERT OR IGNORE), and their
   ModifierArguments <Replace> rows, which the ability modifiers use.
-data/75-civ-abilities.sql (hand-written part, appended below) then attaches each modifier only while the civ's
+data/3-merge/75-civ-abilities.sql (hand-written part, appended below) then attaches each modifier only while the civ's
 personal Age is one of the Ages vanilla has it in. The modifier definitions themselves come from the gameeffects files
 the modinfo imports.
 
@@ -47,7 +47,7 @@ def find_civ7_base():
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "..", "mod", "continuous-civ", "data", "75-civ-abilities.sql")
+OUT = os.path.join(HERE, "..", "mod", "continuous-civ", "data", "3-merge", "75-civ-abilities.sql")
 LOGIC = os.path.join(HERE, "civ_abilities_logic.sql")
 BASE = find_civ7_base()
 DLC = os.path.join(os.path.dirname(BASE), "DLC")

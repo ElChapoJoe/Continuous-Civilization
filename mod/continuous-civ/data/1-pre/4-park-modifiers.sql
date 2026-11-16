@@ -1,4 +1,4 @@
--- Continuous Civilization - runs BEFORE the Exploration import (LoadOrder 400), after 00-pre-park-ids.sql.
+-- Continuous Civilization - runs BEFORE the Exploration import (LoadOrder 400), after 3-park-modifier-ids.sql.
 -- Exploration's resource GameEffects files re-define some Antiquity resource modifiers (same ModifierId).
 -- Deleting the Antiquity rows would hand those resources Exploration's effects, so instead we copy each one
 -- (with its arguments, strings and requirement sets) into cc_park_* tables and remove it. After the import,
