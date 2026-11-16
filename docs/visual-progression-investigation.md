@@ -724,3 +724,10 @@ Map seed 9009, **Fractal** script, standard: every usable land tile urban; 47 vi
 - Bare and wooded keep the same pairing as on maps 7007 and 8008 (bare A0/B300 with wooded A0/B0, bare A60/B0 with wooded A60/B60) on every tile.
 - Against map 7007 (96 shared coordinates) and map 8008 (103): **all 28 differences are river tiles on one of the maps**. 0 conflicts off rivers over three Standard maps and three scripts (Pangaea, Continents, Fractal).
 - Standard table now **2,392 of 4,536 plots** (bare), 2,391 (wooded); 117 river tiles on this map left out.
+
+## Round 56 (2026-11-16): sea turned into land keeps the coordinate's streets
+
+On map 9009, a 9 x 5 patch of open ocean (x 46-54, y 23-27) was turned into flat grassland from the console (`WorldBuilder.MapPlots.setTerrain/setBiome/setFeature`), saved and reloaded (the terrain art only rebuilds on load; before that the patch still draws as sea). The patch was then filled with cities and empty urban districts and probed like a normal map: 40 tiles labelled, median margin 4.6.
+
+- **36 of the 40 tiles have a coordinate measured on maps 7007/8008/9009 (land there): all 36 match.** The other 4 had nothing to compare against.
+- So the street choice follows the coordinate even where this map had water: the remaining unknown plots (mostly sea on every measured map) can be measured by turning the sea into land on one test map, instead of hoping a new map script puts land there.
