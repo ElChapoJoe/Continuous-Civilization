@@ -52,13 +52,11 @@ else:   # CCTable.pack64(): 9 characters per tile
     d = lambda s: B64.index(s[0]) * 64 + B64.index(s[1])
     tiles = [[d(raw_pack[i:i + 2]), d(raw_pack[i + 2:i + 4]), B64.index(raw_pack[i + 4]), d(raw_pack[i + 5:i + 7]),
               d(raw_pack[i + 7:i + 9])] for i in range(0, len(raw_pack), 9)]
-first = load(0)
+first_k = next(k for k in range(10000) if os.path.exists(os.path.join(folder, "s%02d.bmp" % k)))
+first = load(first_k)
 H, W = first.shape
-marker = (np.stack([first] * 1) > 0)  # placeholder, origin found below from the colour image
-with open(os.path.join(folder, "s00.bmp"), "rb") as f:
-    pass
 # client origin: the probe's marker square is pure blue in the top-left corner
-raw = open(os.path.join(folder, "s00.bmp"), "rb").read()
+raw = open(os.path.join(folder, "s%02d.bmp" % first_k), "rb").read()
 off = int.from_bytes(raw[10:14], "little"); w0 = int.from_bytes(raw[18:22], "little", signed=True)
 h0 = int.from_bytes(raw[22:26], "little", signed=True); row = (w0 * 3 + 3) & ~3
 img = np.frombuffer(raw, np.uint8, count=row * abs(h0), offset=off).reshape(abs(h0), row)[:, :w0 * 3].reshape(abs(h0), w0, 3)
@@ -73,7 +71,8 @@ by_view = {}
 for t in tiles:
     by_view.setdefault(t[2], []).append(t)
 for v, ts in sorted(by_view.items()):
-    if not os.path.exists(os.path.join(folder, "s%02d.bmp" % (v * PER + PER - 1))):
+    if not all(os.path.exists(os.path.join(folder, "s%02d.bmp" % (v * PER + c))) for c in range(PER)):
+        print("view %d incomplete, its %d tiles skipped" % (v, len(ts)))
         continue
     shots = [load(v * PER + c) for c in range(PER)]
     for x, y, _, px, py in ts:

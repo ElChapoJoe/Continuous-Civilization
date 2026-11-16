@@ -645,3 +645,14 @@ Map seed 1001, Pangaea, small (74 x 46): 111 cities, 1,001 urban tiles, 35 views
 - Against the tiny table at the same coordinates (224 tiles): turn 215 the same, A/B 119 (chance), as in round 46.
 - Table: `experimental/cc-visual-prototype/tools/street-table-small-1001.json`. Coordinates that are water, mountains or city centres on this map are still missing (1,001 of 3,404).
 - The capture script now reads state markers past 420 (green channel up to 21).
+
+## Round 48 (2026-11-16): a second small map; river tiles take their own turn
+
+Map seed 2002, **Continents** script, small: 101 cities, 860 urban tiles (634 coordinates new, the rest shared with round 47), 40 views, bare and wooded passes of 52 minutes. The first capture missed state 0, so view 0's 19 tiles were dropped from the bare pass (`table_score.py` now skips an incomplete view instead of failing).
+
+- 841 + 860 tiles labelled, median margin 5.2 / 5.0, at most 1 under 2.
+- Against the small table of round 47: **A/B the same on every shared tile**; 318 of 352 bare and 330 of 364 wooded the same in full. All differences are the turn alone (A at 0 vs A at 60, B at 0 vs B at 300, and so on), and on the same tiles in both layers.
+- **Every flipped tile is a river tile on one of the two maps** (map seed 1001 regenerated to check: 18 river only there, 12 only on 2002, 4 on both). Of the 268 shared tiles with no river on either map, 268 agree. River tiles flip about 40% of the time (34 of 83), so a river tile gets a turn from the river instead of the coordinate; the A/B pick is unaffected. Bare and wooded still share the turn on river tiles (91 of 91).
+- Earlier "turn mismatches" between tiny and small (round 46, 9 tiles) are probably the same thing; the tiny map's rivers were not recorded.
+- Each table file now lists its map's river tiles (`rivers`); `build_street_table.py` leaves them out when merging. Merged small table: **0 conflicts** between the two maps, 1,349 of 3,404 plots known (bare), 1,357 (wooded). `CCStreetTable.lookup` flags river tiles (`river: true`: the angle is unsure).
+- Next: the river turn rule (which way the river runs through the tile is the likely input), more small maps for coverage, then the other sizes.
