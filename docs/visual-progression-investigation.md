@@ -677,3 +677,16 @@ Open: the remaining small coordinates (mostly ocean on these maps: more maps, or
 - What predicts the flip (turn different from the coordinate's own turn, known from another map where the coordinate has no river; 87 such tiles on maps 1001 and 2002): **river sources keep the coordinate's turn (11 of 11), tiles next to the sea or a navigable river mostly flip (7 of 8)**, tiles in the middle of a river are mixed (6 flip, 9 same). Overall 38% flip.
 - Not explained by: which neighbours are river or water tiles, flow direction from elevation, position along the river, or the river's entry and exit sides relative to the layout (best rule of the form "flip when the river crosses these sides of layout A/B", searched over all side sets: 67 of 87; predicting "no flip" gives 54). Even a free lookup on (layout, entry/exit sides) can explain at most 153 of 216 river tiles, so the sides alone don't decide it. Likely the engine tests its house/blocker attachments against the river's actual curve (round 9: fitting around rivers happens in engine code), which scripts can't read.
 - For the overlay: river sources can use the table's turn; other river tiles (about 8% of urban tiles) need the paved fill or a best guess. Tools: the river course export and the rule search are in the session scratchpad (`riverdump.js`, `riverrule.py`); a repo copy can follow if this is taken further.
+
+## Round 51 (2026-11-16): a fourth small map (Shattered Seas); river sources are safe
+
+Map seed 5005, **Shattered Seas** script, small: 103 cities, 848 urban tiles, 370 of them new coordinates. Only views with 4 or more new coordinates were run (31 views, 40 minutes per pass), and only new coordinates, river tiles and every sixth known tile were exported.
+
+- 479 tiles labelled per pass, median margin 4.9 / 4.8. Against the merged small table: bare 103 of 110, wooded 88 of 93 the same; **every difference is a river tile on this map**.
+- Merged small table: **1,900 of 3,404 plots** (bare), 1,903 (wooded); 0 conflicts over four maps and four map scripts.
+- River dataset now 297 river tiles on maps 1001, 2002 and 5005, 157 of them with the coordinate's own turn known from another map. Flip (turn 60 degrees off the table):
+  - **river sources (one river neighbour, not at a mouth): 0 of 71**;
+  - mouths (first tile of a river, or next to its navigable part): 29 of 43 (layout A 15 of 26, B 14 of 17);
+  - middles: 17 of 43 (sharp bends 0 of 5, gentle 12 of 21, straight 5 of 15).
+  Side rules fitted separately to mouths and middles gain only 4-6 tiles over always guessing the majority on about 40 tiles each, so they are not trusted.
+- `CCStreetTable.lookup` now returns `river` as false, "source", "mouth", "middle" or "navigable" (worked out from `MapRivers` and cached per map) and `sure` (true off rivers and on sources). The overlay can trust `sure` tiles and pave the rest.
