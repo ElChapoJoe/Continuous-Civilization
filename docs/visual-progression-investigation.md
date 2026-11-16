@@ -656,3 +656,15 @@ Map seed 2002, **Continents** script, small: 101 cities, 860 urban tiles (634 co
 - Earlier "turn mismatches" between tiny and small (round 46, 9 tiles) are probably the same thing; the tiny map's rivers were not recorded.
 - Each table file now lists its map's river tiles (`rivers`); `build_street_table.py` leaves them out when merging. Merged small table: **0 conflicts** between the two maps, 1,349 of 3,404 plots known (bare), 1,357 (wooded). `CCStreetTable.lookup` flags river tiles (`river: true`: the angle is unsure).
 - Next: the river turn rule (which way the river runs through the tile is the likely input), more small maps for coverage, then the other sizes.
+
+## Round 49 (2026-11-16): a third small map (Archipelago); summary of the night
+
+Map seed 3003, **Archipelago** script, small: 81 cities, 486 urban tiles, 33 views (only views with 6 or more urban tiles), bare and wooded passes of 43 minutes. 482 labelled per pass, median margin 5.2 / 5.0, none under 2.
+
+- Against the merged small table (two maps): **bare 252 of 253, wooded 253 of 254 the same**; the one difference in both is 59,18, a river tile on this map. Three map scripts and three seeds now agree on every non-river tile.
+- Merged small table: 1,574 of 3,404 plots known (bare), 1,581 (wooded); tiny: 589 / 592 of 2,280. 0 conflicts.
+- River turn rule: on map seed 1001 (small) the river tiles' turn matches the coordinate's turn 27 of 45 times, and no test on which neighbours are river or water tiles explains it (each about 50/50). The game's `Rivers` API (river course) is not available to UI scripts. River tiles stay flagged as unsure.
+
+Where this leaves the overlay: `ui/cc-street-table.js` (`CCStreetTable.lookup(x, y, wooded)`) gives, for a measured coordinate, the street layout (A or B) and angle that match the engine's Antiquity decal. The overlay can then draw its Exploration or Modern street to line up with the decal underneath instead of fighting it. Unknown coordinates, river tiles (angle unsure) and other map sizes need the paved fill (round 38). The lookup is not yet registered in the modinfo or used by `cc-visual-overlay.js`.
+
+Open: the remaining small coordinates (mostly ocean on these maps: more maps, or other scripts), the other map sizes (standard, large, huge), the river turn, whether the Exploration/Modern street sections line up with the Antiquity A/B decals at the same angles (to check visually), the city-centre tiles.
