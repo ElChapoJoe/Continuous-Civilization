@@ -699,3 +699,12 @@ Map seed 6006, **Fractal** script, small: 97 cities, 835 urban tiles, 228 new co
 - Merged small table: **2,098 of 3,404 plots** (bare), 2,103 (wooded); 0 conflicts over five maps and five map scripts. New coordinates per extra map are falling (634, 321, 462, 228), as the rest are mostly sea on every script.
 - River dataset: 385 river tiles on four maps, 254 with the coordinate's own turn known. Flips: **sources 1 of 113**, **sharp 60-degree bends 0 of 11**, gentle bends 12 of 24, straight runs 8 of 20, mouths 45 of 82 (into the sea on one, two or three sides, short or long rivers: all near 50/50). So mouths and the other middles look like a coin flip from what scripts can see.
 - `CCStreetTable.riverKind` now also returns "bend" for a sharp bend, and `lookup(...).sure` is true off rivers, on sources and on sharp bends. On map 6006 that leaves 46 mouth/middle tiles unsure out of about 830 urban tiles (5.5%).
+
+## Round 53 (2026-11-16): the Standard map size
+
+Map seed 7007, **Pangaea** script, **standard (84 x 54)**: 141 cities, 1,394 urban tiles (every usable land tile), 50 views, about 65 minutes per pass. All 1,394 tiles labelled in both passes, median margin 5.1 (bare) / 4.9 (wooded).
+
+- **The turn is shared across map sizes, the A/B layout is not.** Against the merged small table on the 889 shared coordinates: the turn agrees on 859 (the misses are mostly river tiles on one of the maps), while the A/B layout agrees on 467 (chance). Same picture for the wooded layer (431 of 890 the same, and almost every difference keeps the turn). Bare and wooded share the turn on all 1,394 tiles, as on small.
+- So each map size needs its own measured A/B table; the turn of a new size can be seeded from any measured size.
+- River tiles on this map, judged against the small table's turn: sources 50 the same / 2 flipped, sharp bends 4 / 0, middles 26 / 10, mouths 23 / 18. Same rule as round 52: sources and sharp bends are safe, mouths and the other middles are not.
+- `tools/street-table-standard-7007.json` added; `ui/cc-street-table.js` now covers **standard: 1,191 of 4,536 plots** (river tiles of this map left out), small 2,098 of 3,404, tiny 589 of 2,280.
