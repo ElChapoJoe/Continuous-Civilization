@@ -421,3 +421,9 @@ Checked everything the UI scripts can reach (every global engine object and its 
 ## Pin (2026-11-14): where the prototype stands
 
 Paused at this point; summary and next candidates are in `experimental/cc-visual-prototype/README.md` ("Status"). In short: buildings, lots, palace squares, house layouts (forest and culture variants, slot-by-slot next to cliffs, water and mountains), empty lots, owner colours, harbours and Modern rural tiles now follow the engine's own data or measurements on the vanilla Modern reference; estimated about 80-85% of vanilla for Modern cities. The engine's Antiquity ground streets under our art and its random per-tile turns remain the main gap and are not reachable from scripts. Code cleaned (unused helpers removed); the slot table loads from the modinfo after a game restart (checked in the Rome sandbox).
+
+## Round 34 (2026-11-15): tinting the eraser
+
+- Resumed after the 0.2.0 release (branch merged with main). Idea: the only decal that paints over the engine's Antiquity streets is the sand-coloured high-priority dirt patch (round 19); if `tintColor1/2` recoloured it grey, it could stand in for Modern paving.
+- Result: **tint has no effect on decals.** Three patches (untinted, grey 0x505050, pure red) on bare tiles and on city tiles came out the same sand colour. Tint only reaches 3D models (banners, awnings).
+- So the ground stays at round 20's conclusion: no paving asset, no recolourable cover. The street-ground gap is closed only by density (buildings covering the ground), as vanilla does.
