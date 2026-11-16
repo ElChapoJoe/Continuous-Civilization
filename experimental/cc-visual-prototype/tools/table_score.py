@@ -2,7 +2,7 @@
 
   python table_score.py <shots folder> <pack.txt> <radius_px> <out.json> [known.json ...]
 
-pack.txt is CCTable.pack(): "x,y,view,px,py;..." (pixel position in the game's client area, in that view).
+pack.txt is CCTable.pack() ("x,y,view,px,py;...") or CCTable.pack64() (pixel position in the game's client area, in that view).
 Writes {"x,y": [label, margin]} and prints a summary; known.json files ({"x,y": "A60", ...}) are compared.
 Same scoring as street_probe_score.py: fine detail (picture minus its blur), 100 * (1 - correlation).
 """
@@ -44,7 +44,14 @@ def corr(a, b):
     return float((a * b).sum() / max(np.sqrt((a * a).sum() * (b * b).sum()), 1e-6))
 
 
-tiles = [list(map(int, p.split(","))) for p in open(pack_path).read().strip().split(";") if p]
+raw_pack = open(pack_path).read().strip()
+if ";" in raw_pack or "," in raw_pack:
+    tiles = [list(map(int, p.split(","))) for p in raw_pack.split(";") if p]
+else:   # CCTable.pack64(): 9 characters per tile
+    B64 = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_"
+    d = lambda s: B64.index(s[0]) * 64 + B64.index(s[1])
+    tiles = [[d(raw_pack[i:i + 2]), d(raw_pack[i + 2:i + 4]), B64.index(raw_pack[i + 4]), d(raw_pack[i + 5:i + 7]),
+              d(raw_pack[i + 7:i + 9])] for i in range(0, len(raw_pack), 9)]
 first = load(0)
 H, W = first.shape
 marker = (np.stack([first] * 1) > 0)  # placeholder, origin found below from the colour image

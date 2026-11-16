@@ -634,3 +634,14 @@ Map seed 1001 again, Pangaea, but **small** (74 x 46) instead of tiny. The rig f
 - The plot index (y * width + x) doesn't carry it over either: comparing small (x, y) with the tiny tile of the same plot index gives chance for both bits (26 and 32 of 61), the swapped coordinates too.
 - So the engine's A/B pick uses the map size (or something that changes with it), while maps of the same size agree (four seeds and two map scripts in rounds 42-44). A shipped table needs one A/B layer per map size, plus one turn layer that may be shared.
 - The game's setup screen had Small selected when this session started, so the user's usual size is probably Small; it is measured next.
+
+## Round 47 (2026-11-16): the small map measured
+
+Map seed 1001, Pangaea, small (74 x 46): 111 cities, 1,001 urban tiles, 35 views, one bare and one wooded pass of 46 minutes each. `CCTable.pack64()` exports the positions in 9 characters per tile (`table_score.py` reads both formats).
+
+- 1,001 of 1,001 tiles labelled in both passes; median margin 5.1 (bare) and 4.9 (wooded), 2 and 0 tiles under 2.
+- Bare: A at 0: 272, B at 300: 263, B at 0: 241, A at 60: 225. Wooded: B at 0: 274, A at 0: 261, B at 60: 242, A at 60: 224.
+- Bare and wooded share the turn on **999 of 999** clear tiles, as on the tiny map.
+- Against the tiny table at the same coordinates (224 tiles): turn 215 the same, A/B 119 (chance), as in round 46.
+- Table: `experimental/cc-visual-prototype/tools/street-table-small-1001.json`. Coordinates that are water, mountains or city centres on this map are still missing (1,001 of 3,404).
+- The capture script now reads state markers past 420 (green channel up to 21).

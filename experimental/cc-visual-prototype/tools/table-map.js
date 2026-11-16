@@ -108,6 +108,13 @@
     });
     return parts.join(";");
   }
-  globalThis.CCTable = { plan, run: () => { run(); return "started"; }, status, wood, views, pack, urbanTiles };
+  // Same as pack(), packed: 9 characters per tile (x, y, px, py: two base-64 digits each; view: one).
+  function pack64(filter) {
+    const A = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+    const d2 = (n) => A[(n >> 6) & 63] + A[n & 63];
+    return pack().split(";").filter((p) => p && (!filter || filter.has(p.split(",").slice(0, 2).join(","))))
+      .map((p) => { const [x, y, v, px, py] = p.split(",").map(Number); return d2(x) + d2(y) + A[v] + d2(px) + d2(py); }).join("");
+  }
+  globalThis.CCTable = { pack64, plan, run: () => { run(); return "started"; }, status, wood, views, pack, urbanTiles };
   return "CCTable ready";
 })();
