@@ -708,3 +708,11 @@ Map seed 7007, **Pangaea** script, **standard (84 x 54)**: 141 cities, 1,394 urb
 - So each map size needs its own measured A/B table; the turn of a new size can be seeded from any measured size.
 - River tiles on this map, judged against the small table's turn: sources 50 the same / 2 flipped, sharp bends 4 / 0, middles 26 / 10, mouths 23 / 18. Same rule as round 52: sources and sharp bends are safe, mouths and the other middles are not.
 - `tools/street-table-standard-7007.json` added; `ui/cc-street-table.js` now covers **standard: 1,191 of 4,536 plots** (river tiles of this map left out), small 2,098 of 3,404, tiny 589 of 2,280.
+
+## Round 54 (2026-11-16): a second Standard map (Continents)
+
+Map seed 8008, **Continents** script, standard: 135 cities, 1,245 urban tiles, 783 of them at coordinates not yet in the Standard table. Only views with 4 or more new coordinates were run (41 views, about 55 minutes per pass); new coordinates, river tiles and every sixth known tile were exported.
+
+- 917 tiles labelled per pass, median margin 5.0 (bare) / 4.8 (wooded). Bare and wooded share the turn on all 917.
+- Against map 7007 on the 206 shared coordinates: bare 163 the same, wooded 163 the same; **all 43 differences are river tiles on one of the two maps**. So the per-coordinate table holds at Standard size as on small (0 conflicts off rivers over two maps and two scripts).
+- Standard table now **1,878 of 4,536 plots** (bare), 1,875 (wooded).
