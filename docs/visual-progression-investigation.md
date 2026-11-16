@@ -603,6 +603,6 @@ Swap 1 (features changed before building): the three wooded tiles of map A clear
 
 - Clearing the vegetation gave the bare-table value on all three tiles; untouched tiles kept their pattern.
 - **Wooded tiles are a second fixed table**: 6 of 6 agree with the readings of the same coordinates on other maps, with other wooded feature types. The type (forest, rainforest, savanna woodland, taiga) changed nothing on 4 of 4 tiles.
-- This matches the layout bins (round 26): Antiquity houses have four plain variants and two `_FOL` variants used on tiles with forest, sagebrush steppe, savanna woodland, taiga or rainforest. Mangrove is not in that list, and the mangrove tile of map E read the bare value. Same seed, other variant list, so a different pick.
+- This matches the layout bins (round 31): Antiquity houses have four plain variants and two `_FOL` variants used on tiles with forest, sagebrush steppe, savanna woodland, taiga or rainforest. Mangrove is not in that list, and the mangrove tile of map E read the bare value. Same seed, other variant list, so a different pick.
 - The art follows feature changes live, so the overlay can read features each time it redraws.
 - Consequence: per coordinate the mod needs two values (bare and wooded). Both can be measured on one city by toggling vegetation. Save `CC_Seed_VegSwap`.
