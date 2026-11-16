@@ -690,3 +690,12 @@ Map seed 5005, **Shattered Seas** script, small: 103 cities, 848 urban tiles, 37
   - middles: 17 of 43 (sharp bends 0 of 5, gentle 12 of 21, straight 5 of 15).
   Side rules fitted separately to mouths and middles gain only 4-6 tiles over always guessing the majority on about 40 tiles each, so they are not trusted.
 - `CCStreetTable.lookup` now returns `river` as false, "source", "mouth", "middle" or "navigable" (worked out from `MapRivers` and cached per map) and `sure` (true off rivers and on sources). The overlay can trust `sure` tiles and pave the rest.
+
+## Round 52 (2026-11-16): a fifth small map (Fractal); sharp river bends are safe too
+
+Map seed 6006, **Fractal** script, small: 97 cities, 835 urban tiles, 228 new coordinates, 25 views (33 minutes per pass). 349 tiles labelled per pass, median margin 4.9 / 4.8.
+
+- Against the merged small table: bare 110 of 123, wooded 110 of 123 the same; **all 13 differences are river tiles on this map** (the same tiles in both layers).
+- Merged small table: **2,098 of 3,404 plots** (bare), 2,103 (wooded); 0 conflicts over five maps and five map scripts. New coordinates per extra map are falling (634, 321, 462, 228), as the rest are mostly sea on every script.
+- River dataset: 385 river tiles on four maps, 254 with the coordinate's own turn known. Flips: **sources 1 of 113**, **sharp 60-degree bends 0 of 11**, gentle bends 12 of 24, straight runs 8 of 20, mouths 45 of 82 (into the sea on one, two or three sides, short or long rivers: all near 50/50). So mouths and the other middles look like a coin flip from what scripts can see.
+- `CCStreetTable.riverKind` now also returns "bend" for a sharp bend, and `lookup(...).sure` is true off rivers, on sources and on sharp bends. On map 6006 that leaves 46 mouth/middle tiles unsure out of about 830 urban tiles (5.5%).
