@@ -1,6 +1,7 @@
-# Render docs/images/logo-shapes.json (from tools/make_logo.py) to the 1024 x 1024 Workshop preview.
+# Render docs/images/logo-shapes.json (from tools/make_logo.py) to a 1024 x 1024 image of the simple gold C logo.
+# (It used to write the Workshop preview; that is now the Blender logo, tools/blender/cc_logo_medallion.py.)
 # Usage:  powershell -ExecutionPolicy Bypass -File tools\render_logo.ps1 [-Out <path.jpg|.png>]
-param([string]$Out = (Join-Path $PSScriptRoot "..\docs\images\workshop-preview.jpg"))
+param([string]$Out = (Join-Path $PSScriptRoot "..\docs\images\logo-simple.jpg"))
 Add-Type -AssemblyName System.Drawing
 $shapes = Get-Content (Join-Path $PSScriptRoot "..\docs\images\logo-shapes.json") -Raw | ConvertFrom-Json
 $N = [int]$shapes.size

@@ -1,7 +1,8 @@
-# Render the 1920 x 1080 title card for the Steam Workshop gallery: laurel logo, title, tagline and the
-# Antiquity -> Exploration -> Modern timeline (same look as docs/images/banner.svg and the logo).
+# Superseded: the Workshop title card is now rendered in Blender (tools/blender/cc_banner.py --mode card).
+# This older script renders the first 1920 x 1080 title card: laurel logo, title, tagline and the
+# Antiquity -> Exploration -> Modern timeline (the look of the first, now retired, README banner and logo).
 # Usage:  powershell -ExecutionPolicy Bypass -File tools\render_title_card.ps1 [-Out <path.jpg>]
-param([string]$Out = (Join-Path $PSScriptRoot "..\docs\images\workshop-title-card.jpg"))
+param([string]$Out = (Join-Path $PSScriptRoot "..\docs\images\title-card-old.jpg"))
 Add-Type -AssemblyName System.Drawing
 $W = 1920; $H = 1080
 $shapes = Get-Content (Join-Path $PSScriptRoot "..\docs\images\logo-shapes.json") -Raw | ConvertFrom-Json

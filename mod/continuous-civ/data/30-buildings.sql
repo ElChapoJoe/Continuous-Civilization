@@ -1,5 +1,14 @@
 -- Continuous Civilization - Exploration and Modern buildings in a permanent Antiquity.
 
+-- 0) Remember each imported constructible's vanilla Age before it is re-tagged below: CC_AGE_EXPLORATION or
+--    CC_AGE_MODERN (no tag = Antiquity). ui/cc-overbuild.js uses it to let a player in a later personal Age build over
+--    older buildings, as vanilla allows after an Age transition.
+INSERT OR IGNORE INTO Tags (Tag, Category) VALUES ('CC_AGE_EXPLORATION', 'CONSTRUCTIBLE_TAG'), ('CC_AGE_MODERN', 'CONSTRUCTIBLE_TAG');
+INSERT OR IGNORE INTO TypeTags (Type, Tag)
+  SELECT ConstructibleType, CASE Age WHEN 'AGE_EXPLORATION' THEN 'CC_AGE_EXPLORATION' ELSE 'CC_AGE_MODERN' END
+  FROM Constructibles WHERE Age IN ('AGE_EXPLORATION', 'AGE_MODERN')
+    AND ConstructibleType NOT IN (SELECT ConstructibleType FROM cc_pre_constructibles);
+
 -- 1) Engine rule (verified Phase 1): only constructibles whose Age is the current Age (or NULL) can be
 --    built. Re-tag everything that was imported from Exploration.
 UPDATE Constructibles SET Age = 'AGE_ANTIQUITY'
@@ -34,6 +43,23 @@ INSERT INTO cc_building_gates (ConstructibleType, Node) VALUES
   ('BUILDING_GROCER',              'NODE_TECH_MO_URBANIZATION'),
   ('BUILDING_CITY_PARK',           'NODE_TECH_MO_URBANIZATION'),
   ('IMPROVEMENT_MOUNTAIN',         'NODE_TECH_MO_INDUSTRIALIZATION');
+
+-- DLC civilization-pack wonders (cc-import-dlc-* in the modinfo, owners only): vanilla unlocks them from the pack's
+-- Age-current tree file, which is not imported because it also unlocks that civilization's own content. Same
+-- node and depth as vanilla. Rows for packs that are not loaded are skipped (the wonder doesn't exist).
+DROP TABLE IF EXISTS cc_dlc_wonder_unlocks;
+CREATE TABLE cc_dlc_wonder_unlocks (ConstructibleType TEXT PRIMARY KEY, Node TEXT NOT NULL, Depth INTEGER NOT NULL);
+INSERT INTO cc_dlc_wonder_unlocks VALUES
+  ('WONDER_RILA_MONASTERY',          'NODE_TECH_EX_HERALDRY',          2),  -- bulgaria
+  ('WONDER_SERPENT_MOUND',           'NODE_TECH_EX_ASTRONOMY',         1),  -- shawnee-tecumseh
+  ('WONDER_BATTERSEA_POWER_STATION', 'NODE_TECH_MO_ELECTRICITY',       2),  -- great-britain
+  ('WONDER_BOUDHANATH',              'NODE_CIVIC_MO_MAIN_NATIONALISM', 1);  -- nepal
+INSERT OR IGNORE INTO ProgressionTreeNodeUnlocks (ProgressionTreeNodeType, TargetKind, TargetType, UnlockDepth)
+  SELECT u.Node, 'KIND_CONSTRUCTIBLE', u.ConstructibleType, u.Depth
+  FROM cc_dlc_wonder_unlocks u
+  WHERE u.ConstructibleType IN (SELECT ConstructibleType FROM Constructibles)
+    AND u.Node IN (SELECT ProgressionTreeNodeType FROM ProgressionTreeNodes)
+    AND u.ConstructibleType NOT IN (SELECT TargetType FROM ProgressionTreeNodeUnlocks);
 
 INSERT OR IGNORE INTO ProgressionTreeNodeUnlocks (ProgressionTreeNodeType, TargetKind, TargetType, UnlockDepth)
   SELECT g.Node, 'KIND_CONSTRUCTIBLE', g.ConstructibleType, 1

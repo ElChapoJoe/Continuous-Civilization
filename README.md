@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/images/banner.svg" alt="Continuous Civilization" width="100%">
+  <img src="docs/images/banner.jpg" alt="Continuous Civilization: a white plaster city from castle to skyscrapers on a gold line, on marble" width="100%">
 </p>
 
 <p align="center">
@@ -28,7 +28,7 @@
   <a href="#faq">FAQ</a>
 </p>
 
-![The merged tech tree, where Exploration's Urban Planning and Gunpowder lead into Modern's Academics, Steam Engine and Military Science](docs/images/tech-tree.jpg)
+![The merged tech tree: Exploration's Urban Planning and Gunpowder lead straight into Modern's Academics, Steam Engine and Military Science](docs/images/tech-tree.jpg)
 
 ## Why play it
 
@@ -36,9 +36,9 @@
 - 🌳 **One tech tree, one civic tree.** Exploration continues straight on from Antiquity and Modern from Exploration, all the way to Future Tech.
 - 🧭 **Your own pace.** Each player enters Exploration and Modern through their own research. A leader can be flying planes while a rival still fields knights.
 - ⚔️ **Content from every Age.** Units, buildings, governments, religion, resources, diplomacy and espionage from all three Ages, in one game.
-- 🏆 **Every main victory works:** Science, Culture, Economic and Domination.
+- 🏆 **Every main victory works:** Science, Culture, Economic, Military and Domination.
 
-![A Roman empire on turn 42](docs/images/empire.jpg)
+![Rome on turn 179: its Antiquity Colosseum still stands among the buildings of later Ages](docs/images/empire.jpg)
 
 ## Install
 
@@ -61,8 +61,15 @@ Requires Civilization VII (tested on 1.5.1). No game files are included or chang
 | Age | You enter it by researching any of | What changes for you |
 |---|---|---|
 | Antiquity | (start) | Vanilla Antiquity rules |
-| Exploration | Cartography, Astronomy, Machinery | Deep-ocean travel, embarkation, settlement cap of at least 8, base yields +10 Gold / +20 Science, Culture and Influence, more resource slots and envoys |
-| Modern | Academics, Steam Engine, Military Science | Settlement cap of at least 16, base yields +15 Gold / +30 Science, Culture and Influence, Modern resource slots and town focuses |
+| Exploration | Cartography, Astronomy, Machinery | Crossing the Ocean (civilians and commanders after Cartography, all land units after Shipbuilding mastery), deep-ocean ships, embarkation, settlement cap of at least 8, base yields +10 Gold / +20 Science, Culture and Influence, more resource slots and envoys, longer trade routes, stronger embarked units, leader attribute points; the specialist cap rises as in vanilla Exploration, and Age-scaled bonuses (leader abilities, mementos, attribute nodes) double |
+| Modern | Academics, Steam Engine, Military Science | Settlement cap of at least 16, base yields +15 Gold / +30 Science, Culture and Influence, Modern resource slots and town focuses, longer trade routes, stronger embarked units, more leader attribute points; Modern specialist cap, and Age-scaled bonuses triple |
+
+### World Age
+Costs that vanilla raises in later Ages follow a shared **world Age**, as Civilization VI's world eras do: the world enters Exploration (Modern) once at least half of the living civilizations are in that personal Age. Then everyone's city growth costs (about 1.9x, then 3.3x), town upgrade costs (2x, then 3x) and Influence costs of diplomatic actions (2x, then 3x) rise together, so the first civilization to advance isn't charged more than its rivals.
+
+Techs and civics also cost 20% more when they are from an Age ahead of the world's, and 20% less when from an Age behind it (Civ VI's catch-up), so a leader slows a little and a civilization left behind catches up.
+
+The **Distant Lands** across the Ocean are open from the start: you can meet the civilizations there, and settle their land once your Exploration lets you cross.
 
 ### Content from every Age
 - **Units and buildings** from all three Ages, unlocked through research, with upgrades across Ages (Galleon to Frigate, Arquebusier to Line Infantry).
@@ -76,22 +83,31 @@ Requires Civilization VII (tested on 1.5.1). No game files are included or chang
 
 - **Religion** from Exploration: Piety, Temples, founding a religion, beliefs, Missionaries, relics.
 - **Resources** from later Ages are on the map from the start, but stay inactive and hidden for each player until they research the matching tech (Coal at Steam Engine, Oil at Combustion).
-- **Diplomacy and espionage** from later Ages: Demand Tribute, Treasure Fleets, and spy actions such as Open the Gates and Sabotage Space Program, each unlocked by its tech, civic or city-state bonus.
+- **Triumphs** from all three Ages on the Triumphs screen. Exploration and Modern Triumphs count once you reach that personal Age, with vanilla's rewards.
+- **Dedications:** Major Triumphs unlock Dedications as in vanilla. Instead of an Age transition, you get 3 Dedication points when you enter your personal Exploration and 3 more in Modern. A **Choose Dedications** window opens at the start of your turn listing the Dedications you've earned, and you pick as many as you have points; anything you skip stays on the new **Dedications** tab of the attribute screen. Antiquity Triumphs' Dedications open from Exploration, Exploration Triumphs' from Modern. AI civilizations receive each Dedication they earn automatically, when they complete its Triumph.
+- **Diplomacy and espionage** from later Ages: Demand Tribute and spy actions such as Open the Gates and Sabotage Space Program, each unlocked by its tech, civic or city-state bonus.
 - **City-states, great people, projects, narratives and discoveries** from all three Ages share one pool.
 - **Ideologies:** Democracy, Fascism and Communism open with Political Theory.
 
-![The Exploration part of the tech tree](docs/images/tech-tree-exploration.jpg)
+![Overbuilding: an Exploration University placed over older buildings, choosing which one it replaces](docs/images/overbuild.jpg)
+
+![Triumphs from every Age on one screen](docs/images/triumphs.jpg)
+
+![The Choose Dedications window, which opens when you enter a new personal Age](docs/images/dedications.jpg)
 
 ## Winning
 
 | Victory | How to win |
 |---|---|
 | 🚀 **Science** | 100 Science victory points and an undamaged Launch Pad, then a 5-turn countdown |
-| 🎭 **Culture** | 150 Culture victory points, then a 5-turn countdown |
-| 💰 **Economic** | 12,000 Economic victory points, then a 5-turn countdown |
+| 🎭 **Culture** | 350 Culture victory points, then a 5-turn countdown |
+| 💰 **Economic** | 8,000 Economic victory points, then a 5-turn countdown |
+| ⚔️ **Military** | 100 Military victory points (from the settlements you hold, more for conquered ones and capitals), then a 5-turn countdown |
 | 🗡️ **Domination** | Capture every rival's original capital |
 
-In vanilla, Culture and Economic are won by staying 25% ahead of second place, a check the game only runs inside a real Modern Age. Here they use a fixed target, as Science does. The targets are set so AI leaders reach them late in the game, and will be tuned from beta feedback.
+In vanilla, Culture, Economic and Military are won by staying 25% ahead of second place, a check the game only runs inside a real Modern Age. Here they use a fixed target, as Science does. Culture and Economic are set so AI leaders reach them late in the game; Military is set above what an empire scores without conquest. All targets will be tuned from beta feedback.
+
+![The Victories screen with this mod's fixed targets](docs/images/victories.jpg)
 
 ## Beta testers
 
@@ -109,12 +125,18 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 
 ## Known limitations
 
-- **Military (points) victory** can't be won: it uses the 25%-lead check that only runs in a real Modern Age. Use Domination for a military win.
-- **Score victory** is decided when the final Age ends, which never happens here.
-- **Legacy paths** don't progress, so their Modern rewards (World's Fair, Manhattan Project, John Maynard Keynes) are unavailable. Launch Rocket instead requires the three earlier space projects.
-- **Diplomacy costs don't scale by Age.** Shared actions keep Antiquity's Influence costs, which vanilla doubles in Exploration and triples in Modern.
+- **No turn limit and no Score victory:** a game runs until someone wins (vanilla decides Score when the final Age ends, which never happens here).
+- **Triumphs (legacy paths):** two Triumphs can't be completed: one needs Treasure Fleets and the Modern one that grants John Maynard Keynes needs Factory resources, both not yet included. Launch Rocket requires the three earlier space projects instead of the Science legacy path.
+- **Later-Age resources can be spotted on the map early.** They do nothing until you research them, and their icons are hidden, but the engine still draws their 3D models and builds their own improvement on the tile, for example an Oil Rig on Oil in Antiquity. The improvement starts working once you have the tech. (During an AI autoplay a few of their icons can also appear.)
 - **City art stays Antiquity-style.** Town houses, roads and bridges keep their Antiquity look, because the engine draws them from a single game-wide Age. Buildings, wonders and units from later Ages use their own art. [Details](docs/visual-progression-investigation.md).
 - **Ruins** stay Antiquity discoveries all game, so Modern archaeology can't use them.
+- **A few numbers stay at Antiquity's values**, because the engine reads them from the one game Age with no per-player version: the Happiness needed for celebrations and for Joyous/Ecstatic settlements, and war weariness. (Growth costs, the specialist cap, town upgrade costs, narrative rewards, and leader, memento and attribute-tree bonuses now follow your personal Age.)
+- **Later-Age civilizations' unique Settler, Merchant, Scout and Army Commander replacements are available from the start** (Norman Sokeman, Mughal Zamindar, Mongolian Noyan, Bugandan Mwami, Inca Chasqui, Ming Mandarin, Songhai Tajiro, Qing Hangshang): the engine makes a unique unit available as soon as the unit it replaces is, not at its own tech.
+- **AI civilizations can buy some buildings in towns before their tech** (towns with a building-purchase ability, such as Augustus's or a Factory Town); the purchase screen blocks it for you.
+- **The AI doesn't overbuild.** You can build later-Age buildings over older ones once you're in a later Age, but AI civilizations keep building on new tiles.
+- **No crises** happen.
+- **Not yet included:** Treasure Fleets and Factory resources, some Exploration and Modern wonders that come with DLC civilization packs (wonder packs and four civilization-pack wonders are included), and DLC story events.
+- Full list with details: [Age-gating audit](docs/audit-age-gated-mechanics.md).
 - **Single player only** so far. Multiplayer is untested.
 
 ## FAQ
@@ -136,10 +158,9 @@ Likely: Civ VII patches can change the data the mod builds on. Please open an is
 
 ## Roadmap
 
-- Balance pass from beta feedback: pacing, diplomacy costs, victory targets.
-- Military points victory.
+- Balance pass from beta feedback: pacing, victory targets.
 - Multiplayer testing.
-- Per-player visual city changes: city art (buildings, houses, roads, bridges) that advances for each player as they research, instead of staying Antiquity's all game. In progress: the engine picks this art from one global Age (see [the investigation](docs/visual-progression-investigation.md)), so we're working on a workaround.
+- Per-player visual city changes: city art (houses, roads, bridges) that advances for each player as they research, instead of staying Antiquity's all game. Paused: the engine picks this art from one global Age ([the investigation](docs/visual-progression-investigation.md)); a prototype got part of the way.
 
 ## Contributing
 

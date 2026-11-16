@@ -31,6 +31,43 @@ INSERT INTO Modifiers (ModifierId, ModifierType)
 INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
   ('CC_MO_SETTLEMENT_CAP', 'Amount', '16'), ('CC_MO_SETTLEMENT_CAP', 'Minimum', 'true');
 
+-- Modern's step of the per-Age values in the global Ages table (types defined in 72; audit #5, #6), on top of
+-- Exploration's: trade route range +5 land, +15 sea (to 20/60); embarked land unit strength +30 (to 50).
+INSERT INTO Modifiers (ModifierId, ModifierType) VALUES
+  ('CC_MO_TRADE_RANGE_LAND', 'CC_MODTYPE_CITIES_TRADE_RANGE'), ('CC_MO_TRADE_RANGE_SEA', 'CC_MODTYPE_CITIES_TRADE_RANGE'),
+  ('CC_MO_EMBARKED_STRENGTH', 'CC_MODTYPE_PLAYER_EMBARKED_STRENGTH');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_MO_TRADE_RANGE_LAND', 'DomainType', 'DOMAIN_LAND'), ('CC_MO_TRADE_RANGE_LAND', 'Amount', '5'),
+  ('CC_MO_TRADE_RANGE_SEA', 'DomainType', 'DOMAIN_SEA'), ('CC_MO_TRADE_RANGE_SEA', 'Amount', '15'),
+  ('CC_MO_EMBARKED_STRENGTH', 'Amount', '30');
+INSERT INTO ModifierStrings (ModifierId, Context, Text) VALUES
+  ('CC_MO_EMBARKED_STRENGTH', 'Preview', 'LOC_CC_MO_EMBARKED_STRENGTH_PREVIEW');
+INSERT INTO cc_modern_rules VALUES ('CC_MO_TRADE_RANGE_LAND'), ('CC_MO_TRADE_RANGE_SEA'), ('CC_MO_EMBARKED_STRENGTH');
+
+-- Modern's step of the city balance (types and values in 72): growth -230%, specialist cap +3, town upgrades 3x
+-- in total.
+INSERT INTO Modifiers (ModifierId, ModifierType) VALUES
+  ('CC_MO_GROWTH', 'CC_MODTYPE_CITIES_GROWTH'), ('CC_MO_WORKER_CAP', 'CC_MODTYPE_CITIES_WORKER_CAP'),
+  ('CC_MO_TOWN_UPGRADE', 'CC_MODTYPE_CITIES_TOWN_UPGRADE');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_MO_GROWTH', 'Percent', '-140'), ('CC_MO_WORKER_CAP', 'Amount', '2'),
+  ('CC_MO_TOWN_UPGRADE', 'Percent', '-100');
+INSERT INTO cc_modern_rules VALUES ('CC_MO_GROWTH'), ('CC_MO_WORKER_CAP'), ('CC_MO_TOWN_UPGRADE');
+
+-- Ocean movement (audit #18): 72 applies Exploration's rule that entering Ocean ends a unit's move; vanilla Modern
+-- has no such rule, so units of players in their personal Modern ignore it.
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES ('CC_MODTYPE_UNITS_IGNORE_OBSTACLE', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType)
+  VALUES ('CC_MODTYPE_UNITS_IGNORE_OBSTACLE', 'COLLECTION_PLAYER_UNITS', 'EFFECT_UNIT_ADJUST_IGNORE_MOVEMENT_OBSTACLE');
+INSERT INTO Modifiers (ModifierId, ModifierType) VALUES ('CC_MO_OCEAN_MOVES', 'CC_MODTYPE_UNITS_IGNORE_OBSTACLE');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES ('CC_MO_OCEAN_MOVES', 'Obstacle', 'TERRAIN_OCEAN');
+INSERT INTO cc_modern_rules VALUES ('CC_MO_OCEAN_MOVES');
+
+-- AI difficulty bonuses of Modern (age-modern/data/difficulties.xml): +20% yields and production for the AI, and
+-- free Defensive Fortifications (after Military Science, by difficulty), by personal Modern Age (see 72).
+DELETE FROM TraitModifiers WHERE ModifierId LIKE 'MO_HANDICAP_%' AND TraitType = 'TRAIT_LEADER_MAJOR_CIV';
+INSERT INTO cc_modern_rules SELECT ModifierId FROM Modifiers WHERE ModifierId LIKE 'MO_HANDICAP_%';
+
 DELETE FROM cc_modern_rules WHERE ModifierId NOT IN (SELECT ModifierId FROM Modifiers);
 
 -- Wrappers: game-wide, attach each rule to every major player in their personal Modern Age.
@@ -39,3 +76,6 @@ INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId)
 INSERT INTO ModifierArguments (ModifierId, Name, Value)
   SELECT 'CC_MORULE_' || ModifierId, 'ModifierId', ModifierId FROM cc_modern_rules;
 INSERT INTO GameModifiers (ModifierId) SELECT 'CC_MORULE_' || ModifierId FROM cc_modern_rules;
+-- Cost steps follow the world Age (see 72-exploration-rules.sql).
+UPDATE Modifiers SET SubjectRequirementSetId = 'CC_REQSET_WORLD_IN_MODERN'
+  WHERE ModifierId IN ('CC_MORULE_CC_MO_GROWTH', 'CC_MORULE_CC_MO_TOWN_UPGRADE');

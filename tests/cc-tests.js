@@ -86,7 +86,8 @@
   CC.gating = function (pid) {
     const p = Players.get(pid); const out = { pid, violations: [], trainable: [], buildable: [] };
     const city = p.Cities.getCities()[0]; if (!city) return { pid, pass: null, note: "no city" };
-    const researched = (n) => p.Techs.isNodeUnlocked(node(n).$hash);
+    // Node state works for techs and civics alike (Techs.isNodeUnlocked is false for every civic, e.g. Piety).
+    const researched = (n) => Game.ProgressionTrees.getNodeState(pid, node(n).$hash) >= 4;
     for (const u of exUnlocks("KIND_UNIT")) {
       const d = GameInfo.Units.lookup(u.target); if (!d) continue;
       const ok = Game.CityOperations.canStart(city.id, CityOperationTypes.BUILD, { UnitType: d.$index }, false)?.Success;
@@ -266,7 +267,8 @@
     const capArg = (id) => A(GameInfo.ModifierArguments).find((a) => a.ModifierId === id && a.Name === "Amount")?.Value;
     r.checks.settlementCaps = { pass: capArg("CC_EX_SETTLEMENT_CAP") === "8" && capArg("CC_MO_SETTLEMENT_CAP") === "16" && gm.includes("CC_EXRULE_CC_EX_SETTLEMENT_CAP") && gm.includes("CC_MORULE_CC_MO_SETTLEMENT_CAP"), antiquity: capArg("TRAIT_INITIAL_SETTLEMENT_CAP") };
     const exRules = gm.filter((id) => id.startsWith("CC_EXRULE_")).map((id) => id.slice(10));
-    const gdp = (id) => /_GDP$/.test(id);
+    // Rules that carry on into Modern on purpose: the Economic trackers, and the per-Age steps that Modern adds to.
+    const gdp = (id) => /_GDP$/.test(id) || /^CC_EX_(TRADE_RANGE_|EMBARKED_STRENGTH|GROWTH|WORKER_CAP|TOWN_UPGRADE|FEATURE_PRODUCTION)/.test(id) || /^EX_HANDICAP_.*_WALLS$/.test(id);
     const ending = exRules.filter((id) => !gdp(id)).map((id) => GameInfo.Modifiers.lookup(id));
     const notEnding = ending.filter((m) => m && m.SubjectRequirementSetId !== "CC_REQSET_NOT_IN_MODERN" && !(m.SubjectRequirementSetId || "").startsWith("CC_REQSET_EXRULE_")).map((m) => m.ModifierId + ":" + m.SubjectRequirementSetId);
     r.checks.explorationRulesEndAtModern = { pass: notEnding.length === 0, notEnding };
@@ -320,6 +322,57 @@
     r.checks.antiquityYieldsEnd = { pass: y5?.SubjectRequirementSetId === "CC_REQSET_NOT_IN_EXPLORATION" && !y5?.Permanent };
     const gdp = ["TRAIT_BONUS_RESOURCE_GDP", "TRAIT_CITY_RESOURCE_GDP", "TRAIT_GOLD_BUILDING_GDP", "TRAIT_IMPORTED_RESOURCE_GDP"];
     r.checks.economicGdpTrackers = { pass: gdp.every((id) => wr.includes("CC_EXRULE_" + id)), missing: gdp.filter((id) => !wr.includes("CC_EXRULE_" + id)) };
+    // Audit #18/#19: Exploration's "Ocean ends the move" rows, lifted in personal Modern (74), and the feature
+    // Production step from personal Exploration on (rules attach in games started on this version).
+    const oceanEnds = A(GameInfo.UnitMovementClassObstacles).filter((o) => o.TerrainType === "TERRAIN_OCEAN" && o.EndsTurn).length;
+    const gmIds = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
+    r.checks.oceanEndsMove = { pass: oceanEnds === 6 && gmIds.includes("CC_MORULE_CC_MO_OCEAN_MOVES"), oceanEnds };
+    r.checks.featureProduction = { pass: wr.includes("CC_EXRULE_CC_EX_FEATURE_PRODUCTION") };
+    const gp = (n) => A(GameInfo.GlobalParameters).find((g) => g.Name === n)?.Value;
+    r.checks.oceanDamage = { pass: String(gp("PLOT_WATER_DAMAGE_BASE")) === "11" && String(gp("PLOT_WATER_DAMAGE_RAND")) === "10"
+      && !!GameInfo.Modifiers.lookup("MOD_TECH_EX_NO_OCEAN_DAMAGE"), base: gp("PLOT_WATER_DAMAGE_BASE"), rand: gp("PLOT_WATER_DAMAGE_RAND") };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
+  // Ocean crossing and Distant Lands (beta feedback, 72-exploration-rules.sql). Live checks use player pid's units and
+  // revealed plots: reveal the map and give the player Cartography (or Shipbuilding mastery for military units) first.
+  // The player a live check reads: the one asked for (or the local player) while alive, else the first living major civ.
+  // In an AI autoplay the local player's civ can be conquered (GameContext.localPlayerID is then -1).
+  const livePlayer = (pid) => (pid >= 0 && Players.get(pid)?.isAlive ? pid : Players.getAliveMajorIds()[0]);
+  CC.distantLands = function (pid = 0) {
+    pid = livePlayer(pid);
+    const r = { checks: {} };
+    r.checks.distantLandsOpen = { pass: GameInfo.Ages.lookup("AGE_ANTIQUITY")?.NoVictoriesSecondaryHemisphere === false };
+    const inv = GameInfo.Modifiers.lookup("AGE_ANTIQUITY_MOD_OCEAN_TERRAIN_INVALID");
+    r.checks.oceanRuleEndsAtExploration = { pass: inv?.OwnerRequirementSetId === "CC_REQSET_NOT_IN_EXPLORATION" && !inv?.Permanent };
+    const p = Players.get(pid), terr = (l) => GameInfo.Terrains.lookup(GameplayMap.getTerrainType(l.x, l.y))?.TerrainType;
+    let claims = 0;
+    for (let x = 0; x < GameplayMap.getGridWidth(); x++) for (let y = 0; y < GameplayMap.getGridHeight(); y++) {
+      if (!GameplayMap.isWater(x, y) && p.isDistantLands({ x, y }) && p.Diplomacy.isValidLandClaimLocation({ x, y }, true)) claims++;
+    }
+    // Late in a game the free spots may all be taken; settlements already in the Distant Lands count as proof too.
+    let distantCities = 0;
+    for (const id of Players.getAliveMajorIds()) for (const c of Players.get(id).Cities.getCities()) if (Players.get(id).isDistantLands(c.location)) distantCities++;
+    r.checks.distantSettleSpots = { pass: claims > 0 || distantCities > 0, count: claims, distantCities };
+    // Every land unit with deep-water embarkation must find a path to an unoccupied Ocean plot within 3 tiles (any of
+    // them: a single plot can be blocked by units or borders for reasons unrelated to the Ocean rule).
+    const deep = Database.makeHash("UNIT_EMBARKATION_DEEP_WATER");
+    const blocked = [], tested = [];
+    for (const u of p.Units.getUnits()) {
+      if (u.embarkationType !== deep) continue;
+      const { x: ux, y: uy } = u.location;
+      const targets = [];
+      const w = GameplayMap.getGridWidth();
+      for (let rx = ux - 3; rx <= ux + 3; rx++) for (let y = uy - 3; y <= uy + 3; y++) {
+        const x = ((rx % w) + w) % w;   // the map wraps east-west: a unit at x = 0 has neighbours at x = width - 1
+        if (y >= 0 && y < GameplayMap.getGridHeight() && GameplayMap.getPlotDistance(ux, uy, x, y) <= 3 && terr({ x, y }) === "TERRAIN_OCEAN"
+          && MapUnits.getUnits(x, y).length === 0) targets.push({ x, y });
+      }
+      if (!targets.length) continue;
+      tested.push(unitName(u.type));
+      if (!targets.some((q) => (Units.getPathTo(u.id, q)?.plots || []).length)) blocked.push(unitName(u.type));
+    }
+    r.checks.deepWaterUnitsEnterOcean = { pass: tested.length > 0 && blocked.length === 0, tested, blocked };
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
@@ -347,7 +400,7 @@
     const badUnlocks = A(GameInfo.ProgressionTreeNodeUnlocks).filter((u) => u.TargetKind === "KIND_UNIT" && !GameInfo.Units.lookup(u.TargetType)).length;
     r.checks.noDanglingUnitUnlocks = { pass: badUnlocks === 0, badUnlocks };
     // Phase 3.2: a node with nothing to unlock is "can never unlock" and the tree screen hides it (and its links).
-    const hidden = tech.filter((n) => Game.ProgressionTrees.canEverUnlock(GameContext.localPlayerID, n.$hash).isLocked).map((n) => n.ProgressionTreeNodeType);
+    const hidden = tech.filter((n) => Game.ProgressionTrees.canEverUnlock(livePlayer(GameContext.localPlayerID), n.$hash).isLocked).map((n) => n.ProgressionTreeNodeType);
     r.checks.allModernTechsShown = { pass: hidden.length === 0, hidden };
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
@@ -419,7 +472,7 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
-  // Victories (76-victories.sql). Science and Domination work; Military/Culture/Economic points victories are a known limitation.
+  // Victories (76-victories.sql). Science and Domination as in vanilla; Culture, Economic and Military with a fixed points target.
   CC.victories = function () {
     const r = { checks: {} };
     const vm = Game.VictoryManager, h = (t) => GameInfo.Victories.lookup(t)?.$hash;
@@ -429,8 +482,90 @@
     const pre = A(GameInfo.ProjectPrereqs).filter((p) => p.ProjectType === "PROJECT_LAUNCH_ROCKET").map((p) => p.PrereqProjectType).sort();
     r.checks.rocketNeedsSpaceProjects = { pass: !!rocket && !rocket.RequireCompletedLegacyPathType && pre.length === 3, pre };
     r.checks.notSingleAge = { pass: !Game.AgeProgressManager.isSingleAge };
-    r.checks.cultureFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_CULTURE_MODERN")) === 150 };
-    r.checks.economicFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_ECONOMIC_MODERN")) === 12000 };
+    r.checks.cultureFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_CULTURE_MODERN")) === 350 };
+    r.checks.economicFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_ECONOMIC_MODERN")) === 8000 };
+    r.checks.militaryFixedTarget = { pass: vm.getCountdownVictoryDominanceScore(h("VICTORY_MILITARY_MODERN")) === 100 };
+    // Culture points by Age (80-triumphs.sql): wonders by their Age's tag, celebrations by rows switched on in the
+    // personal Age (game-wide rules, attached in games started on this version).
+    const sc = (id) => GameInfo.VictoryScorings.lookup(id);
+    const gm = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
+    r.checks.cultureByAge = { pass: sc("CC_VICTORY_TRACKER_WONDERS_EXPLORATION")?.Points === 4 && sc("CC_VICTORY_TRACKER_WONDERS_MODERN")?.Points === 8
+      && ["CC_VICTORY_TRACKER_CELEBRATIONS_EXPLORATION", "CC_VICTORY_TRACKER_CELEBRATIONS_MODERN"].every((id) => sc(id)?.Points === 2 && sc(id)?.RequiresActivation)
+      && ["CC_CELEBRATIONSRULE_EX", "CC_CELEBRATIONSRULE_MO", "CC_CELEBRATIONSRULE_EX_AQ"].every((id) => gm.includes(id)) };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
+  // Triumphs (80-triumphs.sql): Exploration and Modern Triumphs exist as Antiquity ones, are valid for the player, and
+  // each later-Age trigger requires the personal Age (directly, or through a CC_REQSET_TRIUMPH_ wrapper).
+  CC.triumphs = function (pid = 0) {
+    const r = { checks: {} };
+    const L = A(GameInfo.Legacies);
+    const later = L.filter((l) => /^LEGACY_(EX|MO)_/.test(l.LegacyType));
+    r.checks.imported = { pass: later.length > 100, count: later.length };
+    r.checks.retagged = { pass: later.every((l) => l.Age === "AGE_ANTIQUITY"), notAntiquity: later.filter((l) => l.Age !== "AGE_ANTIQUITY").length };
+    const leg = Players.get(pid)?.Legacies;
+    const valid = leg ? later.filter((l) => leg.isValidLegacy(l.$hash)).length : null;
+    r.checks.validForPlayer = { pass: valid > 0, valid };
+    const rsr = A(GameInfo.RequirementSetRequirements);
+    const reqsOf = (set) => rsr.filter((x) => x.RequirementSetId === set).map((x) => x.RequirementId);
+    const lm = A(GameInfo.LegacyModifiers).filter((m) => /^LEGACY_(EX|MO)_/.test(m.LegacyType));
+    const ungated = lm.filter((m) => {
+      const need = /^LEGACY_EX_/.test(m.LegacyType) ? "CC_REQ_IN_EXPLORATION" : "CC_REQ_IN_MODERN";
+      const set = m.RequirementSetId;
+      return !(reqsOf(set).includes(need) || (/^CC_REQSET_TRIUMPH_/.test(set) && reqsOf(set).includes(need)));
+    }).map((m) => m.LegacyType);
+    r.checks.gatedByPersonalAge = { pass: lm.length > 0 && ungated.length === 0, triggers: lm.length, ungated: ungated.slice(0, 10) };
+    // Wonders Triumphs count only their own Age's wonders (by tag), not every wonder (all are tagged Antiquity here).
+    const args = A(GameInfo.RequirementArguments);
+    const wonderReqs = ["REQSET_LEGACY_EX_CULTURAL_2_1", "REQSET_LEGACY_MO_CULTURAL_2_1"].map((id) => ({
+      type: GameInfo.Requirements.lookup(id)?.RequirementType, tag: args.find((a) => a.RequirementId === id && a.Name === "BuildingTag")?.Value }));
+    const tagged = (tag) => A(GameInfo.TypeTags).filter((t) => t.Tag === tag).map((t) => t.Type);
+    const aqTagged = [...tagged("CC_WONDER_EXPLORATION"), ...tagged("CC_WONDER_MODERN")]
+      .filter((w) => A(GameInfo.ProgressionTreeNodeUnlocks).some((u) => u.TargetType === w && /_AQ_/.test(u.ProgressionTreeNodeType)));
+    r.checks.wonderTriumphsByAge = { pass: wonderReqs[0].tag === "CC_WONDER_EXPLORATION" && wonderReqs[1].tag === "CC_WONDER_MODERN"
+      && wonderReqs.every((w) => w.type === "REQUIREMENT_PLAYER_HAS_AT_LEAST_NUM_BUILDINGS")
+      && tagged("CC_WONDER_EXPLORATION").length >= 10 && tagged("CC_WONDER_MODERN").length >= 10 && aqTagged.length === 0,
+      ex: tagged("CC_WONDER_EXPLORATION").length, mo: tagged("CC_WONDER_MODERN").length, aqTagged };
+    // UI (ui/cc-triumphs.js): progress shown without the personal-Age requirement's share, e.g. 0/20, not 0/200.
+    const proto = leg && Object.getPrototypeOf(leg);
+    const shown = leg ? later.filter((l) => leg.isValidLegacy(l.$hash)).map((l) => leg.getProgress(l.$hash)?.progress?.[0]?.total) : [];
+    r.checks.progressDisplay = { pass: !!proto?.__ccTriumphs && shown.length > 0 && shown.every((t) => t !== 200), patched: !!proto?.__ccTriumphs, at200: shown.filter((t) => t === 200).length };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
+  // Dedications (82/83, ui/cc-dedications.js): a Dedications attribute tree with one node per Major Triumph card;
+  // each node's modifiers need a completed Triumph, the card's Age and a human owner; AI copies on the major-civ
+  // trait; 3 + 3 points for humans; the buy check refuses Dedications that don't qualify yet.
+  CC.dedications = function (pid = 0) {
+    const r = { checks: {} };
+    const nodes = A(GameInfo.ProgressionTreeNodes).filter((n) => n.ProgressionTreeNodeType.startsWith("CC_DED_"));
+    r.checks.tree = { pass: !!GameInfo.Attributes.lookup("ATTRIBUTE_CC_DEDICATION") && nodes.length >= 40, nodes: nodes.length };
+    const unlocks = A(GameInfo.ProgressionTreeNodeUnlocks).filter((u) => u.ProgressionTreeNodeType.startsWith("CC_DED_"));
+    const rsr = A(GameInfo.RequirementSetRequirements);
+    const reqsOf = (set) => rsr.filter((x) => x.RequirementSetId === set).map((x) => x.RequirementId);
+    const mods = A(GameInfo.Modifiers);
+    const ungated = unlocks.filter((u) => {
+      const m = mods.find((x) => x.ModifierId === u.TargetType);
+      const reqs = m ? reqsOf(m.OwnerRequirementSetId) : [];
+      return !(reqs.includes("CC_REQ_DED_IS_HUMAN") && reqs.some((q) => q.startsWith("CC_REQ_DED_TRIUMPH_"))
+        && reqs.some((q) => /^CC_REQ_IN_(EXPLORATION|MODERN)$/.test(q)));
+    }).map((u) => u.TargetType);
+    r.checks.humanEffectsGated = { pass: unlocks.length >= nodes.length && ungated.length === 0, effects: unlocks.length, ungated: ungated.slice(0, 5) };
+    const ai = A(GameInfo.TraitModifiers).filter((t) => t.TraitType === "TRAIT_LEADER_MAJOR_CIV" && t.ModifierId.startsWith("CC_DMAI_"));
+    const aiUngated = ai.filter((t) => {
+      const m = mods.find((x) => x.ModifierId === t.ModifierId);
+      const reqs = m ? reqsOf(m.OwnerRequirementSetId) : [];
+      return !(reqs.includes("CC_REQ_DED_IS_AI") && reqs.some((q) => q.startsWith("CC_REQ_DED_TRIUMPH_")));
+    }).length;
+    r.checks.aiCopies = { pass: ai.length === unlocks.length && aiUngated === 0, ai: ai.length, aiUngated };
+    const pts = A(GameInfo.TraitModifiers).filter((t) => /^CC_DEDPOINTS_(EX|MO)$/.test(t.ModifierId));
+    r.checks.points = { pass: pts.length === 2 };
+    r.checks.buyCheck = { pass: !!Game.PlayerOperations.__ccDedications };
+    const P = Players.get(pid);
+    if (P) {
+      r.points = P.Identity.getAvailableAttributePoints("ATTRIBUTE_CC_DEDICATION");
+      r.bought = nodes.filter((n) => Game.ProgressionTrees.getNodeState(pid, n.$hash) >= 4).map((n) => n.ProgressionTreeNodeType);
+    }
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
@@ -450,6 +585,14 @@
     const cost = (a) => A(GameInfo.DiplomaticActionInfluenceCosts).find((c) => c.DiplomacyActionType === a);
     const war = cost("DIPLOMACY_ACTION_DECLARE_WAR")?.InfCostNeutral, spy = cost("DIPLOMACY_ACTION_COUNTER_SPY")?.InfCostNeutral;
     r.checks.antiquityCosts = { pass: war === 60 && spy === 40, war, spy };
+    // Influence costs by personal Age (78-diplomacy.sql): -100% in Exploration and -100% more in Modern for shared
+    // actions; Exploration-only actions only get Modern's -50%.
+    const arg = (id, n) => A(GameInfo.ModifierArguments).find((x) => x.ModifierId === id && x.Name === n)?.Value;
+    r.checks.costSteps = { pass: arg("CC_DIPCOST_EX_DIPLOMACY_ACTION_DECLARE_WAR", "Percent") == -100
+      && arg("CC_DIPCOST_MO_DIPLOMACY_ACTION_DECLARE_WAR", "Percent") == -100
+      && arg("CC_DIPCOST_MO_DIPLOMACY_ACTION_DEMAND_TRIBUTE", "Percent") == -50
+      && !GameInfo.Modifiers.lookup("CC_DIPCOST_EX_DIPLOMACY_ACTION_DEMAND_TRIBUTE")
+      && !GameInfo.Modifiers.lookup("CC_DIPCOST_MO_DIPLOMACY_ACTION_ESPIONAGE_FAKE_ARTIFACTS") };
     const ruins = GameInfo.Constructibles.lookup("IMPROVEMENT_RUINS"), ri = GameInfo.Improvements.lookup("IMPROVEMENT_RUINS");
     r.checks.ruinsAreDiscoveries = { pass: !!ruins?.Discovery && !ruins?.Archaeology && !!ruins?.CanBeHidden && !!ri?.RemoveOnEntry };
     r.pass = Object.values(r.checks).every((c) => c.pass);
@@ -464,6 +607,137 @@
     const ok = Game.PlayerOperations.canStart(pid, PlayerOperationTypes.CHANGE_GOVERNMENT, args, false).Success;
     if (ok) Game.PlayerOperations.sendRequest(pid, PlayerOperationTypes.CHANGE_GOVERNMENT, args);
     return ok;
+  };
+
+  // Global-Age values raised per player (audit #5, #6, #7: 72, 74, 79). Live checks use player pid's first city and
+  // identity: compare before and after granting Cartography and then a Modern root tech.
+  // World Age (70-personal-age.sql, after Civ VI's world eras): half the living majors in an Age moves the world there.
+  // Live checks: the "exactly N majors" hook has every major as subject when N civs are alive (6-civ games), the
+  // catch-up modifiers list nodes, and the cost steps (growth, town upgrades, Influence) hang on the world sets.
+  CC.worldAge = function () {
+    const r = { checks: {} };
+    const subj = (id) => { try { return Game.Modifiers.getModifierSubjects(Game.getHash(id))?.length ?? 0; } catch (e) { return -1; } };
+    const alive = Players.getAliveMajorIds().length;
+    if (alive === 6) r.checks.countsMajors = { pass: subj("CC_TEST_SIX_MAJORS") === 6, subjects: subj("CC_TEST_SIX_MAJORS") };
+    const arg = (id, n) => A(GameInfo.ModifierArguments).find((x) => x.ModifierId === id && x.Name === n)?.Value;
+    const ids = ["TECH_EX_AHEAD", "TECH_MO_AHEAD", "TECH_AQ_BEHIND", "TECH_EX_BEHIND", "CIVIC_EX_AHEAD", "CIVIC_MO_AHEAD", "CIVIC_AQ_BEHIND", "CIVIC_EX_BEHIND"];
+    const empty = ids.filter((i) => !(arg("CC_CATCHUP_NODE_" + i, "ProgressionTreeNodeType") || "").includes("NODE_"));
+    r.checks.catchUpNodes = { pass: empty.length === 0, empty };
+    const set = (id) => GameInfo.Modifiers.lookup(id)?.SubjectRequirementSetId;
+    const onWorld = { growthEx: set("CC_EXRULE_CC_EX_GROWTH"), townMo: set("CC_MORULE_CC_MO_TOWN_UPGRADE"), dipEx: set("CC_DIPCOSTRULE_EX_DIPLOMACY_ACTION_DENOUNCE") };
+    r.checks.costsOnWorldAge = { pass: onWorld.growthEx === "CC_REQSET_WORLD_IN_EXPLORATION" && onWorld.townMo === "CC_REQSET_WORLD_IN_MODERN"
+      && onWorld.dipEx === "CC_REQSET_WORLD_IN_EXPLORATION", ...onWorld };
+    r.checks.workerCapStaysPersonal = { pass: set("CC_EXRULE_CC_EX_WORKER_CAP") === "CC_REQSET_TEST_IN_EXPLORATION" };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
+  // Exploration and Modern civs' own civic trees (84-civ-trees.sql): imported, re-tagged to Antiquity, and a reveal
+  // rule per tree gated by the civ's trait and personal Age. Live: a civ in its tree's personal Age has the tree.
+  CC.civTrees = function () {
+    const r = { checks: {} };
+    const base = ["TREE_CIVICS_EX_ABBASID", "TREE_CIVICS_EX_INCA", "TREE_CIVICS_EX_MONGOLIA", "TREE_CIVICS_MO_PRUSSIA", "TREE_CIVICS_MO_MUGHAL", "TREE_CIVICS_MO_FRENCH_EMPIRE"];
+    const bad = base.filter((t) => GameInfo.ProgressionTrees.lookup(t)?.AgeType !== "AGE_ANTIQUITY" || !GameInfo.Modifiers.lookup("CC_REVEALRULE_" + t));
+    r.checks.treesImported = { pass: bad.length === 0, bad };
+    const rules = A(GameInfo.Modifiers).filter((m) => m.ModifierId.startsWith("CC_REVEALRULE_TREE_")).length;
+    r.checks.revealRules = { pass: rules >= 20, rules };
+    // Test of Time trees of Exploration and Modern, for civs not of that Age, with the per-civ civics in them.
+    const tot = ["TREE_CIVICS_EX_TEST_OF_TIME", "TREE_CIVICS_MO_TEST_OF_TIME"];
+    const totBad = tot.filter((t) => GameInfo.ProgressionTrees.lookup(t)?.AgeType !== "AGE_ANTIQUITY" || !GameInfo.Modifiers.lookup("CC_REVEALRULE_" + t));
+    const perCiv = ["NODE_CIVIC_EX_ROMAN_RENAISSANCE", "NODE_CIVIC_EX_SYNCRETISM_CHOICE"].filter((n) => !GameInfo.ProgressionTreeNodes.lookup(n));
+    r.checks.testOfTimeTrees = { pass: totBad.length === 0 && perCiv.length === 0, totBad, missingNodes: perCiv };
+    // Civ abilities per personal Age (75-civ-abilities.sql): Abbasid's Test of Time ability only in Antiquity, its
+    // real one only in Exploration; Rome's Antiquity-only wonder bonus gated; abilities kept in all Ages untouched.
+    const tm = (t) => A(GameInfo.TraitModifiers).filter((x) => x.TraitType === t).map((x) => x.ModifierId);
+    const ab = tm("TRAIT_ABBASID_ABILITY"), rome = tm("TRAIT_ROME_ABILITY");
+    const owner = (id) => GameInfo.Modifiers.lookup(id)?.OwnerRequirementSetId;
+    r.checks.abilitiesByAge = { pass: owner("CC_AB_AQ_TRAIT_MOD_TOT_AQ_GOLD_SPECIALISTS") === "CC_REQSET_ABAGE_AQ" && ab.includes("CC_AB_AQ_TRAIT_MOD_TOT_AQ_GOLD_SPECIALISTS")
+      && ab.includes("CC_AB_EX_TRAIT_MOD_GOLD_SPECIALISTS") && !ab.includes("TRAIT_MOD_TOT_AQ_GOLD_SPECIALISTS")
+      && rome.includes("TRAIT_MOD_TWELVE_TABLES_TOWN_INFANTRY"), abbasid: ab.length, rome: rome.length };
+    const live = [];
+    for (const id of Players.getAliveMajorIds()) {
+      const p = Players.get(id);
+      const trait = A(GameInfo.CivilizationTraits).filter((c) => c.CivilizationType === GameInfo.Civilizations.lookup(p.civilizationType)?.CivilizationType).map((c) => c.TraitType);
+      for (const t of A(GameInfo.ProgressionTrees)) {
+        if (!GameInfo.Modifiers.lookup("CC_REVEALRULE_" + t.ProgressionTreeType)) continue;
+        const civTrait = "TRAIT_" + t.ProgressionTreeType.slice("TREE_CIVICS_EX_".length);
+        if (!trait.includes(civTrait)) continue;
+        const subj = (() => { try { return Game.Modifiers.getModifierSubjects(Game.getHash("CC_REVEALRULE_" + t.ProgressionTreeType))?.some((s) => s.owner === id || s === id || s.id === id) ?? false; } catch (e) { return "?"; } })();
+        live.push({ pid: id, tree: t.ProgressionTreeType, attached: subj });
+      }
+    }
+    r.checks.liveCivTrees = { pass: true, live };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
+  CC.ageScaling = function (pid = 0) {
+    const r = { checks: {} };
+    const gm = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
+    const rules = ["CC_EXRULE_CC_EX_TRADE_RANGE_LAND", "CC_EXRULE_CC_EX_TRADE_RANGE_SEA", "CC_EXRULE_CC_EX_EMBARKED_STRENGTH",
+      "CC_MORULE_CC_MO_TRADE_RANGE_LAND", "CC_MORULE_CC_MO_TRADE_RANGE_SEA", "CC_MORULE_CC_MO_EMBARKED_STRENGTH"];
+    r.checks.wrappers = { pass: rules.every((id) => gm.includes(id)), missing: rules.filter((id) => !gm.includes(id)) };
+    const tm = A(GameInfo.TraitModifiers).filter((t) => /^CC_(EX|MO)_(ATTR_|IBN_BATTUTA_WILDCARD)/.test(t.ModifierId));
+    r.checks.attributeTraits = { pass: tm.length === 16, count: tm.length };
+    // City balance by personal Age (72/74, audit #9): growth, specialist cap, town upgrade cost.
+    const balance = ["GROWTH", "WORKER_CAP", "TOWN_UPGRADE"].flatMap((k) => ["CC_EXRULE_CC_EX_" + k, "CC_MORULE_CC_MO_" + k]);
+    r.checks.cityBalanceWrappers = { pass: balance.every((id) => gm.includes(id)), missing: balance.filter((id) => !gm.includes(id)) };
+    // Age-scaled bonuses (81, audit #2): an Exploration and a Modern copy of each player-owned ScaleByGameAge modifier.
+    const scaled = A(GameInfo.Modifiers).filter((m) => /^CC_SA_(EX|MO)_/.test(m.ModifierId));
+    const ex = scaled.filter((m) => m.ModifierId.startsWith("CC_SA_EX_")).length, mo = scaled.length - ex;
+    r.checks.ageScaledCopies = { pass: ex > 80 && ex === mo, ex, mo };
+    // Narrative rewards (37, audit #15): later-Age reward sizes exist as Antiquity rows and stories point to them.
+    const nyr = A(GameInfo.NarrativeStory_Yield_Rewards).filter((x) => x.Age === "AGE_ANTIQUITY" && /^CC_(EX|MO)_/.test(x.Type)).length;
+    const repointed = A(GameInfo.ModifierArguments).filter((a) => a.Name === "MultiplierType" && /^CC_(EX|MO)_/.test(a.Value)).length;
+    r.checks.narrativeRewardSizes = { pass: nyr > 0 && repointed > 500, rows: nyr, repointed };
+    const city = Players.get(pid)?.Cities?.getCities()[0];
+    const t = city && Cities.get(city.id)?.Trade;
+    r.tradeRange = t ? { land: t.landTradeRouteRange?.value, sea: t.waterTradeRouteRange?.value } : null;
+    const id = Players.get(pid)?.Identity;
+    r.attributePoints = id ? A(GameInfo.Attributes).reduce((n, a) => n + id.getAvailableAttributePoints(a.AttributeType) + id.getSpentAttributePoints(a.AttributeType), 0) : null;
+    const on = (rid) => (Game.Modifiers.getModifierSubjects(Game.getHash(rid)) || []).some((s) => s.owner === pid);
+    r.active = Object.fromEntries(rules.map((rid) => [rid.replace(/^CC_(EX|MO)RULE_/, ""), on(rid)]));
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
+
+  // Missing content (cc-import-dlc-*, cc-import-difficulty): DLC wonders of the later Ages (only if the pack is
+  // installed and enabled), and the AI's later-Age difficulty bonuses attached by personal Age.
+  // Overbuilding by personal Age (30-buildings.sql tags, ui/cc-overbuild.js): Exploration and Modern buildings keep
+  // their vanilla Age as a tag, no Antiquity building is tagged, and the dialog text exists.
+  CC.overbuild = function () {
+    const r = { checks: {} };
+    const tags = A(GameInfo.TypeTags);
+    const ex = tags.filter((t) => t.Tag === "CC_AGE_EXPLORATION").map((t) => t.Type);
+    const mo = tags.filter((t) => t.Tag === "CC_AGE_MODERN").map((t) => t.Type);
+    const aq = ["BUILDING_LIBRARY", "BUILDING_BARRACKS", "BUILDING_MARKET", "BUILDING_ALTAR"].filter((b) => ex.includes(b) || mo.includes(b));
+    r.checks.vanillaAgeTags = { pass: ex.includes("BUILDING_TAVERN") && ex.includes("BUILDING_UNIVERSITY") && mo.includes("BUILDING_MUSEUM")
+      && mo.includes("BUILDING_FACTORY") && aq.length === 0 && !ex.some((b) => mo.includes(b)), ex: ex.length, mo: mo.length, aqTagged: aq };
+    r.checks.dialogText = { pass: Locale.compose("LOC_CC_OVERBUILD_BODY", "A", "B") !== "LOC_CC_OVERBUILD_BODY" };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
+  };
+  CC.missingContent = function () {
+    const r = { checks: {} };
+    const dlc = { "asia-wonders": ["WONDER_GRAND_BAZAAR", "WONDER_WAT_XIENG_THONG", "WONDER_UBUDIAH_MOSQUE"],
+      "japan-korea-wonders": ["WONDER_NIRAYAMA_REVERBERATORY_FURNACE"], "water-wonders": ["WONDER_NAN_MADOL"],
+      "bulgaria": ["WONDER_RILA_MONASTERY"], "shawnee-tecumseh": ["WONDER_SERPENT_MOUND"],
+      "great-britain": ["WONDER_BATTERSEA_POWER_STATION"], "nepal": ["WONDER_BOUDHANATH"] };
+    const active = new Set((Modding.getActiveMods?.() || []).map((m) => (typeof m === "object" ? m.id : m)));
+    r.wonders = {};
+    for (const [pack, list] of Object.entries(dlc)) {
+      for (const w of list) {
+        const c = GameInfo.Constructibles.lookup(w);
+        const unlock = A(GameInfo.ProgressionTreeNodeUnlocks).find((u) => u.TargetType === w);
+        r.wonders[w] = c ? (c.Age + (unlock ? " @" + unlock.ProgressionTreeNodeType : " (no unlock)")) : "missing";
+      }
+    }
+    const loaded = Object.values(r.wonders).filter((v) => v !== "missing");
+    r.checks.wondersBuildable = { pass: loaded.every((v) => v.startsWith("AGE_ANTIQUITY @")), loaded: loaded.length };
+    const gm = A(GameInfo.GameModifiers).map((g) => g.ModifierId);
+    const ex = gm.filter((id) => /^CC_EXRULE_EX_HANDICAP_/.test(id)), mo = gm.filter((id) => /^CC_MORULE_MO_HANDICAP_/.test(id));
+    const onTrait = A(GameInfo.TraitModifiers).filter((t) => /^(EX|MO)_HANDICAP_/.test(t.ModifierId));
+    r.checks.difficultyByPersonalAge = { pass: ex.length === 8 && mo.length === 8 && onTrait.length === 0, ex: ex.length, mo: mo.length, stillOnTrait: onTrait.length };
+    r.pass = Object.values(r.checks).every((c) => c.pass);
+    return r;
   };
 
   CC.grant = function (pid, nodeType) {
