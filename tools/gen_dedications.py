@@ -1,9 +1,9 @@
-"""Generate the Dedication card data for the continuous-civ mod (data/82-dedication-cards.sql).
+"""Generate the Dedication card data for the continuous-civ mod (data/3-merge/82-dedication-cards.sql).
 
 In vanilla, a Major Triumph grants an unlock (UNLOCK_AQ_*, UNLOCK_EX_*), and at the next Age transition the
 matching Dedication card appears in the advanced-start deck (age-exploration/age-modern data/age-transition.xml),
 where the player picks up to 3. A card applies the modifiers of its effects (AdvancedStartCardEffects ->
-age-transition-gameeffects.xml). There is no Age transition here, so data/83-dedications.sql turns these cards into
+age-transition-gameeffects.xml). There is no Age transition here, so data/3-merge/83-dedications.sql turns these cards into
 a Dedications attribute tree. This script reads (read-only) the installed game and writes staging rows:
 
   cc_dedication_cards      CardId, Age (EX = earned in Antiquity, picked in Exploration; MO = earned in
@@ -40,7 +40,7 @@ def find_civ7_base():
 
 
 HERE = os.path.dirname(os.path.abspath(__file__))
-OUT = os.path.join(HERE, "..", "mod", "continuous-civ", "data", "82-dedication-cards.sql")
+OUT = os.path.join(HERE, "..", "mod", "continuous-civ", "data", "3-merge", "82-dedication-cards.sql")
 BASE = find_civ7_base()
 
 

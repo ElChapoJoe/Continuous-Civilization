@@ -1,10 +1,10 @@
 // Continuous Civilization - Dedications tree (UI side).
-// data/83-dedications.sql makes each Dedication card an attribute-tree node (CC_DED_<card>). The engine lets any
+// data/3-merge/83-dedications.sql makes each Dedication card an attribute-tree node (CC_DED_<card>). The engine lets any
 // node be bought with points; the card's effects only apply once one of its Triumphs is complete and its Age is
 // reached. So the buy check is narrowed here: a Dedication node can only be bought when that is already true, and
 // the screen shows it locked otherwise. Display/validation for the local player only; the AI gets no Dedication
 // points (it receives earned Dedications automatically).
-// Personal Age uses the same root techs as data/70-personal-age.sql.
+// Personal Age uses the same root techs as data/3-merge/70-personal-age.sql.
 
 function rootHashes(setId) {
   const out = [];
@@ -84,7 +84,7 @@ globalThis.CCDedications = {
 })();
 
 // The AI gets no Dedication points, but it can spend Wildcard attribute points on Dedication nodes, whose effects are
-// for human players only (the AI gets its Dedications from data/83-dedications.sql's AI copies). Give each such point
+// for human players only (the AI gets its Dedications from data/3-merge/83-dedications.sql's AI copies). Give each such point
 // back so it goes to a real attribute node. Each node can only be bought once, so this ends.
 const dedicationAttribute = GameInfo.Attributes.lookup("ATTRIBUTE_CC_DEDICATION")?.$hash;
 engine.on("AttributeNodeCompleted", (data) => {

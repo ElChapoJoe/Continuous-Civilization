@@ -12,7 +12,7 @@
 -- The UI script ui/cc-hide-resources.js hides their icons from a player until they have the tech.
 -- Phase 3 will remap these to Modern techs.
 
--- Tunable: resource -> tech that activates it. Keep text/65-modern-resources-text.sql in step.
+-- Tunable: resource -> tech that activates it. Keep text/3-merge/resource-tooltips.sql in step.
 DROP TABLE IF EXISTS cc_resource_unlocks;
 CREATE TABLE cc_resource_unlocks (ResourceType TEXT PRIMARY KEY, ProgressionTreeNodeType TEXT NOT NULL);
 INSERT INTO cc_resource_unlocks VALUES

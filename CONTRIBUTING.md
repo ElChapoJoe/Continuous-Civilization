@@ -7,17 +7,17 @@
 ## How the mod works
 The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game files: each Age's content is imported from the player's installed game when the game is created.
 
-- Load groups run in order: `cc-pre` (400), `cc-import-exploration` (500), `cc-import-modern` (600), `cc-import-resources` (700), `cc-merge` (1000).
-- Where a later Age re-defines a row from an earlier one, generated SQL resolves it (`data/00-*`, `data/06-*`, `data/09-*`, `text/00-*`, `text/09-*`).
-- Personal Ages are requirement sets (`data/70-personal-age.sql`). Rules tied to an Age are rewritten to follow the player's own Age.
+- Load groups run in order: `cc-pre` (400), `cc-import-exploration` (500), `cc-import-modern` (600), the DLC imports (650-660), `cc-import-resources` (700), `cc-merge` (1000). The files sit in one folder per stage: `data/1-pre/`, `data/2-import/`, `data/3-merge/` (and the same under `text/`).
+- Where a later Age re-defines a row from an earlier one, generated SQL resolves it (`1-pre/2-dedupe-exploration`, `2-import/modern-2-dedupe` and `-3-restore`, `3-merge/00-restore-cascades`).
+- Personal Ages are requirement sets (`data/3-merge/70-personal-age.sql`). Rules tied to an Age are rewritten to follow the player's own Age.
 - The technical notes are in [mod/continuous-civ/README.md](mod/continuous-civ/README.md); the investigation and test reports are in [docs/](docs).
 
 ## Repository layout
 
 | Path | Contents |
 |---|---|
-| `mod/continuous-civ/` | The mod: `.modinfo`, SQL data changes (`data/`), text (`text/`), UI scripts (`ui/`) |
-| `tools/` | Generators: `gen_dedupe.py` (resolves clashes between Ages' data), `gen_modern_resources.py`, `gen_dedications.py` (Dedication cards), `gen_civ_abilities.py` (civ abilities per Age, with `civ_abilities_logic.sql`), `survey_imports.py`, `age-audit.js`. Dev loop (PowerShell, see below): `deploy.ps1`, `restart-civ.ps1`, `wait-civ.ps1`, `watch-autoplay.ps1`, `scan-logs.ps1`, `civ-status.ps1` (shared paths in `civ7-common.ps1`) |
+| `mod/continuous-civ/` | The mod: `.modinfo`, SQL data changes (`data/<stage>/`), text (`text/<stage>/`), UI scripts (`ui/`); layout in its README |
+| `tools/` | Generators: `gen_dedupe.py` (resolves clashes between Ages' data), `gen_modern_resources.py`, `gen_dedications.py` (Dedication cards), `gen_civ_abilities.py` (civ abilities per Age, with `civ_abilities_logic.sql`), `gen_prune_fk.py` (broken-reference safety net), `survey_imports.py`, `age-audit.js`. Dev loop (PowerShell, see below): `deploy.ps1`, `restart-civ.ps1`, `wait-civ.ps1`, `watch-autoplay.ps1`, `scan-logs.ps1`, `civ-status.ps1` (shared paths in `civ7-common.ps1`) |
 | `tests/cc-tests.js` | In-game test suites for the game's debug console (`CC.db()`, `CC.modernTrees()`, `CC.victories()`, `CC.diplomacy()`, `CC.worldAge()` and more); `tests/run-all-suites.js` runs them all and lists failing checks |
 | `tests/cc-dev.js` | Debug-console helpers: `CCDev.status()`, `.victory()`, `.costs()`, `.load()`, `.save()`, `.newGame()`, `.autoplay()`, `.grant()` and more |
 | `docs/` | Engine investigation, phase plans, test reports and README images |
@@ -30,6 +30,7 @@ The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game 
   python -I tools/gen_modern_resources.py
   python -I tools/gen_dedications.py
   python -I tools/gen_civ_abilities.py
+  python -I tools/gen_prune_fk.py
   ```
 - Dev loop (run the scripts with `powershell -ExecutionPolicy Bypass -File tools\<script>.ps1`):
   1. `civ-status.ps1`: game running?, UI page (menu or game), a stuck crash reporter, whether the deployed mod matches the project, newest saves and crash dumps.

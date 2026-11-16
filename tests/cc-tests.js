@@ -143,7 +143,7 @@
     return out;
   };
 
-  // ---------- map resources (data/60-resources.sql, data/65-modern-resources.sql) ----------
+  // ---------- map resources (data/3-merge/60-resources.sql, data/3-merge/65-modern-resources.sql) ----------
   const EX_ONLY = ["RESOURCE_CLOVES", "RESOURCE_COCOA", "RESOURCE_FURS", "RESOURCE_NITER", "RESOURCE_PITCH",
     "RESOURCE_SPICES", "RESOURCE_SUGAR", "RESOURCE_TEA", "RESOURCE_TRUFFLES", "RESOURCE_WHALES"];
   const MODERN_ONLY = ["RESOURCE_COAL", "RESOURCE_OIL", "RESOURCE_RUBBER", "RESOURCE_NICKEL", "RESOURCE_COFFEE",
@@ -279,8 +279,8 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
-  // Batch A (36-batch-a.sql): great people, projects, city-states, AI lists; cascade restore (06).
-  CC.batchA = function () {
+  // Batch A (36-great-people-city-states.sql): great people, projects, city-states, AI lists; cascade restore (06).
+  CC.greatPeopleCityStates = function () {
     const r = { checks: {} };
     const ind = A(GameInfo.Independents);
     r.checks.cityStatesBothAges = { pass: ind.some((i) => /EXPLORATION/.test(i.IndependentType)) && ind.filter((i) => !/EXPLORATION/.test(i.IndependentType)).length >= 20,
@@ -295,8 +295,8 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
-  // Batch B (37-batch-b.sql): Exploration narratives and discoveries.
-  CC.batchB = function () {
+  // Batch B (37-narratives.sql): Exploration narratives and discoveries.
+  CC.narratives = function () {
     const r = { checks: {} };
     const st = A(GameInfo.NarrativeStories);
     const byAge = {}; for (const s of st) byAge[s.Age] = (byAge[s.Age] || 0) + 1;
@@ -376,7 +376,7 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
-  // Modern trees (Phase 3.1: 21-modern-tech-tree.sql, 26-modern-civic-tree.sql).
+  // Modern trees (Phase 3.1: 20-tech-tree.sql, 25-civic-tree.sql).
   CC.modernTrees = function () {
     const r = { checks: {} };
     const nodes = A(GameInfo.ProgressionTreeNodes);
@@ -449,7 +449,7 @@
       byAffinity: ["AFFINITY_FRIENDLY", "AFFINITY_NEUTRAL", "AFFINITY_HOSTILE"].map((a) => a.slice(9) + ":" + ind.filter((i) => i.Affinity === a).length) };
     r.checks.spaceProjects = { pass: ["PROJECT_LAUNCH_SATELLITE", "PROJECT_LAUNCH_ROCKET"].every((p) => GameInfo.Projects.lookup(p)) };
     r.checks.railroad = { pass: !!GameInfo.Routes.lookup("ROUTE_RAILROAD") };
-    // Major-civ AI keeps the base Military/Diplomatic/Tactical components (36-batch-a.sql); no later-Age swaps.
+    // Major-civ AI keeps the base Military/Diplomatic/Tactical components (36-great-people-city-states.sql); no later-Age swaps.
     const ai = A(GameInfo.AiDefinitions).filter((d) => d.LeaderTrait === "TRAIT_LEADER_MAJOR_CIV").map((d) => d.AiComponent);
     r.checks.aiBaseComponents = { pass: ["Military", "Diplomatic", "Tactical"].every((c) => ai.includes(c)) && !ai.some((c) => /^(Military|Diplomatic|Tactical)_/.test(c)), ai: ai.filter((c) => /Military|Diplomatic|Tactical/.test(c)) };
     const un = A(GameInfo.ProgressionTreeNodeUnlocks).filter((u) => u.TargetKind === "KIND_DIPLOMATIC_ACTION" && !GameInfo.DiplomacyActions.lookup(u.TargetType));
@@ -569,7 +569,7 @@
     r.pass = Object.values(r.checks).every((c) => c.pass);
     return r;
   };
-  // Diplomacy and espionage (00-snapshot, 50-restore, 78-diplomacy.sql): Exploration and Modern actions exist and need
+  // Diplomacy and espionage (1-snapshot, 50-restore, 78-diplomacy.sql): Exploration and Modern actions exist and need
   // an unlock; shared actions keep Antiquity's Influence costs; ruins are Antiquity discoveries (30-buildings.sql).
   CC.diplomacy = function () {
     const r = { checks: {} };

@@ -4,7 +4,7 @@
 // Game.CityStates.canHaveBonus() is true, and nothing else calls that function, so this script narrows it to
 // the bonuses of the player's personal Age (the Age is in the type name: CITY_STATE_BONUS_MODERN_3,
 // CITY_STATE_SCIENTIFIC_BONUS_MODERN_6).
-// Personal Age uses the same root techs as data/70-personal-age.sql.
+// Personal Age uses the same root techs as data/3-merge/70-personal-age.sql.
 // If no bonus of that Age is available for the city-state (all taken), every bonus the engine allows is offered,
 // so the choice can never be empty.
 // Display only: the selection is still the normal player operation and the engine still validates it. The AI

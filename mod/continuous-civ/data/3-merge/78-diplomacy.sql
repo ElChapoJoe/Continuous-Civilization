@@ -1,5 +1,5 @@
 -- Continuous Civilization - Exploration and Modern diplomacy and espionage actions.
--- The imports add each Age's own actions; shared actions keep Antiquity's costs (00-snapshot / 50-restore).
+-- The imports add each Age's own actions; shared actions keep Antiquity's costs (1-snapshot / 50-restore).
 -- In vanilla these actions are available for the whole of their Age. Here every one of them needs an unlock,
 -- so a player only gets them through the Exploration or Modern tech, civic or city-state bonus that grants them.
 
@@ -33,7 +33,7 @@ DROP TABLE cc_new_dip_actions;
 
 -- Influence costs by world Age (70-personal-age.sql: half the civs in that Age, after Civ VI's world eras), so the
 -- first civ to advance isn't charged more than its rivals. Vanilla's DiplomaticActionInfluenceCosts are set per Age,
--- about 2x in Exploration and 3x in Modern; here the shared actions keep Antiquity's (00-snapshot / 50-restore).
+-- about 2x in Exploration and 3x in Modern; here the shared actions keep Antiquity's (1-snapshot / 50-restore).
 -- Every major player gets the step through the per-action cost effect instead: a negative Percent raises the cost (-100 = double). Exploration adds
 -- -100 and Modern another -100 (3x). The Exploration-only actions above already carry Exploration's costs, so they
 -- only get Modern's step (-50 = 1.5x); Modern-only ones carry Modern's. Free and -1 ("not by Influence") costs skip.

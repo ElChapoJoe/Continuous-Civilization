@@ -1,5 +1,5 @@
 // Continuous Civilization - hide Modern resources from a player until they research the activating tech.
-// Gameplay side: data/65-modern-resources.sql (the resources are inactive until then). This file is display
+// Gameplay side: data/3-merge/65-modern-resources.sql (the resources are inactive until then). This file is display
 // only: it runs in the local UI, so every client hides what its own player has not unlocked, and nothing
 // here touches the game simulation (multiplayer-safe).
 //
