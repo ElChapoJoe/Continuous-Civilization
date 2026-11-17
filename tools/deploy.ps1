@@ -1,15 +1,23 @@
 # Copies the mod from the project into the Civilization VII user Mods folder (mirror: removed files are removed).
-# Usage:  powershell -ExecutionPolicy Bypass -File tools\deploy.ps1 [-Remove] [-DryRun]
+# Usage:  powershell -ExecutionPolicy Bypass -File tools\deploy.ps1 [-Remove] [-DryRun] [-SkipCheck]
+# Runs tools\check_mod.py first and stops on any error (a broken SQL file makes the game roll back the whole mod);
+# -SkipCheck deploys anyway (only for testing a broken state on purpose).
 # Prints what changed and what the game needs to pick it up:
 #   - a changed .modinfo (new or removed files): a full game restart (tools\restart-civ.ps1)
 #   - SQL/XML data: a new game or loading a save (game-wide modifiers only attach in games started after the change)
 #   - UI scripts only: a UI reload is enough
-param([switch]$Remove, [switch]$DryRun)
+param([switch]$Remove, [switch]$DryRun, [switch]$SkipCheck)
 . "$PSScriptRoot\civ7-common.ps1"
 
 if ($Remove) {
   if (Test-Path $ModDeployed) { Remove-Item -Recurse -Force $ModDeployed }
   "Removed $ModDeployed"; return
+}
+if (-not $SkipCheck) {
+  $py = (Get-Command python -ErrorAction SilentlyContinue).Source
+  if (-not $py) { throw "python not found: install it or deploy with -SkipCheck" }
+  & $py -I "$PSScriptRoot\check_mod.py"
+  if ($LASTEXITCODE -ne 0) { throw "check_mod.py found errors: not deployed (fix them, or -SkipCheck to deploy anyway)" }
 }
 $diff = @(Get-Civ7DeployDiff)
 if ($diff.Count -eq 0) { "Deployed copy is already up to date."; return }

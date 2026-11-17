@@ -1,0 +1,26 @@
+name: Mod check
+
+# Static checks of the mod (tools/check_mod.py --ci): modinfo file list, SQL that parses, well-formed XML, UI script
+# syntax. No game needed; imports from the installed game are only checked locally (tools/deploy.ps1 runs the full
+# check before every deploy).
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Check the mod
+        run: python -I tools/check_mod.py --ci
