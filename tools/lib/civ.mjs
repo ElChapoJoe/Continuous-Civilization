@@ -13,6 +13,14 @@ export const REPO = path.resolve(TOOLS, "..");
 export const MODS = path.join(process.env.LOCALAPPDATA || "", "Firaxis Games", "Sid Meier's Civilization VII", "Mods");
 export const LOGS = path.join(process.env.LOCALAPPDATA || "", "Firaxis Games", "Sid Meier's Civilization VII", "Logs");
 export const SAVES = path.join(os.homedir(), "Documents", "My Games", "Sid Meier's Civilization VII", "Saves", "Single");
+export const AUTOSAVES = path.join(SAVES, "auto");
+/** The newest autosave's name (without .Civ7Save), or null. */
+export function newestAutosave() {
+  if (!fs.existsSync(AUTOSAVES)) return null;
+  const f = fs.readdirSync(AUTOSAVES).filter((n) => n.endsWith(".Civ7Save"))
+    .map((n) => ({ n, t: fs.statSync(path.join(AUTOSAVES, n)).mtimeMs })).sort((a, b) => b.t - a.t)[0];
+  return f ? f.n.replace(/\.Civ7Save$/, "") : null;
+}
 export const PARK = path.join(os.homedir(), "CivModsParked");
 export const RUNS = process.env.CC_RUNS || path.join(os.homedir(), "CivRuns");
 const OUR_MODS = ["continuous-civ", "cc-visual-prototype"];
@@ -81,7 +89,7 @@ export async function dismissStart() {
 export const IN_GAME = `(location.href.includes('root-game') && typeof Players !== 'undefined' && Players.get(GameContext.localPlayerID >= 0 ? GameContext.localPlayerID : 0) && (Players.getAliveMajorIds().length > 0)) ? 1 : 0`;
 
 // ---- saves
-const saveInfo = (name) => `{Location: SaveLocations.LOCAL_STORAGE, LocationCategories: SaveLocationCategories.NORMAL, Type: SaveTypes.SINGLE_PLAYER, ContentType: SaveFileTypes.GAME_STATE, FileName: ${JSON.stringify(name)}, DisplayName: ${JSON.stringify(name)}}`;
+const saveInfo = (name, auto = false) => `{Location: SaveLocations.LOCAL_STORAGE, LocationCategories: SaveLocationCategories.${auto ? "AUTOSAVE" : "NORMAL"}, Type: SaveTypes.SINGLE_PLAYER, ContentType: SaveFileTypes.GAME_STATE, FileName: ${JSON.stringify(name)}, DisplayName: ${JSON.stringify(name)}}`;
 /** Saves the game and waits until the file is written. */
 export async function save(name) {
   const file = path.join(SAVES, name + ".Civ7Save");
@@ -90,10 +98,11 @@ export async function save(name) {
   for (let i = 0; i < 60; i++) { if (fs.existsSync(file) && fs.statSync(file).mtimeMs > before) return; await sleep(1000); }
   throw new Error("save not written: " + name);
 }
-/** Loads a save (from the menu or a running game), waits for it and clicks through its start dialogs. */
-export async function load(name) {
-  if (!fs.existsSync(path.join(SAVES, name + ".Civ7Save"))) throw new Error("no save " + name);
-  await js(`(() => { const i = ${saveInfo(name)}; i.FileName += '.Civ7Save'; Network.loadGame(i, ServerType.SERVER_TYPE_NONE); return 'ok'; })()`);
+/** Loads a save (from the menu or a running game), waits for it and clicks through its start dialogs. auto: from the
+ *  autosave folder (Saves/Single/auto). */
+export async function load(name, { auto = false } = {}) {
+  if (!fs.existsSync(path.join(auto ? AUTOSAVES : SAVES, name + ".Civ7Save"))) throw new Error("no save " + name);
+  await js(`(() => { const i = ${saveInfo(name, auto)}; i.FileName += '.Civ7Save'; Network.loadGame(i, ServerType.SERVER_TYPE_NONE); return 'ok'; })()`);
   await sleep(15000);
   await until(IN_GAME, "the loaded game");
   await dismissStart();
