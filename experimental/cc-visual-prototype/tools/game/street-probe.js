@@ -15,7 +15,12 @@
   // against the engine's Antiquity paint (do they line up at the same turns?).
   const STREETS = globalThis.CCStreetProbeStreets || ["LAYOUT_CTY_Hex_Section_AB_Road_ANT", "LAYOUT_CTY_Hex_Section_AB_B_Road_ANT"];
   const CANDS = [null];
-  for (let s = 0; s < STREETS.length; s++) for (let a = 0; a < 360; a += 60) CANDS.push([s, a]);
+  // Per-tile candidates instead (house-layout probe, round 63): globalThis.CCProbeCands = { n, of(tile) -> [[model,
+  // angle], ...] with n entries }. State k draws each tile's entry k - 1. With globalThis.CCProbeNoClip the engine's
+  // own art stays visible, so the candidate that changes the picture least is the one the engine drew.
+  const PER = globalThis.CCProbeCands;
+  if (PER) for (let i = 0; i < PER.n; i++) CANDS.push([-1, i]);
+  else for (let s = 0; s < STREETS.length; s++) for (let a = 0; a < 360; a += 60) CANDS.push([s, a]);
   let lastError = null;
   let timer = null, group = null, marker = null, hidden = [], cam = false, tiles = [], pos = {}, state = -1, views = [];
 
@@ -29,7 +34,10 @@
       cam = true;
     }
     group.clear();
-    if (cand) for (const t of tiles) group.addModelAtPlot(STREETS[cand[0]], { x: t.x, y: t.y }, { x: 0, y: 0, z: 0 }, { placement: T, angle: cand[1] });
+    if (cand && PER) for (const t of tiles) {
+      const c = t.cands && t.cands[cand[1]];
+      if (c) group.addModelAtPlot(c[0], { x: t.x, y: t.y }, { x: 0, y: 0, z: 0 }, { placement: T, angle: c[1] });
+    } else if (cand) for (const t of tiles) group.addModelAtPlot(STREETS[cand[0]], { x: t.x, y: t.y }, { x: 0, y: 0, z: 0 }, { placement: T, angle: cand[1] });
     marker.style.backgroundColor = `rgb(${10 + (k % 60) * 4}, ${Math.floor(k / 60) * 3}, 255)`;   // state = (r - 10) / 4 + 60 * g / 3
   }
 
@@ -60,8 +68,9 @@
       tiles.push({ x: d.location.x, y: d.location.y, did: id.id, centre: d.type === DistrictTypes.CITY_CENTER,
         cons: d.getConstructibleIds().map((c) => c.id) });
     }
+    if (PER) for (const t of tiles) t.cands = t.centre ? null : PER.of(t);
     // Clip a moment later: stop() above restores all clips, and a restore in the same frame also undoes new clips.
-    setTimeout(() => { for (const t of tiles) WorldUI.clipHexHeight({ x: t.x, y: t.y }, 0); }, 700);
+    if (!globalThis.CCProbeNoClip) setTimeout(() => { for (const t of tiles) WorldUI.clipHexHeight({ x: t.x, y: t.y }, 0); }, 700);
     WorldUI.setUnitVisibility(false);
     group = WorldUI.createModelGroup("ccStreetProbe");
     for (const el of document.body.children) { hidden.push([el, el.style.visibility]); el.style.visibility = "hidden"; }

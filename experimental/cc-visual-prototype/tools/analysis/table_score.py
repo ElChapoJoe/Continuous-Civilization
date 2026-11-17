@@ -16,6 +16,10 @@ folder, pack_path, radius, out_path = sys.argv[1], sys.argv[2], int(sys.argv[3])
 known_paths = sys.argv[5:]
 # CC_STREETS=1 when the probe drew one street model only (Modern: CCStreetProbeStreets with one entry, 7 states per view)
 CANDS = [None] + [(s, a) for s in range(int(os.environ.get("CC_STREETS", "2"))) for a in range(0, 360, 60)]
+# CC_STATES=n: a per-tile candidate run (CCProbeCands, e.g. house layouts) with n - 1 candidates; labels A0, A60 ...
+# then mean candidate 0, 1 ...
+if os.environ.get("CC_STATES"):
+    CANDS = [None] + [(0, 60 * i) for i in range(int(os.environ["CC_STATES"]) - 1)]
 NAMES = ["A", "B"]
 PER = len(CANDS)
 
