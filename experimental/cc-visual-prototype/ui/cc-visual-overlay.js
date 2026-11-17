@@ -36,24 +36,38 @@
   // Offsets are in tile units (x east, y north; 0.5 = the tile's inner edge); turns are degrees counter-clockwise.
   // The house and square layouts are chosen as the engine's own layout bins choose them (decoded rows of
   // BIN_CTY_*_Layout_2HB_Full_A, _Palace_Full_A, _City_Center_Full_A): a forest version on wooded tiles; in
-  // Exploration a "Less" version for some cultures, otherwise one of the street-pattern-A variants by tile seed
-  // (pattern B would not fit the pattern-A streets we draw). The engine also turns some tiles at random in code
-  // we can't read; we always draw them unturned.
+  // Exploration a "Less" version for some cultures, otherwise one of the variants by tile seed.
+  // Street pattern and turn of an urban tile follow the engine's Antiquity streets painted underneath, which the
+  // clip can't hide: ui/cc-street-table.js has them per coordinate (measured; see streetPick). Exploration has
+  // street patterns A and B, each with its own house layouts; Modern has one street and draws pattern-B tiles as A,
+  // unturned. Unmeasured coordinates and river tiles whose turn is unsure get pattern A, unturned.
   const LAYOUTS = {
     1: {
-      street: "LAYOUT_CTY_Hex_Section_AB_Road_EXP",
-      houses: { plain: ["LAYOUT_CTY_EXP_Hex_Section_AB", "LAYOUT_CTY_EXP_Hex_Section_AB_VAR_A"],
-        less: ["LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less"], fol: ["LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less_FOL"] },
+      street: { A: "LAYOUT_CTY_Hex_Section_AB_Road_EXP", B: "LAYOUT_CTY_Hex_Section_AB_B_Road_EXP" },
+      houses: {
+        A: { plain: ["LAYOUT_CTY_EXP_Hex_Section_AB", "LAYOUT_CTY_EXP_Hex_Section_AB_VAR_A"],
+          less: ["LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less"], fol: ["LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less_FOL"] },
+        B: { plain: ["LAYOUT_CTY_EXP_Hex_Section_AB_B", "LAYOUT_CTY_EXP_Hex_Section_AB_B_VAR_A"],
+          less: ["LAYOUT_CTY_EXP_Hex_Section_AB_B_Attachment_Less"], fol: ["LAYOUT_CTY_EXP_Hex_Section_AB_B_Attachment_Less_FOL"] },
+      },
       capital: { plain: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace", fol: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Palace_FOL" },
       center: { plain: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center", less: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Less",
         fol: "LAYOUT_CTY_EXP_Hex_Section_AB_City_Center_Less_FOL" },
     },
     2: {
-      street: "LAYOUT_CTY_MOD_Section_AB_Road",
-      houses: { plain: ["LAYOUT_CTY_MOD_Section_AB_Small_Packed"], fol: ["LAYOUT_CTY_MOD_Section_AB_Small_Packed_FOL"] },
+      street: { A: "LAYOUT_CTY_MOD_Section_AB_Road" },
+      houses: { A: { plain: ["LAYOUT_CTY_MOD_Section_AB_Small_Packed"], fol: ["LAYOUT_CTY_MOD_Section_AB_Small_Packed_FOL"] } },
       capital: { plain: "LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace", fol: "LAYOUT_CTY_MOD_Hex_Section_AB_City_Center_Palace_FOL" },
       center: { plain: "LAYOUT_CTY_MOD_Section_AB_City_Center", fol: "LAYOUT_CTY_MOD_Section_AB_City_Center_FOL" },
     },
+  };
+  // The pattern-B "Less" house layouts are attachments the engine draws turned -60 degrees inside its B layouts
+  // (LAYOUT_CTY_EXP_Hex_Section_AB_B carries LAYOUT_..._AB_B_Attachment at -60); drawn directly they need that turn.
+  const LAYOUT_TURN = { LAYOUT_CTY_EXP_Hex_Section_AB_B_Attachment_Less: -60, LAYOUT_CTY_EXP_Hex_Section_AB_B_Attachment_Less_FOL: -60 };
+  const norm = (deg) => ((Math.round(deg) % 360) + 360) % 360;
+  const rot = (p, deg) => {
+    const r = deg * Math.PI / 180, c = Math.cos(r), s = Math.sin(r);
+    return { x: p.x * c - p.y * s, y: p.x * s + p.y * c, z: p.z || 0 };
   };
   const WOODED = new Set(["FEATURE_FOREST", "FEATURE_SAGEBRUSH_STEPPE", "FEATURE_SAVANNA_WOODLAND", "FEATURE_TAIGA", "FEATURE_RAINFOREST"]);
   const LESS_CULTURES = ["SAM", "SEA", "PAC", "NAM", "SAF"];
@@ -72,9 +86,12 @@
   // attachment points of the urban and city-centre layouts, in tile units, with their turns in degrees.
   // The first building goes to A, the second to B.
   const LOTS = {
+    // Hero_Building_A / _B of the house layouts (tools/extract_layout_slots.py). Pattern B's are the same in its
+    // full and "Less" layouts once the Less attachment's -60 degree turn is applied.
     urban: {
-      1: [{ x: 0.120, y: 0.245, turn: 330 }, { x: -0.214, y: -0.086, turn: 0 }],
-      2: [{ x: 0.123, y: 0.275, turn: 330 }, { x: -0.215, y: -0.093, turn: 0 }],
+      1: { A: [{ x: 0.120, y: 0.245, turn: 330 }, { x: -0.214, y: -0.086, turn: 0 }],
+        B: [{ x: 0.033, y: -0.196, turn: 300 }, { x: -0.133, y: 0.236, turn: 30 }] },
+      2: { A: [{ x: 0.123, y: 0.275, turn: 330 }, { x: -0.215, y: -0.093, turn: 0 }] },
     },
     center: {
       1: [{ x: 0.120, y: 0.245, turn: 150 }, { x: -0.214, y: -0.086, turn: 0 }],
@@ -242,6 +259,18 @@
     return out;
   }
 
+  /**
+   * Street pattern ("A" | "B") and turn (degrees) to draw on an urban tile so our streets lie on the engine's
+   * Antiquity streets underneath. Measured coordinates only (ui/cc-street-table.js); river tiles whose turn may be
+   * 60 degrees off, unmeasured coordinates and other map sizes get pattern A unturned, as before the table.
+   */
+  function streetPick(loc, age) {
+    const t = globalThis.CCStreetTable?.lookup(loc.x, loc.y, isWooded(loc));
+    if (!t || !t.sure) return { pattern: "A", angle: 0 };
+    if (!LAYOUTS[age].street[t.street]) return { pattern: "A", angle: 0 };   // Modern has no pattern B
+    return { pattern: t.street, angle: norm(t.angle) };
+  }
+
   /** "x,y" -> list of [asset, offset, scale, turn, owner] for every tile that should be rebuilt. */
   function desiredTiles() {
     const want = new Map();
@@ -314,28 +343,31 @@
             });
           } else {
             if (erase) for (const a of [0, 60, 120]) parts.push([ERASER, ZERO, ERASER_SCALE, a]);
-            parts.push([layout.street, ZERO, 1, 0]);
-            const houses = pickLayout(layout.houses, loc, owned, Math.abs(seed));
+            const { pattern, angle } = streetPick(loc, age);
+            parts.push([layout.street[pattern], ZERO, 1, angle]);
+            const houses = pickLayout(layout.houses[pattern], loc, owned, Math.abs(seed));
+            const houseTurn = (LAYOUT_TURN[houses] || 0) + angle;
             // Next to a cliff, water or a mountain the engine leaves out the house slots nearest that edge (they
             // would stand on the rocks or the beach). Draw such tiles slot by slot from the engine's own slot table
             // and skip those slots; other tiles get the whole layout in one piece.
             const rough = roughEdges(loc);
             const slots = rough.length && globalThis.CCLayoutSlots?.[houses];
-            if (!slots) parts.push([houses, ZERO, 1, 0]);
+            if (!slots) parts.push([houses, ZERO, 1, norm(houseTurn)]);
             else {
               slots.forEach(([m, x, y, z, turn, scale], i) => {
                 if (/^Hero_Building|_Road$/.test(m)) return; // our buildings and street are drawn separately
+                const at = rot({ x, y, z }, houseTurn);
                 const clear = Math.min(...rough.map((d) => {
                   const r = DIR_ANGLE[d] * Math.PI / 180;
-                  return 0.5 - (x * Math.cos(r) + y * Math.sin(r));
+                  return 0.5 - (at.x * Math.cos(r) + at.y * Math.sin(r));
                 }));
                 if (clear < EDGE_CLEARANCE) return;
-                parts.push([resolve(m, owned, ageName, Math.abs(seed) + i) || m, { x, y, z }, scale, turn]);
+                parts.push([resolve(m, owned, ageName, Math.abs(seed) + i) || m, at, scale, norm(turn + houseTurn)]);
               });
             }
             const others = buildings.filter((b) => !civic(b) && !/BRIDGE/.test(b));
-            LOTS.urban[age].forEach((lot, i) => {
-              const at = { x: lot.x, y: lot.y, z: 0 };
+            LOTS.urban[age][pattern].forEach((lot, i) => {
+              const at = rot({ x: lot.x, y: lot.y, z: 0 }, angle);
               const type = others[i];
               let model = type && buildingModel(type, owned, ageName, Math.abs(seed));
               let scale = model && /_Scaled$/.test(model) ? 1 : BUILDING_SCALE;
@@ -345,17 +377,19 @@
                 model = VACANT[age][(Math.abs(seed) + i) % VACANT[age].length];
                 scale = BUILDING_SCALE;
               }
-              parts.push([model, at, scale, lot.turn]);
+              parts.push([model, at, scale, norm(lot.turn + angle)]);
             });
           }
           // Modern gap filler: at angle 0 the engine's wedge piece fills the tile's east edge, the one edge our
-          // layout leaves open. Draw it when the eastern neighbour is also a city tile (never on water or rivers).
+          // layout leaves open (on a turned tile, the edge that turn faces). Draw it when that neighbour is also a
+          // city tile (never on water or rivers).
           if (age === 2 && !isCenter && !GameplayMap.isWater(loc.x, loc.y)) {
-            const e = GameplayMap.getAdjacentPlotLocation(loc, 1);
+            const wedgeTurn = streetPick(loc, age).angle;
+            const e = GameplayMap.getAdjacentPlotLocation(loc, DIR_ANGLE.indexOf(wedgeTurn));
             const ed = e && Districts.getAtLocation(e);
             if (ed && (ed.type === DistrictTypes.URBAN || ed.type === DistrictTypes.CITY_CENTER)
               && !GameplayMap.isWater(e.x, e.y) && !GameplayMap.isNavigableRiver(e.x, e.y)) {
-              parts.push([WEDGE, ZERO, 1, 0]);
+              parts.push([WEDGE, ZERO, 1, wedgeTurn]);
             }
           }
           // Owner's colours (banners, awnings, roof stripes), as the engine tints its own city models.

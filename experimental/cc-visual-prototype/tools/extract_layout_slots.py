@@ -31,6 +31,11 @@ LAYOUTS = [
     "LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment",
     "LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less",
     "LAYOUT_CTY_EXP_Hex_Section_AB_Attatchment_Less_FOL",
+    # Street pattern B (drawn where the engine's Antiquity streets underneath are B, see ui/cc-street-table.js)
+    "LAYOUT_CTY_EXP_Hex_Section_AB_B",
+    "LAYOUT_CTY_EXP_Hex_Section_AB_B_VAR_A",
+    "LAYOUT_CTY_EXP_Hex_Section_AB_B_Attachment_Less",
+    "LAYOUT_CTY_EXP_Hex_Section_AB_B_Attachment_Less_FOL",
 ]
 
 
