@@ -1,0 +1,41 @@
+name: Visual prototype check
+
+# Offline checks of the experimental city-art overlay (experimental/cc-visual-prototype): the overlay's rules run
+# against a mocked game (tools/tests/overlay.test.mjs) and the measured street data is checked and must match the
+# generated ui/cc-street-table.js (tools/analysis/check_tables.py). No game needed.
+on:
+  pull_request:
+    paths:
+      - "experimental/cc-visual-prototype/**"
+      - ".github/workflows/visual-check.yml"
+  push:
+    branches: [main]
+    paths:
+      - "experimental/cc-visual-prototype/**"
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: experimental/cc-visual-prototype
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Overlay rules (mocked game)
+        run: node tools/tests/overlay.test.mjs
+      - name: Street data
+        run: python -I tools/analysis/check_tables.py
+      - name: Script syntax
+        run: |
+          for f in ui/*.js tools/game/*.js tools/game/cands/*.js tools/analysis/*.js; do node --check "$f"; done
+          for f in tools/pipeline/*.mjs tools/tests/*.mjs; do node --check "$f"; done
+          python -m py_compile tools/analysis/*.py tools/extract/*.py
