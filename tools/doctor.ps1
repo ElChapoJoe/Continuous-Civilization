@@ -76,6 +76,8 @@ if ($git) {
   $ahead = (& git rev-list --count "@{u}..HEAD" 2>$null)
   Pop-Location
   Ok "Git" ("branch $branch, $dirty uncommitted, " + $(if ($ahead) { "$ahead unpushed" } else { "no upstream" }))
+  Push-Location $Repo; $hooks = (& git config core.hooksPath); Pop-Location
+  if ($hooks -eq "tools/hooks") { Ok "Pre-commit hook" "installed" } else { Warn "Pre-commit hook" "not installed: git config core.hooksPath tools/hooks" }
 } else { Fail "Git" "not found" }
 if (Get-Command gh -ErrorAction SilentlyContinue) {
   & gh auth status *> $null

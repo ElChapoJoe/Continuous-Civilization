@@ -18,6 +18,10 @@ if (-not $SkipCheck) {
   if (-not $py) { throw "python not found: install it or deploy with -SkipCheck" }
   & $py -I "$PSScriptRoot\check_mod.py"
   if ($LASTEXITCODE -ne 0) { throw "check_mod.py found errors: not deployed (fix them, or -SkipCheck to deploy anyway)" }
+  # Generated SQL out of date (a game update, or a generator changed without re-running): warn, don't block.
+  & $py -I "$PSScriptRoot\check_generated.py"
+  if ($LASTEXITCODE -eq 1) { "WARNING: generated SQL is out of date (see above): python -I tools\check_generated.py --update, then commit" }
+  elseif ($LASTEXITCODE -ne 0) { "WARNING: check_generated.py could not run the generators (see above)" }
 }
 $diff = @(Get-Civ7DeployDiff)
 if ($diff.Count -eq 0) { "Deployed copy is already up to date."; return }

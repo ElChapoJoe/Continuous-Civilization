@@ -24,6 +24,9 @@ The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game 
 
 ## Workflow
 - The tools find Civilization VII through Steam. To point them elsewhere, pass the game's `Base` folder as the first argument or set `CIV7_DIR`.
+- `python -I tools/check_generated.py` tells whether the generated SQL is up to date with the installed game (it runs every generator, compares, and puts the files back; `--update` keeps the new output). `deploy.ps1` and the pre-commit hook run it and warn.
+- One-time setup per clone: `git config core.hooksPath tools/hooks` turns on the pre-commit hook (blocks game files such as saves and logs, runs `check_mod.py` when the mod changes, warns on stale generated SQL; `git commit --no-verify` skips it once). `tools/doctor.ps1` shows whether it is on.
+- Pull requests: the Mod check workflow also warns when the mod changes without a `CHANGELOG.md` entry.
 - After changing which game files are imported, or after a game patch, regenerate the generated SQL:
   ```
   python -I tools/gen_dedupe.py

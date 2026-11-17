@@ -1,0 +1,27 @@
+#!/bin/sh
+# Pre-commit checks (install once per clone: git config core.hooksPath tools/hooks; skip one commit: git commit --no-verify).
+#   - never commit game files: saves, logs, art packages, crash dumps (the mod ships no game files);
+#   - when the mod changes: tools/check_mod.py (blocks on errors) and tools/check_generated.py (warns when the
+#     generated SQL is out of date).
+staged=$(git diff --cached --name-only --diff-filter=ACM)
+[ -z "$staged" ] && exit 0
+
+game_files=$(echo "$staged" | grep -iE '\.(civ7save|log|blp|dmp|wem|bnk)$')
+if [ -n "$game_files" ]; then
+  echo "pre-commit: game files staged (the repo never holds game files):"
+  echo "$game_files" | sed 's/^/  /'
+  exit 1
+fi
+
+if echo "$staged" | grep -q '^mod/continuous-civ/\|^tools/gen_\|^tools/check_mod.py'; then
+  py=$(command -v python || command -v py)
+  if [ -z "$py" ]; then echo "pre-commit: python not found, mod checks skipped"; exit 0; fi
+  "$py" -I tools/check_mod.py || { echo "pre-commit: check_mod.py found errors (commit with --no-verify to override)"; exit 1; }
+  "$py" -I tools/check_generated.py
+  case $? in
+    0) ;;
+    1) echo "pre-commit: WARNING generated SQL is out of date (python -I tools/check_generated.py --update)";;
+    *) echo "pre-commit: WARNING could not run the generators (is the game installed?)";;
+  esac
+fi
+exit 0
