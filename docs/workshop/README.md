@@ -15,6 +15,7 @@ Workshop item: [https://steamcommunity.com/sharedfiles/filedetails/?id=383877774
 | Visibility | The uploader offers Public, Friends Only and Private. **Friends Only** for a closed beta with Steam friends, **Public** to open it up (visibility can be changed later on the item's Steam page) |
 | Change note (first upload) | `0.1.0-beta: first public beta.` |
 | Change note (0.2.0) | `0.2.0-beta: World Age (costs rise for everyone together), Test of Time and every civilization's own civic tree, Triumphs and Dedications from all Ages, overbuilding, Military victory, Culture target 350 and Economic 8,000. Start a new game. Full list: github.com/ElChapoJoe/Continuous-Civilization/blob/main/CHANGELOG.md` |
+| Change note (0.2.1) | `0.2.1-beta: fixes "Content Configuration Validation Failed" with the Ottomans DLC (BUILDING_CAMII); games with DLC or mod combinations never tested now start instead of failing; files reorganized, no gameplay change. Start a new game. Full list: github.com/ElChapoJoe/Continuous-Civilization/blob/main/CHANGELOG.md` |
 
 ## First upload
 1. In Steam, open **Library**, switch the filter to **Tools**, and install **Sid Meier's Civilization VII Development Tools**.
