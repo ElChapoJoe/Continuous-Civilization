@@ -50,7 +50,7 @@
 1. Download `continuous-civ.zip` from the newest release on the [Releases page](../../releases).
 2. Unzip it into your Civilization VII mods folder, so you get
    `%LOCALAPPDATA%\Firaxis Games\Sid Meier's Civilization VII\Mods\continuous-civ\`.
-3. In game, enable **Continuous Civilization** under **Additional Content**.
+3. In game, enable **Continuous Civilization** under **Additional Content**. Game updates switch all mods off, so check it again after every Civilization VII update.
 4. Start a **new** game with an **Antiquity** start.
 
 Requires Civilization VII (tested on 1.5.1). No game files are included or changed: the mod reads the Exploration and Modern content from your own installed game.

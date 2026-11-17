@@ -26,6 +26,8 @@ Workshop item: [https://steamcommunity.com/sharedfiles/filedetails/?id=383877774
 6. Upload, then open the item's page on Steam to check the description and add the extra screenshots.
 
 ## Updates
+`tools/release.ps1` runs this list: with no switch it only checks (on `main`, clean and up to date, CHANGELOG top entry matching the modinfo version, a change-note row below, tag unused, `check_mod.py`); `-Prepare` deploys, adds the placeholders, tags locally and prints the change note to paste; after the upload, `-Publish` pushes the tag and creates the GitHub pre-release from the CHANGELOG entry.
+
 - Bump `version` in `continuous-civ.modinfo` and add a `CHANGELOG.md` entry.
 - Update the main `README.md` first (it is the source of truth), then bring `description.txt` in line: same tagline, features, victory targets and limitations, in Steam's formatting codes and kept shorter.
 - Deploy, run `tools/workshop_placeholders.py`, then upload to the **same** Workshop item, with the changelog entry as the change note.
