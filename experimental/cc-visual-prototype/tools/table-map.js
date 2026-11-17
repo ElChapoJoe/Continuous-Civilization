@@ -24,7 +24,11 @@
       if (usable(x, y) && (GameplayMap.getOwner(x, y) == -1 || GameplayMap.getOwner(x, y) == me())) targets.push([x, y]);
     }
     centres = Players.get(me()).Cities.getCities().map((c) => [c.location.x, c.location.y]);
-    for (const t of targets) if (!centres.some((c) => dist(c, t) <= 3)) centres.push(t);
+    // CCTable.preferCentre(x, y): optional; such tiles are tried as city centres first (a second all-land run puts
+    // its centres on coordinates already measured, so the unmeasured ones become urban tiles).
+    const pref = globalThis.CCTable && CCTable.preferCentre;
+    const order = pref ? [...targets.filter((t) => pref(t[0], t[1])), ...targets.filter((t) => !pref(t[0], t[1]))] : targets;
+    for (const t of order) if (!centres.some((c) => dist(c, t) <= 3)) centres.push(t);
     return JSON.stringify({ targets: targets.length, centres: centres.length });
   }
   const wait = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -36,6 +40,9 @@
       const have = () => Players.get(me()).Cities.getCities();
       for (const c of centres) {
         if (have().some((k) => k.location.x == c[0] && k.location.y == c[1])) continue;
+        // CCTable.skip: "x,y" centres to leave out (a vanilla Modern game crashed founding on one tile).
+        if (CCTable.skip && CCTable.skip.has(c[0] + "," + c[1])) continue;
+        CCTable.last = c[0] + "," + c[1];
         Game.PlayerOperations.sendRequest(me(), "CREATE_ELEMENT", { Kind: "CITY", Location: { x: c[0], y: c[1] }, Owner: me() });
         await wait(400);
       }
@@ -115,6 +122,7 @@
     return pack().split(";").filter((p) => p && (!filter || filter.has(p.split(",").slice(0, 2).join(","))))
       .map((p) => { const [x, y, v, px, py] = p.split(",").map(Number); return d2(x) + d2(y) + A[v] + d2(px) + d2(py); }).join("");
   }
-  globalThis.CCTable = { pack64, plan, run: () => { run(); return "started"; }, status, wood, views, pack, urbanTiles };
+  globalThis.CCTable = { pack64, plan, run: () => { run(); return "started"; }, status, wood, views, pack, urbanTiles,
+    centres: () => centres };
   return "CCTable ready";
 })();

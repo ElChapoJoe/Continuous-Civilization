@@ -21,7 +21,8 @@
 //      Save the pack text to a file at once (it needs this run's camera data, which a closed game loses; a re-run
 //      on the reloaded save gives the same views and positions). Forest pass: CCTable.wood(true) and the same again
 //      into another folder.
-//   9. table_score.py on both passes, write street-table-<size>-<seed>.json, build_street_table.py.
+//   9. CCAllLand.rivers() -> rivers.json; table_score.py on both passes; merge_passes.py writes
+//      street-table-<size>-<seed>.json; build_street_table.py.
 // Nothing can cover the game window while the screenshot script runs.
 (function () {
   const W = () => GameplayMap.getGridWidth(), H = () => GameplayMap.getGridHeight();
@@ -78,6 +79,11 @@
     return CCTable.pack64(s);
   }
 
-  globalThis.CCAllLand = { convert, save, load, views, pack };
+  /** River tiles among the urban tiles, as JSON ["x,y", ...] for merge_passes.py (their turn follows the river). */
+  function rivers() {
+    return JSON.stringify(CCTable.urbanTiles().filter(([x, y]) => GameplayMap.isRiver(x, y)).map(([x, y]) => x + "," + y));
+  }
+
+  globalThis.CCAllLand = { convert, save, load, views, pack, rivers };
   return "CCAllLand ready";
 })();

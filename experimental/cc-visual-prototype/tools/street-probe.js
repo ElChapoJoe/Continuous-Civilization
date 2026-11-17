@@ -11,7 +11,9 @@
   const old = globalThis.CCStreetProbe;
   if (old) old.stop();
   const T = PlacementMode.TERRAIN;
-  const STREETS = ["LAYOUT_CTY_Hex_Section_AB_Road_ANT", "LAYOUT_CTY_Hex_Section_AB_B_Road_ANT"];
+  // Candidate street sections A and B; set globalThis.CCStreetProbeStreets before loading to test other Ages' roads
+  // against the engine's Antiquity paint (do they line up at the same turns?).
+  const STREETS = globalThis.CCStreetProbeStreets || ["LAYOUT_CTY_Hex_Section_AB_Road_ANT", "LAYOUT_CTY_Hex_Section_AB_B_Road_ANT"];
   const CANDS = [null];
   for (let s = 0; s < STREETS.length; s++) for (let a = 0; a < 360; a += 60) CANDS.push([s, a]);
   let lastError = null;

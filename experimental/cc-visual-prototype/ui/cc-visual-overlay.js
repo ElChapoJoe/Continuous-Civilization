@@ -265,6 +265,11 @@
    * 60 degrees off, unmeasured coordinates and other map sizes get pattern A unturned, as before the table.
    */
   function streetPick(loc, age) {
+    // First choice: the street the engine itself draws on this coordinate in the owner's Age (measured in vanilla
+    // games of that Age; its turn is unrelated to the Antiquity paint, round 58). The Antiquity paint underneath then
+    // shows wherever the two differ, but streets, houses and lots stand where vanilla puts them.
+    const own = globalThis.CCStreetTable?.lookupAge?.(age, loc.x, loc.y, isWooded(loc));
+    if (own && own.sure && LAYOUTS[age].street[own.street]) return { pattern: own.street, angle: norm(own.angle) };
     const t = globalThis.CCStreetTable?.lookup(loc.x, loc.y, isWooded(loc));
     if (!t || !t.sure) return { pattern: "A", angle: 0 };
     if (!LAYOUTS[age].street[t.street]) return { pattern: "A", angle: 0 };   // Modern has no pattern B
@@ -310,7 +315,8 @@
             parts.push([pickLayout(layout[kind], loc, owned, Math.abs(seed)), ZERO, 1, 0]);
             // The palace or city hall takes the first slot of the square, at full size; any other building on the
             // centre tile takes the second slot.
-            const main = buildings.find(civic) || (kind === "capital" ? "BUILDING_PALACE" : "BUILDING_CITY_HALL");
+            // A capital can hold a city hall too (Exploration start): the palace always takes the square's main slot.
+            const main = kind === "capital" ? "BUILDING_PALACE" : (buildings.find(civic) || "BUILDING_CITY_HALL");
             const slots = kind === "capital" ? LOTS.capital : LOTS.center[age];
             [main, ...buildings.filter((b) => !civic(b) && !/BRIDGE/.test(b))].slice(0, 2).forEach((type, i) => {
               const model = buildingModel(type, owned, ageName, Math.abs(seed));

@@ -14,7 +14,8 @@ import numpy as np
 
 folder, pack_path, radius, out_path = sys.argv[1], sys.argv[2], int(sys.argv[3]), sys.argv[4]
 known_paths = sys.argv[5:]
-CANDS = [None] + [(s, a) for s in (0, 1) for a in range(0, 360, 60)]
+# CC_STREETS=1 when the probe drew one street model only (Modern: CCStreetProbeStreets with one entry, 7 states per view)
+CANDS = [None] + [(s, a) for s in range(int(os.environ.get("CC_STREETS", "2"))) for a in range(0, 360, 60)]
 NAMES = ["A", "B"]
 PER = len(CANDS)
 
@@ -67,6 +68,7 @@ ox, oy = int(xs.min()), int(ys.min())
 yy, xx = np.mgrid[-radius:radius + 1, -radius:radius + 1]
 disc = (xx * xx + yy * yy) <= radius * radius
 labels = {}
+scores = {}
 by_view = {}
 for t in tiles:
     by_view.setdefault(t[2], []).append(t)
@@ -87,7 +89,11 @@ for v, ts in sorted(by_view.items()):
         order = np.argsort(d)
         s, a = CANDS[int(order[0]) + 1]
         labels["%d,%d" % (x, y)] = ["%s%d" % (NAMES[s], a), round(d[int(order[1])] / max(d[int(order[0])], 1e-6), 2)]
+        scores["%d,%d" % (x, y)] = [round(v, 2) for v in d]
 json.dump(labels, open(out_path, "w"))
+# Every candidate's distance per tile (order: A0..A300, B0..B300), for runs whose two street models are the same
+# (Modern has one street section) where the label's margin means nothing.
+json.dump(scores, open(out_path.replace(".json", "") + ".all.json", "w"))
 margins = sorted(m for _, m in labels.values())
 print("tiles in pack %d, labelled %d, margin <2: %d, <3: %d, median %.1f" % (
     len(tiles), len(labels), sum(m < 2 for m in margins), sum(m < 3 for m in margins),
