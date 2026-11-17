@@ -2,32 +2,34 @@
 
 A separate, opt-in mod that gives each civilization city architecture from its own personal Age, so a Modern Rome can stand next to an Antiquity Russia. **Not part of the released mod.** Display only: it never changes the game simulation.
 
-## Status (pinned 2026-11-14)
+## Current state (2026-11-16)
 
-Paused here. Work happens on the `experiment/visual-overlay` branch; the full log of what was tried and measured is in `docs/visual-progression-investigation.md` (rounds 1-33).
+Active again, on the `experiment/visual-overlay` branch. This section is the short version; the full log of what was tried and measured is `docs/visual-progression-investigation.md` (rounds 1-56).
 
-**Estimated closeness to vanilla, by eye at normal zoom:** Modern cities about 80-85%, Exploration about 60-65%.
+**Plan (set 2026-11-16):** finish **Tiny** completely before any other map size: its whole street table, rural improvements, rivers and capitals; then Exploration and Modern each compared tile by tile against a vanilla game of that Age on the same Tiny map; about 3 test games until they match; only then the other map sizes.
 
 | Part | State |
 |---|---|
-| Buildings | The model the engine would pick for the owner's cultures and personal Age, in the engine's lots and turns (read from its layout data) |
-| Palace / capital square | Engine layout, palace in its slot at the engine's turn, Exploration and Modern. Missing: the spiral topiary in the garden beds |
-| House rows | The engine's own house layout, chosen like its layout bins (forest version on wooded tiles, "Less" version for some cultures in Exploration); next to cliffs, water or mountains drawn slot by slot without the slots on the rocks or beach |
-| Empty building lots | The engine's vacant-plot piece of the owner's Age |
-| Owner colours | Banners, awnings and roof stripes in the owner's colours |
-| Harbour tiles | Wharf, shipyard and quay on the shore side with a pier; the engine's piers are longer and more numerous |
-| Rural tiles (Modern) | Farms, woodcutters, mines, clay pits, camps, quarries, pastures, plantations in Modern art. Farms are sparser than vanilla; the mine's rock colour differs; pastures lack fence rails; plantations lack their vat and racks |
-| Streets and ground | Our streets are drawn, but the engine's own Antiquity street pattern stays painted underneath, and on about 70% of tiles it differs from ours. Nothing in the game can paint over it except sand-coloured patches (the "eraser", off by default) |
+| Buildings | The model the engine would pick for the owner's cultures and personal Age, in the engine's lots and turns (read from its layout data). Among equal variants we pick by our own per-tile number, not the engine's |
+| Streets and ground | The engine's Antiquity street paint stays under our art (nothing can hide it). Its pattern (A/B) and turn per tile is fixed per map size and coordinate, so it is measured into `ui/cc-street-table.js`, and the overlay draws its streets, houses and lots in the matching pattern and turn (Exploration has A and B layouts; Modern only A, B tiles unturned). **Written, not yet tested in game** |
+| Street table coverage | Tiny 586 of 2,280 plots, Small 2,092 of 3,404, Standard 2,392 of 4,536 (an all-land run waiting for its forest pass should fill most of the rest), Large and Huge none. Unknown tiles fall back to pattern A unturned |
+| River tiles | Sources and sharp bends keep the coordinate's turn; other river tiles (about 5% of urban tiles) flip about half the time by a rule not found yet. Next idea: read the river's channel from terrain heights |
+| Palace / capital square | Engine layout, palace in its slot at the engine's turn (measured on 3 vanilla capitals). Missing: the spiral topiary. City-centre ground not yet checked against the street table |
+| House rows | The engine's own house layout, chosen like its layout bins; next to cliffs, water or mountains drawn slot by slot without the slots on the rocks or beach |
+| Empty lots, owner colours, harbours | Vacant-plot pieces; banners, awnings and roof stripes in the owner's colours; harbour buildings on the shore side (the engine's piers are longer and more numerous) |
+| Rural tiles | Modern farms, woodcutters, mines, clay pits, camps, quarries, pastures, plantations; Exploration camps. Drawn at the tile centre, unturned, with fixed variants (farm B): the engine's variant and turn per tile are not measured yet. Antiquity farm paths stay painted underneath. Pastures lack fence rails, plantations their vat and racks |
 
-**Known limits (not fixable from scripts as far as we found):** the engine turns some tiles at random (Antiquity: 5 street patterns; Modern: 0 or 60 degrees) in compiled code; navigable-river tiles are left to the engine because the clip can't hide their houses; walls and wonders are left to the engine.
+**Known limits:** the engine's Antiquity ground paint can't be removed, only matched; navigable-river tiles are left to the engine (the clip can't hide their houses); walls and wonders are left to the engine; spline pieces (topiary, fence rails) draw nothing when placed alone (not yet tried: placing their segments one by one, `addModelBetweenPlots`).
 
-**Next candidates if work resumes:** the Modern river-city ground pieces (`River_City_I_*_MOD_Decal`) for river tiles; `addModelBetweenPlots` for edge pieces; topiary and fence rails (spline pieces that don't draw on their own); the mine's resource-dependent rock; Exploration capitals checked on screen; city ownership changes and multiplayer.
+**Next, in order:** forest pass of the Standard all-land run (save `CC_AllLand9009_Cities`; the bare-pass shots are in the session's temp folder) and its table; the overlay change tested in game; then the Tiny plan above.
+
+**Street table tools** (`tools/`): `all-land.js` (whole map turned into land, runbook in its header), `have_mask.py`, `table-map.js`, `street-probe.js`, `capture-states.ps1` (screenshots; nothing may cover the game window), `table_score.py`, `build_street_table.py`; `river/` holds the river courses and the rule search.
 
 ## How it works
 For every city-centre, urban and (in Modern) rural tile of a player whose personal Age is later than Antiquity:
 1. `WorldUI.clipHexHeight(plot, 0)` hides everything the engine draws on the tile above ground (not ground paint).
 2. The tile is composed again from the game's own models, drawn with `addModelAtPlot` in the owner's colours:
-   - the street section and house layout of the owner's Age, chosen and placed from the engine's own layout data;
+   - the street section and house layout of the owner's Age, chosen and placed from the engine's own layout data, in the street pattern and turn of the engine's Antiquity streets underneath (`ui/cc-street-table.js`);
    - each completed building on the tile, as the model the engine would choose for the owner's building cultures (`VisArt_CivilizationBuildingCultures`) and personal Age, in the engine's lot for it;
    - the vacant-plot piece in empty lots; Modern rural improvements; harbour buildings on the shore side.
 3. Tiles with a wonder, navigable-river tiles and walls are left to the engine.
