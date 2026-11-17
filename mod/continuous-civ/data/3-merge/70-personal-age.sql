@@ -253,3 +253,25 @@ INSERT INTO ModifierArguments (ModifierId, Name, Value)
 INSERT INTO GameModifiers (ModifierId) SELECT 'CC_CATCHUP_' || s.Prefix || c.Id FROM cc_catchup c, cc_catchup_sys s;
 DROP TABLE cc_catchup;
 DROP TABLE cc_catchup_sys;
+
+-- Test hooks for city-owned modifiers (tests/cc-probes.js, cityOwnerAge): does the personal-Age condition, which tests
+-- a player (REQUIREMENT_PLAYER_HAS_COMPLETED_PROGRESSION_TREE_NODE), work when the subject or the owner is a city?
+-- Vanilla never uses it that way; town-focus projects (ProjectModifiers) own their modifiers through the city.
+--   CC_TEST_CITY_SUBJECT_EX: every city, condition on the city as the subject.
+--   CC_TEST_CITY_OWNER_EX:   attached to every city (owner = the city), condition as the owner's requirement.
+-- Both +0 Gold. Expected if it works: the cities of players in their Exploration, and no others.
+INSERT OR IGNORE INTO Types (Type, Kind) VALUES
+  ('CC_MODTYPE_CITIES_YIELD', 'KIND_MODIFIER'), ('CC_MODTYPE_CITIES_ATTACH', 'KIND_MODIFIER'), ('CC_MODTYPE_OWNER_CITY_YIELD', 'KIND_MODIFIER');
+INSERT OR IGNORE INTO DynamicModifiers (ModifierType, CollectionType, EffectType) VALUES
+  ('CC_MODTYPE_CITIES_YIELD', 'COLLECTION_ALL_CITIES', 'EFFECT_CITY_ADJUST_YIELD'),
+  ('CC_MODTYPE_CITIES_ATTACH', 'COLLECTION_ALL_CITIES', 'EFFECT_ATTACH_MODIFIERS'),
+  ('CC_MODTYPE_OWNER_CITY_YIELD', 'COLLECTION_OWNER', 'EFFECT_CITY_ADJUST_YIELD');
+INSERT INTO Modifiers (ModifierId, ModifierType, SubjectRequirementSetId, OwnerRequirementSetId) VALUES
+  ('CC_TEST_CITY_SUBJECT_EX', 'CC_MODTYPE_CITIES_YIELD', 'CC_REQSET_TEST_IN_EXPLORATION', NULL),
+  ('CC_TEST_CITY_OWNER_EX_ATTACH', 'CC_MODTYPE_CITIES_ATTACH', NULL, NULL),
+  ('CC_TEST_CITY_OWNER_EX', 'CC_MODTYPE_OWNER_CITY_YIELD', NULL, 'CC_REQSET_TEST_IN_EXPLORATION');
+INSERT INTO ModifierArguments (ModifierId, Name, Value) VALUES
+  ('CC_TEST_CITY_SUBJECT_EX', 'YieldType', 'YIELD_GOLD'), ('CC_TEST_CITY_SUBJECT_EX', 'Amount', '0'),
+  ('CC_TEST_CITY_OWNER_EX_ATTACH', 'ModifierId', 'CC_TEST_CITY_OWNER_EX'),
+  ('CC_TEST_CITY_OWNER_EX', 'YieldType', 'YIELD_GOLD'), ('CC_TEST_CITY_OWNER_EX', 'Amount', '0');
+INSERT INTO GameModifiers (ModifierId) VALUES ('CC_TEST_CITY_SUBJECT_EX'), ('CC_TEST_CITY_OWNER_EX_ATTACH');
