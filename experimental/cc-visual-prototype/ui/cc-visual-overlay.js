@@ -266,6 +266,8 @@
     return { pattern: t.street, angle: norm(t.angle) };
   }
 
+  // Paving test switch: { 1: { model, scale, last }, 2: ... } per personal Age; empty = off (setGround()).
+  const ground = {};
   /** "x,y" -> list of [asset, offset, scale, turn, owner] for every tile that should be rebuilt. */
   function desiredTiles() {
     const want = new Map();
@@ -387,6 +389,12 @@
               parts.push([WEDGE, ZERO, 1, wedgeTurn]);
             }
           }
+          // Ground test (round 64): a paving piece per Age under or over the tile's parts, set by setGround().
+          const g = ground[age];
+          if (g && !GameplayMap.isWater(loc.x, loc.y)) {
+            const piece = [g.model, ZERO, g.scale, norm((loc.x * 37 + loc.y * 11) % 6 * 60)];
+            if (g.last) parts.push(piece); else parts.unshift(piece);
+          }
           // Owner's colours (banners, awnings, roof stripes), as the engine tints its own city models.
           for (const p of parts) p[4] = id;
           want.set(loc.x + "," + loc.y, parts);
@@ -479,6 +487,12 @@
     rebuild: () => { reset(); rebuild(); return current.size; },
     reset, personalAge, count: () => current.size,
     tile: (x, y) => current.get(x + "," + y) || null,
+    // setGround(age, model, scale, last): draw a paving piece first (or last) on every tile of that personal Age;
+    // setGround(age) turns it off. Test switch; redraws everything.
+    setGround: (age, model, scale = 1, last = false) => {
+      if (model) ground[age] = { model, scale, last }; else delete ground[age];
+      reset(); rebuild(); return JSON.stringify(ground);
+    },
     resolve, buildingModel,
   };
   reset();

@@ -800,3 +800,18 @@ New read-only tools: `tools/extract/asset_names.py` (every asset name in Civ VII
 - Candidates per tile: the two plain house layouts of the tile's street pattern (`..._AB` / `_AB_VAR_A`, B: `_AB_B` / `_AB_B_VAR_A`) at the street's turn and turned 180 degrees. From height 900 (1,020 tiles) and 300 (142 tiles): no candidate reproduces the engine's picture (distances about 80-90 out of 100); the houses follow the street's turn on about 80% of tiles (114 of 142), the variant stays unresolved.
 - Cause (`sandbox-shots/62-houses-engine-vs-layout-only.png`): the engine fills every lot of these empty urban tiles, while a layout drawn alone leaves its two building lots as grass. The engine's own house-layout bin (`tools/extract/bin_rows.py BIN_CTY_EXP_Layout_2HB_Full_A`) has no building-count condition: four plain variants (A, A_VAR_A, B, B_VAR_A), the "Less" layouts for SAM/SEA/PAC/NAM/SAF cultures, the `_FOL` layouts on forest, sagebrush steppe, savanna woodland, taiga and rainforest. This is the rule the overlay already follows (`pickLayout`); the empty lots get the vacant-plot pieces, which the overlay draws and the probe candidates did not. Modern's bin has only `LAYOUT_CTY_MOD_Section_AB_Small_Packed` and its `_FOL` version: nothing to pick.
 - Still open: the engine's per-tile pick between a layout and its `_VAR_A` (a probe with the vacant-plot pieces in the candidates), and whether "Less" or `_FOL` wins for a SAM/SEA/PAC/NAM/SAF owner on a wooded tile (the bin lists the culture rows first).
+
+## Round 64 (2026-11-17): paving pieces drawn by the overlay itself
+
+`CCVisualOverlay.setGround(age, model, scale, last)` (test switch) adds a paving piece to every tile of that personal Age, first or last among the tile's parts, in the tile's own model group. Reference map and rebuilt Exploration city as in round 63, camera at height 140, orange-ness of the city measured as mean red minus blue:
+
+| Piece | Effect |
+|---|---|
+| none | 36.9 |
+| `Decal_SpanishPlaza_Floor` at 2.5, first | 36.2 (slightly greyer around streets) |
+| same, last | 35.2 |
+| same at 4.5, last | lighter, still mostly orange |
+| `EXP_Decal_Block_A_Brick` at 8, last | no visible change |
+| `MED_ROM_Arena_Decal` at 1, last | no visible change (the same decal shows fully opaque under a real Arena) |
+
+So ground decals drawn on the overlay's tiles barely show, whatever their order or size, while the same decals show on clipped tiles without the overlay and under the engine's own buildings. The engine's city ground of the game's Age seems to win over script-drawn decals on city tiles. Paving needs something other than a decal (a flat model, or a building whose own ground decal the engine draws); left open. Other ground decals found on the way: `Decal_RomanForum_Floor_Pattern`, `MED_SPN_Temple_Decal`, `MED_SPN_Bank_Decal`, `EEU_EXP_Palace_Decal`, `GEN_MOD_Vacant_02_Decal`.
