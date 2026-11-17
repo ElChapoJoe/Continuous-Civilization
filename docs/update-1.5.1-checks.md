@@ -13,6 +13,6 @@ The installed game is 1.5.1 (Engine.log `Engine Version: 1.5.1 (1327230)`), and 
 | Game year recalibrated per Age, slowing at the end of an Age during a Crisis | The Age never ends here | Look at the year late in a long game (turn 200+): it keeps advancing sensibly |
 | Placement previews no longer double-count natural yields | `ui/cc-overbuild.js` shows its own preview in the side panel | Overbuild preview numbers match the result after placing |
 | New map types (Donut, Randomized Earth) and updated Voronoi generation | Map scripts are new code paths; the street table is per map size and coordinate, not per script | Start a game on each new map type with the mod: it loads, autoplays 10 turns, `scan-logs.ps1` clean |
-| Updates switch all active mods off | Players need to turn the mod back on after every game update | Worth a line in the Workshop description or FAQ |
+| Updates switch all active mods off | Players need to turn the mod back on after every game update | Done: a line in How to play (`README.md`, `docs/workshop/description.txt`); reaches Workshop players with the next upload |
 
 Sources: official patch notes for [1.5.1](https://support.civilization.com/hc/en-us/articles/57073538595987-Civilization-VII-Patch-Notes-November-10-2026) and [1.5.0](https://support.civilization.com/hc/en-us/articles/55328611080339-Civilization-VII-Patch-Notes-September-15-2026).
