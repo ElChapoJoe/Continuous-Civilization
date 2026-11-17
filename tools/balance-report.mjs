@@ -10,9 +10,9 @@ import { pathToFileURL } from "node:url";
 
 const YIELDS = ["sci", "cul", "gold", "prod", "food", "infl", "happy"];
 const TRENDS = [["cul", "Culture per turn"], ["sci", "Science per turn"], ["techs", "Techs researched"],
-  ["civics", "Civics researched"], ["cities", "Cities"], ["pop", "Population"]];
+  ["civics", "Civics researched"], ["cities", "Cities"], ["overseas", "Cities in the Distant Lands (across the Ocean)"], ["pop", "Population"]];
 const VPS = [["vpC", "Culture"], ["vpS", "Science"], ["vpE", "Economic"], ["vpM", "Military"]];
-const FIELDS = ["turn", "world", "id", "civ", "age", "cities", "pop", "techs", "civics", "units", ...YIELDS, ...VPS.map(([k]) => k)];
+const FIELDS = ["turn", "world", "id", "civ", "age", "cities", "overseas", "continents", "pop", "techs", "civics", "units", ...YIELDS, ...VPS.map(([k]) => k)];
 
 export function readSnapshots(file) {
   // A crash can leave a half-written last line: skip lines that don't parse.
@@ -83,8 +83,8 @@ export function buildReport(snaps, opts = {}) {
     table(["civ", "Exploration from", "Modern from"], ids.map((id) => [head[ids.indexOf(id)], tl.civs[id]?.EX, tl.civs[id]?.MO])));
 
   out.push(``, `## At turn ${last.turn}`, ``,
-    table(["civ", "Age", "cities", "pop", "techs", "civics", "sci", "cul", "gold", "prod", "infl", "happy", ...VPS.map(([, n]) => `VP ${n}`)],
-      last.civs.map((c) => [`${c.civ} (${c.id})`, c.age, c.cities, c.pop, c.techs, c.civics, c.sci, c.cul, c.gold, c.prod, c.infl, c.happy, ...VPS.map(([k]) => c[k])])));
+    table(["civ", "Age", "cities", "overseas", "pop", "techs", "civics", "sci", "cul", "gold", "prod", "infl", "happy", ...VPS.map(([, n]) => `VP ${n}`)],
+      last.civs.map((c) => [`${c.civ} (${c.id})`, c.age, c.cities, c.overseas, c.pop, c.techs, c.civics, c.sci, c.cul, c.gold, c.prod, c.infl, c.happy, ...VPS.map(([k]) => c[k])])));
 
   for (const [k, title] of [...TRENDS, ...VPS.map(([k, n]) => [k, `Victory points: ${n}`])]) {
     if (!snaps.some((s) => s.civs.some((c) => c[k] != null))) continue;
