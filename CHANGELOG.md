@@ -4,6 +4,14 @@ Versions follow `MAJOR.MINOR.PATCH`. The number in brackets is the mod's interna
 
 Saves from one beta version may not load in the next. Start a new game after updating.
 
+## Unreleased
+
+### Added
+- The other nine Exploration and Modern wonders from DLC civilization packs, if you own the pack: Thanh Hue (Dai Viet), Globe Theatre (England), Buseoksa (Goryeo), Reykholt (Iceland), Himeji Castle (Sengoku Japan), Havana Harbor (Pirate Republic), Hwaseong (Joseon), Sultanahmet Camii (Ottomans) and Eram Garden (Qajar), each unlocked for everyone by its vanilla tech or civic. The same files bring those civilizations' unique buildings and improvements (for example the Ottoman Camii and Hammam), unlocked as in vanilla by the civ's own civic tree. Havana Harbor's Treasure Fleet effect is left out until Treasure Fleets are in. Not yet tested in game.
+
+### Fixed
+- A civilization-pack wonder could end up unlocked only for its own civilization (through that civ's civic tree) instead of for everyone at its tech or civic.
+
 ## 0.2.1-beta (23) - Ottomans DLC fix
 
 ### Fixed

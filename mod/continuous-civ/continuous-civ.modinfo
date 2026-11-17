@@ -380,11 +380,17 @@
 			</Actions>
 		</ActionGroup>
 		<!-- DLC civilizations' own Exploration / Modern civic trees (owners only; vanilla loads each only in its Age).
-		     data/3-merge/84-civ-trees.sql reveals each to its civ in the matching personal Age. Not tested in game. -->
+		     data/3-merge/84-civ-trees.sql reveals each to its civ in the matching personal Age. Not tested in game.
+		     constructibles.xml: the pack's wonder (Thanh Hue, Globe Theatre, Buseoksa, Reykholt, Himeji Castle, Hwaseong,
+		     Sultanahmet Camii, Eram Garden, Havana Harbor; vanilla unlock added in 30-buildings.sql) and the civ's unique
+		     buildings and improvements (kept to that civilization by its trait, unlocked by its own civic tree). Pirate
+		     Republic's constructibles-exploration.xml (Treasure Fleet effects) is left out: no Treasure Fleets here. -->
 		<ActionGroup id="cc-import-dlc-dai-viet" scope="game" criteria="antiquity-with-dai-viet">
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
+					<Item>{dai-viet}data/constructibles.xml</Item>
+					<Item>{dai-viet}data/constructibles-gameeffects.xml</Item>
 					<Item>{dai-viet}data/progression-trees-culture-unique.xml</Item>
 					<Item>{dai-viet}data/progression-trees-culture-unique-mo.xml</Item>
 					<Item>{dai-viet}data/civilizations-gameeffects.xml</Item>
@@ -395,6 +401,8 @@
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
+					<Item>{england}data/constructibles.xml</Item>
+					<Item>{england}data/constructibles-gameeffects.xml</Item>
 					<Item>{england}data/progression-trees-culture-unique.xml</Item>
 					<Item>{england}data/progression-trees-culture-unique-mo.xml</Item>
 					<Item>{england}data/civilizations-gameeffects.xml</Item>
@@ -405,6 +413,8 @@
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
+					<Item>{goryeo}data/constructibles.xml</Item>
+					<Item>{goryeo}data/constructibles-gameeffects.xml</Item>
 					<Item>{goryeo}data/progression-trees-culture-unique.xml</Item>
 					<Item>{goryeo}data/progression-trees-culture-unique-mo.xml</Item>
 				</UpdateDatabase>
@@ -414,6 +424,8 @@
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
+					<Item>{iceland}data/constructibles.xml</Item>
+					<Item>{iceland}data/constructibles-gameeffects.xml</Item>
 					<Item>{iceland}data/progression-trees-culture-unique.xml</Item>
 					<Item>{iceland}data/progression-trees-culture-unique-mo.xml</Item>
 					<Item>{iceland}data/civilizations-gameeffects.xml</Item>
@@ -424,6 +436,8 @@
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
+					<Item>{joseon}data/constructibles.xml</Item>
+					<Item>{joseon}data/constructibles-gameeffects.xml</Item>
 					<Item>{joseon}data/progression-trees-culture-unique.xml</Item>
 				</UpdateDatabase>
 			</Actions>
@@ -432,6 +446,8 @@
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
+					<Item>{ottomans}data/constructibles.xml</Item>
+					<Item>{ottomans}data/constructibles-gameeffects.xml</Item>
 					<Item>{ottomans}data/progression-trees-culture-unique.xml</Item>
 					<Item>{ottomans}data/progression-trees-culture-unique-ex.xml</Item>
 				</UpdateDatabase>
@@ -441,6 +457,8 @@
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
+					<Item>{pirate-republic}data/constructibles.xml</Item>
+					<Item>{pirate-republic}data/constructibles-gameeffects.xml</Item>
 					<Item>{pirate-republic}data/progression-trees-culture-unique.xml</Item>
 					<Item>{pirate-republic}data/progression-trees-culture-unique-mo.xml</Item>
 					<Item>{pirate-republic}data/civilizations-gameeffects.xml</Item>
@@ -451,6 +469,8 @@
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
+					<Item>{qajar}data/constructibles.xml</Item>
+					<Item>{qajar}data/constructibles-gameeffects.xml</Item>
 					<Item>{qajar}data/progression-trees-culture-unique.xml</Item>
 					<Item>{qajar}data/progression-trees-culture-unique-ex.xml</Item>
 					<Item>{qajar}data/civilizations-gameeffects.xml</Item>
@@ -461,6 +481,8 @@
 			<Properties><LoadOrder>650</LoadOrder></Properties>
 			<Actions>
 				<UpdateDatabase>
+					<Item>{sengoku}data/constructibles.xml</Item>
+					<Item>{sengoku}data/constructibles-gameeffects.xml</Item>
 					<Item>{sengoku}data/progression-trees-culture-unique.xml</Item>
 					<Item>{sengoku}data/progression-trees-culture-unique-mo.xml</Item>
 					<Item>{sengoku}data/civilizations-gameeffects.xml</Item>

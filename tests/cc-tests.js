@@ -725,17 +725,25 @@
   };
   CC.missingContent = function () {
     const r = { checks: {} };
+    // Wonder -> the tech or civic that unlocks it for everyone (vanilla's general unlock, data/3-merge/30-buildings.sql).
+    // A civ-pack wonder is also unlocked by its own civ's civic tree; that one alone is not enough.
     const dlc = { "asia-wonders": ["WONDER_GRAND_BAZAAR", "WONDER_WAT_XIENG_THONG", "WONDER_UBUDIAH_MOSQUE"],
       "japan-korea-wonders": ["WONDER_NIRAYAMA_REVERBERATORY_FURNACE"], "water-wonders": ["WONDER_NAN_MADOL"],
-      "bulgaria": ["WONDER_RILA_MONASTERY"], "shawnee-tecumseh": ["WONDER_SERPENT_MOUND"],
-      "great-britain": ["WONDER_BATTERSEA_POWER_STATION"], "nepal": ["WONDER_BOUDHANATH"] };
-    const active = new Set((Modding.getActiveMods?.() || []).map((m) => (typeof m === "object" ? m.id : m)));
+      "bulgaria": [["WONDER_RILA_MONASTERY", "NODE_TECH_EX_HERALDRY"]], "shawnee-tecumseh": [["WONDER_SERPENT_MOUND", "NODE_TECH_EX_ASTRONOMY"]],
+      "great-britain": [["WONDER_BATTERSEA_POWER_STATION", "NODE_TECH_MO_ELECTRICITY"]], "nepal": [["WONDER_BOUDHANATH", "NODE_CIVIC_MO_MAIN_NATIONALISM"]],
+      "dai-viet": [["WONDER_THANH_HUE", "NODE_TECH_EX_CASTLES"]], "england": [["WONDER_GLOBE_THEATRE", "NODE_CIVIC_EX_MAIN_SOVEREIGNTY"]],
+      "goryeo": [["WONDER_BUSEOKSA", "NODE_CIVIC_EX_MAIN_INSPIRATION"]], "iceland": [["WONDER_REYKHOLT", "NODE_CIVIC_EX_MAIN_SOCIETY"]],
+      "sengoku": [["WONDER_HIMEJI_CASTLE", "NODE_TECH_EX_CASTLES"]], "joseon": [["WONDER_HWASEONG", "NODE_CIVIC_MO_MAIN_SOCIAL_QUESTION"]],
+      "ottomans": [["WONDER_SULTANAHMET_CAMII", "NODE_CIVIC_MO_MAIN_MODERNIZATION"]], "qajar": [["WONDER_ERAM_GARDEN", "NODE_CIVIC_MO_MAIN_HEGEMONY"]],
+      "pirate-republic": [["WONDER_HAVANA_HARBOR", "NODE_TECH_EX_SHIPBUILDING"]] };
     r.wonders = {};
+    const unlocks = A(GameInfo.ProgressionTreeNodeUnlocks);
     for (const [pack, list] of Object.entries(dlc)) {
-      for (const w of list) {
+      for (const entry of list) {
+        const [w, want] = Array.isArray(entry) ? entry : [entry, null];
         const c = GameInfo.Constructibles.lookup(w);
-        const unlock = A(GameInfo.ProgressionTreeNodeUnlocks).find((u) => u.TargetType === w);
-        r.wonders[w] = c ? (c.Age + (unlock ? " @" + unlock.ProgressionTreeNodeType : " (no unlock)")) : "missing";
+        const unlock = unlocks.find((u) => u.TargetType === w && (!want || u.ProgressionTreeNodeType === want));
+        r.wonders[w] = c ? (c.Age + (unlock ? " @" + unlock.ProgressionTreeNodeType : ` (no unlock${want ? " at " + want : ""})`)) : "missing";
       }
     }
     const loaded = Object.values(r.wonders).filter((v) => v !== "missing");
