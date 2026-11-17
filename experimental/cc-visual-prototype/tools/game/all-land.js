@@ -5,18 +5,18 @@
 //
 // Runbook for one map size (Tiny 60x38, Small 74x46, Standard 84x54, Large 96x60, Huge 106x66):
 //   1. Start a fresh game of that size (any map script and seed) and close both start dialogs.
-//   2. Load tools/table-map.js, tools/street-probe.js and this file with execute_js_file.
+//   2. Load tools/game/table-map.js, tools/game/street-probe.js and this file with execute_js_file.
 //   3. CCAllLand.convert()            every water and mountain plot -> flat grassland, no feature
 //   4. CCAllLand.save("CC_AllLand_<size>"), then CCAllLand.load(...) and press Begin Game: the terrain art only
 //      rebuilds on load (before that the converted plots still draw as sea). Reveal the map, load the three
 //      scripts again.
-//   5. Load the known-coordinate mask: python tools/have_mask.py <size> <out.js>, then execute_js_file <out.js>
+//   5. Load the known-coordinate mask: python tools/analysis/have_mask.py <size> <out.js>, then execute_js_file <out.js>
 //      (sets globalThis._have; a size with no table yet gives an empty mask: every coordinate is new).
 //   6. CCTable.plan(); CCTable.run()  found cities and urban districts everywhere (CCTable.status() until "done";
 //      about 10 minutes for 150 cities), then SAVE AT ONCE: CCAllLand.save("CC_AllLand_<size>_Cities"). Founding is
 //      the slow step and the game can close during a long capture; with this save a lost game costs one load.
 //   7. CCAllLand.views()              keeps the camera views with 4 or more new coordinates (globalThis._views)
-//   8. Bare pass: CCTable.wood(false); start tools/capture-states.ps1 for views x 13 states, then
+//   8. Bare pass: CCTable.wood(false); start tools/game/capture-states.ps1 for views x 13 states, then
 //      CCStreetProbe.start(-1, _views, 6); afterwards CCAllLand.pack() for table_score.py.
 //      Save the pack text to a file at once (it needs this run's camera data, which a closed game loses; a re-run
 //      on the reloaded save gives the same views and positions). Forest pass: CCTable.wood(true) and the same again

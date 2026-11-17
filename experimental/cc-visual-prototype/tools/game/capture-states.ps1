@@ -1,4 +1,4 @@
-# Screenshots each street-probe state (tools/street-probe.js) for table_score.py. Run before CCStreetProbe.start;
+# Screenshots each street-probe state (tools/game/street-probe.js) for table_score.py. Run before CCStreetProbe.start;
 # usage: capture-states.ps1 -Out <folder> -States <views x 13> -TimeoutSec <s>. Nothing may cover the game window.
 param([string]$Out, [int]$States = 26, [int]$TimeoutSec = 200, [double]$Settle = 3.6)
 # Screenshots the primary screen once per probe state: the state number is read from the colour of the marker square

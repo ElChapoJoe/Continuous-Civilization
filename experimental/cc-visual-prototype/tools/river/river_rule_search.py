@@ -9,7 +9,7 @@ tables in the folder above. Kept for the river-height test planned for Tiny.
 import json, collections, sys, itertools
 import os
 N = os.path.dirname(os.path.abspath(__file__))  # river dumps live next to this script
-T = os.path.join(N, '..')  # street tables
+T = os.path.join(N, '..', 'data')  # street tables
 tb = {'A0': 0, 'B300': 0, 'A60': 1, 'B0': 1}
 def load(f):
     d = json.load(open(f)); return d['tiles'], set(d.get('rivers', []))

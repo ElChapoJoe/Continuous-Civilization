@@ -1,10 +1,10 @@
-"""Score a whole-map street-probe run (tools/table-map.js + street-probe.js with cityIndex -1).
+"""Score a whole-map street-probe run (tools/game/table-map.js + street-probe.js with cityIndex -1).
 
   python table_score.py <shots folder> <pack.txt> <radius_px> <out.json> [known.json ...]
 
 pack.txt is CCTable.pack() ("x,y,view,px,py;...") or CCTable.pack64() (pixel position in the game's client area, in that view).
 Writes {"x,y": [label, margin]} and prints a summary; known.json files ({"x,y": "A60", ...}) are compared.
-Same scoring as street_probe_score.py: fine detail (picture minus its blur), 100 * (1 - correlation).
+Scoring: fine detail (picture minus its blur), 100 * (1 - correlation).
 """
 import json
 import os

@@ -82,11 +82,11 @@
     if (set.less && LESS_CULTURES.some((c) => owned.has(c) || owned.has(c + "_EXP"))) return pick(set.less);
     return pick(set.plain);
   }
-  // Building lots read from the engine's own layout assets (tools/decode_layouts.py): the Herobuilding_A/B
+  // Building lots read from the engine's own layout assets (tools/extract/decode_layouts.py): the Herobuilding_A/B
   // attachment points of the urban and city-centre layouts, in tile units, with their turns in degrees.
   // The first building goes to A, the second to B.
   const LOTS = {
-    // Hero_Building_A / _B of the house layouts (tools/extract_layout_slots.py). Pattern B's are the same in its
+    // Hero_Building_A / _B of the house layouts (tools/extract/extract_layout_slots.py). Pattern B's are the same in its
     // full and "Less" layouts once the Less attachment's -60 degree turn is applied.
     urban: {
       1: { A: [{ x: 0.120, y: 0.245, turn: 330 }, { x: -0.214, y: -0.086, turn: 0 }],
@@ -149,16 +149,6 @@
       "Vacant_Hero_Building_Plot_04", "Vacant_Hero_Building_Plot_05"],
     2: ["Vacant_Hero_Building_Plot_MOD_01", "Vacant_Hero_Building_Plot_MOD_02"],
   };
-  // Street eraser. The engine picks one of five Antiquity street patterns per urban tile (A or B, some turned
-  // 60 degrees) in compiled code we can't read, so on most tiles its ground streets don't match ours, and the
-  // clip doesn't hide ground decals. This high-priority dirt patch paints over every lower decal: three copies
-  // turned 0/60/120 at this size cover the inside of the hex and leave the street ring along its edges, which all
-  // five patterns share. Our own street decals are covered too, so the inside becomes one block for our models.
-  const ERASER = "EXP_Decal_Patch_DirtRectangle_A_highPrio";
-  const ERASER_SCALE = 2.2;
-  // Off by default: the only high-priority patches in the game are sand-coloured dirt, which takes the ground
-  // further from vanilla (grey paving in Modern, streets in Exploration). Kept as a switch for testing.
-  let erase = false;
   /** The directions (0-5) whose edge faces water, a mountain, a cliff or the map's end. */
   function roughEdges(loc) {
     const out = [];
@@ -348,7 +338,6 @@
               parts.push([model, at, 1, turn(land + 120)]);
             });
           } else {
-            if (erase) for (const a of [0, 60, 120]) parts.push([ERASER, ZERO, ERASER_SCALE, a]);
             const { pattern, angle } = streetPick(loc, age);
             parts.push([layout.street[pattern], ZERO, 1, angle]);
             const houses = pickLayout(layout.houses[pattern], loc, owned, Math.abs(seed));
@@ -489,7 +478,6 @@
   globalThis.CCVisualOverlay = {
     rebuild: () => { reset(); rebuild(); return current.size; },
     reset, personalAge, count: () => current.size,
-    setErase: (on) => { erase = !!on; reset(); rebuild(); return erase; },
     tile: (x, y) => current.get(x + "," + y) || null,
     resolve, buildingModel,
   };

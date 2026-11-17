@@ -1,4 +1,4 @@
-"""Compare the same city tiles in two games (vanilla vs our overlay), tile by tile, from tools/layout-copy.js shots.
+"""Compare the same city tiles in two games (vanilla vs our overlay), tile by tile, from tools/game/layout-copy.js shots.
 
   python compare_tiles.py <shots A> <pack A> <shots B> <pack B> <out folder> [radius_px] [worst_n]
 

@@ -1,5 +1,5 @@
 // Whole-map street-table rig (debug console, TEST GAMES ONLY: it founds cities and districts everywhere).
-// Turns every usable land tile of the map into an urban district of the local player, so tools/street-probe.js can
+// Turns every usable land tile of the map into an urban district of the local player, so tools/game/street-probe.js can
 // read the street pattern of every coordinate from a high camera.
 //   CCTable.plan()          land tiles, chosen city centres (every land tile within 3 of a centre)
 //   CCTable.bounds = [x0, y0, x1, y1]   optional: only tiles inside this box (inclusive)

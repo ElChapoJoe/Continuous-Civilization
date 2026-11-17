@@ -8,10 +8,10 @@
 //                                improvements, all with the debug CREATE_ELEMENT operation (async; CCLayout.status())
 //   CCLayout.check(json)         tiles where this game differs from the layout (after apply, to prove the copy)
 //   CCLayout.shoot(views, s)     top-down shot of each view in turn ([[x, y, 0, height], ...], as CCTable.views),
-//                                with the same corner marker as street-probe.js, so tools/capture-states.ps1 saves one
+//                                with the same corner marker as street-probe.js, so tools/game/capture-states.ps1 saves one
 //                                screenshot per view; units and the interface hidden, nothing clipped or drawn
 //   CCLayout.pack()              after shoot(): "x,y,view,px,py;..." per city tile (its most central view), for
-//                                tools/compare_tiles.py
+//                                tools/analysis/compare_tiles.py
 //
 // Comparison recipe (one Age; see the prototype README "Current state"):
 //   1. Vanilla game (mods off) started in that Age on a Tiny map with a fixed map seed; build or play a few cities;

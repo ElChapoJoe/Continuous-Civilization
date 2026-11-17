@@ -23,11 +23,13 @@ Active again, on the `experiment/visual-overlay` branch. This section is the sho
 
 **Tiny vs vanilla (2026-11-17, `sandbox-shots/58-*`, `59-*`, vanilla left):** palace squares now match vanilla in both Ages (a capital that also had a City Hall drew the City Hall in the palace slot: fixed). Still different: some buildings use another of their bin's equal variants than vanilla (the large grey block in shot 58 is `MED_ROM_Arena` where vanilla drew `MID_ABB_Arena`; the Guildhall's Mongolian model is the same case): the engine picks among those per tile (round 59); harbour buildings sit further out to sea than vanilla's, with a longer pier; vanilla paves more of its streets (grey cobbles in Exploration, asphalt in Modern) where ours show the sandy Antiquity ground; some tiles have fewer houses than vanilla; 
 
-**Next, in order (Tiny):** the harbour and street-paving differences above; the engine's per-tile pick among equal building variants (a measured table per building, if worth it); rural tiles (variant and turn per tile); then a second comparison game. Then the other map sizes (Standard: forest pass of `CC_AllLand9009_Cities`, steps in `C:\Users\imzth\CivStreetShots\README.txt`). Vanilla runs: park both mods outside the Mods folder; vanilla Modern crashes when founding more than about 95 cities, so do halves (`CCTable.bounds`).
+**Next, in order (Tiny):** the harbour and street-paving differences above (the game's only high-priority ground patches are sand-coloured dirt, round 38: the street eraser built on them was removed, so paving needs another way, e.g. a later-Age decal or model drawn over the ground); the engine's per-tile pick among equal building variants (a measured table per building, if worth it); rural tiles (variant and turn per tile); then a second comparison game. Then the other map sizes (Standard: forest pass of `CC_AllLand9009_Cities`, steps in `C:\Users\imzth\CivStreetShots\README.txt`). Vanilla runs: park both mods outside the Mods folder; vanilla Modern crashes when founding more than about 95 cities, so do halves (`CCTable.bounds`).
 
-**Street table tools** (`tools/`): `all-land.js` (whole map turned into land, runbook in its header), `have_mask.py`, `table-map.js`, `street-probe.js`, `capture-states.ps1` (screenshots; nothing may cover the game window), `table_score.py`, `build_street_table.py`; `river/` holds the river courses, the rule search and the river-height test (`river-height.js` dumps terrain heights across river tiles, `river_height.py` checks whether the channel predicts the turn).
+**Folders:** `ui/` is the mod itself (copied into the game). `tools/game/` runs in the game's debug console (plus `capture-states.ps1`, which screenshots the window beside it); `tools/analysis/` runs offline on the screenshots and tables; `tools/extract/` reads the installed game's art files into `ui/`; `tools/data/` holds the measured street tables (`street-table-<size>-<seed>[-<age>].json`) and the reference city layout; `tools/river/` is the river-turn research; `sandbox-shots/` the screenshots the log refers to.
 
-**Vanilla comparison tools** (`tools/`): `layout-copy.js` (`CCLayout`: record a game's cities tile by tile, rebuild the same layout in another game on the same map, shoot the same views; recipe in its header) and `compare_tiles.py` (ranks the city tiles by how much the two games' pictures differ, writes a side-by-side sheet of the worst ones).
+**Street table tools:** `all-land.js` (whole map turned into land, runbook in its header), `have_mask.py`, `gap_mask.js` (plots still missing from an Age's layer), `table-map.js` (`CCTable`; `targetFilter` for gap runs, `bounds` for halves), `street-probe.js` (`CCStreetProbeStreets` for another Age's roads), `capture-states.ps1` (screenshots; nothing may cover the game window), `table_score.py` (`CC_STREETS=1` for Modern's single road), `merge_passes.py`, `build_street_table.py` (Antiquity tables `street-table-<size>-<seed>.json`, later Ages `...-<seed>-exploration|modern.json`); `river/` holds the river courses, the rule search and the river-height test (`river-height.js` dumps terrain heights across river tiles, `river_height.py` checks whether the channel predicts the turn).
+
+**Vanilla comparison tools:** `layout-copy.js` (`CCLayout`: record a game's cities tile by tile, rebuild the same layout in another game on the same map, shoot the same views; recipe in its header) and `compare_tiles.py` (ranks the city tiles by how much the two games' pictures differ, writes a side-by-side sheet of the worst ones), `variant-check.js` (`CCVariant`: draw candidate models next to the engine's own to see which variant it picked). The seed and hash experiments of rounds 39-46 were removed in the 2026-11-17 cleanup (git history has them).
 
 ## How it works
 For every city-centre, urban and (in Modern) rural tile of a player whose personal Age is later than Antiquity:
@@ -49,14 +51,14 @@ All generated from the installed game's art packages (`Base/Platforms/Windows/BL
 
 | Tool | Writes | What |
 |---|---|---|
-| `tools/extract_building_art.py` | `ui/cc-building-art.js` | Which art bin each building uses, and per bin the model for each building culture and Age (32-byte bin records, FNV-1a model hashes, string-table indexes) |
-| `tools/extract_layout_slots.py` | `ui/cc-layout-slots.js` | The attachment slots of the house layouts: model, position, turn, scale per slot (40-byte transform record before each slot's name record) |
-| `tools/decode_layouts.py LAYOUT_NAME` | (prints) | The slots of any layout, for checking |
+| `tools/extract/extract_building_art.py` | `ui/cc-building-art.js` | Which art bin each building uses, and per bin the model for each building culture and Age (32-byte bin records, FNV-1a model hashes, string-table indexes) |
+| `tools/extract/extract_layout_slots.py` | `ui/cc-layout-slots.js` | The attachment slots of the house layouts: model, position, turn, scale per slot (40-byte transform record before each slot's name record) |
+| `tools/extract/decode_layouts.py LAYOUT_NAME` | (prints) | The slots of any layout, for checking |
 
-`tools/sandbox.js` (`CCSandbox`) and `tools/bench.js` (`CCBench`) are debug-console helpers for test games: placing buildings, granting techs, framing top-down shots. They change the game state and are not part of the mod.
+`tools/game/sandbox.js` (`CCSandbox`) and `tools/game/bench.js` (`CCBench`) are debug-console helpers for test games: placing buildings, granting techs, framing top-down shots. They change the game state and are not part of the mod.
 
 ## Debug switches
-From the debug console: `CCVisualOverlay.rebuild()`, `.reset()` (engine art back), `.tile(x, y)` (what is drawn on a tile), `.setErase(true|false)` (the street eraser test), `.personalAge(player)`.
+From the debug console: `CCVisualOverlay.rebuild()`, `.reset()` (engine art back), `.tile(x, y)` (what is drawn on a tile), `.personalAge(player)`.
 
 ## Practical notes
 - **Changing the modinfo needs a full game restart**; `UI.reloadUI()` re-reads scripts but not the script list.

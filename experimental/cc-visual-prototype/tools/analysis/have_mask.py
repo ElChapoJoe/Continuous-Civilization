@@ -2,9 +2,9 @@
 
   python have_mask.py <tiny|small|standard|large|huge> <out.js> [min_margin]
 
-Reads every street-table-<size>-*.json in this folder. A coordinate counts as measured when some map labelled it off
+Reads every street-table-<size>-*.json in tools/data. A coordinate counts as measured when some map labelled it off
 that map's rivers with both the bare and the wooded margin at least min_margin (default 2.5). Used by
-tools/all-land.js to keep only camera views with new coordinates.
+tools/game/all-land.js to keep only camera views with new coordinates.
 """
 import glob
 import json
@@ -17,7 +17,7 @@ MIN = float(sys.argv[3]) if len(sys.argv) > 3 else 2.5
 w, h = SIZES[size]
 here = os.path.dirname(os.path.abspath(__file__))
 have = set()
-for path in sorted(glob.glob(os.path.join(here, f"street-table-{size}-*.json"))):
+for path in sorted(glob.glob(os.path.join(here, "..", "data", f"street-table-{size}-*.json"))):
     table = json.load(open(path))
     rivers = set(table.get("rivers", []))
     for k, v in table["tiles"].items():
