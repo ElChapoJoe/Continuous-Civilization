@@ -36,7 +36,9 @@
     group.clear();
     if (cand && PER) for (const t of tiles) {
       const c = t.cands && t.cands[cand[1]];
-      if (c) group.addModelAtPlot(c[0], { x: t.x, y: t.y }, { x: 0, y: 0, z: 0 }, { placement: T, angle: c[1] });
+      // An entry is [model, angle], or several pieces [[model, {x, y, z}, scale, angle], ...] (tile units).
+      if (c && Array.isArray(c[0])) for (const [m, at, s, a] of c) group.addModelAtPlot(m, { x: t.x, y: t.y }, at, { placement: T, scale: s, angle: a });
+      else if (c) group.addModelAtPlot(c[0], { x: t.x, y: t.y }, { x: 0, y: 0, z: 0 }, { placement: T, angle: c[1] });
     } else if (cand) for (const t of tiles) group.addModelAtPlot(STREETS[cand[0]], { x: t.x, y: t.y }, { x: 0, y: 0, z: 0 }, { placement: T, angle: cand[1] });
     marker.style.backgroundColor = `rgb(${10 + (k % 60) * 4}, ${Math.floor(k / 60) * 3}, 255)`;   // state = (r - 10) / 4 + 60 * g / 3
   }

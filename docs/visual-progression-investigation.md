@@ -815,3 +815,12 @@ New read-only tools: `tools/extract/asset_names.py` (every asset name in Civ VII
 | `MED_ROM_Arena_Decal` at 1, last | no visible change (the same decal shows fully opaque under a real Arena) |
 
 So ground decals drawn on the overlay's tiles barely show, whatever their order or size, while the same decals show on clipped tiles without the overlay and under the engine's own buildings. The engine's city ground of the game's Age seems to win over script-drawn decals on city tiles. Paving needs something other than a decal (a flat model, or a building whose own ground decal the engine draws); left open. Other ground decals found on the way: `Decal_RomanForum_Floor_Pattern`, `MED_SPN_Temple_Decal`, `MED_SPN_Bank_Decal`, `EEU_EXP_Palace_Decal`, `GEN_MOD_Vacant_02_Decal`.
+
+## Round 65 (2026-11-17): the Exploration house variant follows the tile's second street bit
+
+House-layout probe again (round 63), on the vanilla Exploration all-land save, 12 close views (height 300), with each candidate now drawn as the overlay draws it: the house layout at the street's turn plus the vacant-plot piece in both building lots (`street-probe.js` candidates may be several pieces). Candidates: the plain layout and its `_VAR_A`.
+
+- Absolute match is still weak (distances about 94; the house slots are themselves bins with per-slot variants), but the decision is stable: the same winner at window radius 120 and 90 on 181 of 204 tiles (47 of 47 where both are clear), and on 43 of 52 tiles shared with round 63's run.
+- **Street pattern A: the variant equals the tile's wooded-street A/B pick** (the second A/B bit of `CCStreetTable`): wooded A -> the plain `LAYOUT_CTY_EXP_Hex_Section_AB`, wooded B -> `_AB_VAR_A`, on **104 of 104** tiles (no ratio threshold needed). The Exploration turn, the Antiquity and Modern turns and coordinate parity each split about 50/50.
+- Pattern B: no signal (its two layouts look alike from above); the overlay keeps its own pick there.
+- So the engine reuses one per-tile bit for the street layout of wooded tiles and the house variant of bare tiles. The overlay now picks Exploration pattern-A house layouts this way (deployed, not yet looked at in game).

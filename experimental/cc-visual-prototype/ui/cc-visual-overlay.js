@@ -342,7 +342,14 @@
           } else {
             const { pattern, angle } = streetPick(loc, age);
             parts.push([layout.street[pattern], ZERO, 1, angle]);
-            const houses = pickLayout(layout.houses[pattern], loc, owned, Math.abs(seed));
+            // Exploration pattern A: the engine picks the plain layout or its _VAR_A by the tile's wooded-street A/B
+            // bit (A -> plain, B -> _VAR_A; 104 of 104 tiles, round 65). Pattern B's pick is not known yet.
+            let houseSeed = Math.abs(seed);
+            if (age === 1 && pattern === "A") {
+              const w = globalThis.CCStreetTable?.lookupAge?.(1, loc.x, loc.y, true);
+              if (w) houseSeed = w.street === "A" ? 0 : 1;
+            }
+            const houses = pickLayout(layout.houses[pattern], loc, owned, houseSeed);
             const houseTurn = (LAYOUT_TURN[houses] || 0) + angle;
             // Next to a cliff, water or a mountain the engine leaves out the house slots nearest that edge (they
             // would stand on the rocks or the beach). Draw such tiles slot by slot from the engine's own slot table
