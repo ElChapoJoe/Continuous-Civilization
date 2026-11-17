@@ -23,7 +23,9 @@ Active again, on the `experiment/visual-overlay` branch. This section is the sho
 
 **Next, in order:** forest pass of the Standard all-land run (save `CC_AllLand9009_Cities`; the bare-pass shots are in the session's temp folder) and its table; the overlay change tested in game; then the Tiny plan above.
 
-**Street table tools** (`tools/`): `all-land.js` (whole map turned into land, runbook in its header), `have_mask.py`, `table-map.js`, `street-probe.js`, `capture-states.ps1` (screenshots; nothing may cover the game window), `table_score.py`, `build_street_table.py`; `river/` holds the river courses and the rule search.
+**Street table tools** (`tools/`): `all-land.js` (whole map turned into land, runbook in its header), `have_mask.py`, `table-map.js`, `street-probe.js`, `capture-states.ps1` (screenshots; nothing may cover the game window), `table_score.py`, `build_street_table.py`; `river/` holds the river courses, the rule search and the river-height test (`river-height.js` dumps terrain heights across river tiles, `river_height.py` checks whether the channel predicts the turn).
+
+**Vanilla comparison tools** (`tools/`): `layout-copy.js` (`CCLayout`: record a game's cities tile by tile, rebuild the same layout in another game on the same map, shoot the same views; recipe in its header) and `compare_tiles.py` (ranks the city tiles by how much the two games' pictures differ, writes a side-by-side sheet of the worst ones).
 
 ## How it works
 For every city-centre, urban and (in Modern) rural tile of a player whose personal Age is later than Antiquity:
