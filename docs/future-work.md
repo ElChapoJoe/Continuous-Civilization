@@ -48,3 +48,25 @@ has a full tile with an older building, move it there. Needs an autoplay to conf
 ### Smaller
 
 - Multiplayer is untested (`DESTROY_ELEMENT`/`CREATE_ELEMENT` may be refused there).
+
+## Known limitations: findings (2026-11-17)
+
+### Later-Age unique Settler, Scout, Merchant and Commander from the start
+Vanilla gives these replacements (Sokeman, Zamindar, Noyan, Mwami, Chasqui, Mandarin, Tajiro, Hangshang) no unlock:
+the civ has them from its own start. `40-units.sql` step 3 already gates them at Machinery / Military Science with
+their trait, and they are still trainable on turn 1, so the engine ignores a replacement's own unlock (`Units` has no
+requirement column either). What they change: Sokeman and Zamindar carry one trait effect each
+(`TRAIT_MOD_SOKEMAN_WALLS`, `TRAIT_MOD_ZAMINDAR_POPULATION_BONUS`, could be gated by personal Age); Noyan and Chasqui
+have 4 moves and 4 sight instead of 2; Tajiro is cheaper (30) and Hangshang dearer (140); Mwami and Mandarin are
+identical to the base unit. The other lever, dropping the `UnitReplaces` row, would leave the civ both units after
+the tech. Low value: the civ is played from turn 1, as in vanilla's own Age.
+
+### AI town purchases before the tech
+`EFFECT_ADJUST_TOWN_CAN_PURCHASE_TAGGED_CONSTRUCTIBLES` (argument `ConstructibleTag`: CULTURE, MILITARY, SCIENCE,
+FOOD, GOLD, ...) lets a town buy every building of that tag, locked or not; `ui/cc-age-ui.js` blocks it for the local
+player only. Data fix in the style of `81-age-scaled-bonuses.sql`: per-Age copies of each tag (`CC_<TAG>_AQ/EX/MO` by
+the building's original Age), the original modifier switched to the Antiquity tag, and two copies for the Exploration
+and Modern tags switched on by personal Age. Used by leader traits (Augustus; owner = player, works like 81) and by
+town-focus projects (`ProjectModifiers`, COLLECTION_OWNER: owner = the city). Open question for a game test: does
+`REQUIREMENT_PLAYER_HAS_COMPLETED_PROGRESSION_TREE_NODE` (inside the personal-Age sets) test the city's owner when the
+modifier belongs to a city? Vanilla never uses it that way. Also in DLC civ traits (Carthage, England, Gaul, Joseon).
