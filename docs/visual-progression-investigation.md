@@ -771,3 +771,13 @@ Vanilla **Small** maps (map seed 6006, pangaea, the only player), cities only on
 - With rounds 46 and 53 (Antiquity turn shared by Tiny, Small and Standard): per urban tile the engine picks **an A/B street layout per map size** (bare and wooded separately, the same in every Age) and **a turn per Age that depends on the coordinate only**.
 - `build_street_table.py` rebuilt on this: one A/B layer pair per map size (from every Antiquity and Exploration table of that size) and one turn layer per Age on a 106 x 66 grid (the Huge map). Where maps disagree the majority wins with at least twice the votes, else the value stays unknown (15 Antiquity turn disagreements, all involving the oldest Tiny table, which has no river list; 3 left unknown). Against the previous table: identical on every Exploration and Modern value and on Small and Standard; 23 Tiny Antiquity turns now follow the majority of the other maps.
 - Coverage gained without new measuring: Small now has Exploration streets on 3,160 and Modern streets on 4,450 tile readings (bare plus wooded), Standard 2,715 and 4,450 (before: none). Still needed per size: the A/B layer for its unmeasured coordinates, and the turns outside 60 x 38 for Exploration and Modern (one all-land run on the largest map measures them for every size).
+
+## Round 61 (2026-11-17): a full AI game with the overlay
+
+Modded game (continuous-civ and the prototype), **Small** pangaea, map seed 7777, six civs, the local player's map revealed, AI autoplay for 300 turns (`CCDev.autoplay(300)`, observing as player 0). Logged every 2 minutes: turn, each civ's personal Age and city count, tiles drawn, time of a full `CCVisualOverlay.rebuild()`, overlay errors in UI.log.
+
+- **No crash and no overlay error** in 300 turns.
+- Personal Ages diverged as intended: first Exploration city at turn ~130; at turn 226 America Modern while the others were in Exploration; all surviving civs Modern by turn 260.
+- **Cost**: a full rebuild (every tile cleared and drawn again) took 6 ms for 12 tiles, 38 ms for 103, 65 ms for 248, 83 ms for 345: about 0.25 ms per tile, so redrawing is not a performance problem on a Small map. (Normal turns only redraw changed tiles.)
+- Shot `sandbox-shots/60-autoplay-modern-ai-city.png` (America at turn 301): Modern buildings, squares and palace area in place; walls and wonders left to the engine; the known gaps (sandy unpaved ground, thinner house blocks on some tiles) show here too. Save `CC_Visual_Autoplay_Small_T301`.
+- The deployed street table during this game was the one before round 60's restructure (same Tiny values; Small had no Exploration/Modern layer yet), so on this map most tiles used the Antiquity fallback.
