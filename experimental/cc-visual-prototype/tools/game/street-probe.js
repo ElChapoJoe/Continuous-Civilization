@@ -86,7 +86,7 @@
     let k = 0;
     show(0);
     lastError = null;
-    timer = setInterval(() => {
+    advance = () => {
       try {
         record();
         k++;
@@ -95,9 +95,14 @@
       } catch (e) {
         lastError = String(e && e.stack || e);
       }
-    }, seconds * 1000);
+    };
+    // globalThis.CCProbeManual: no timer; the screenshot side calls CCStreetProbe.next() after each shot
+    // (tools/pipeline/civ.mjs captureFast).
+    if (globalThis.CCProbeManual) return `started (manual): ${tiles.length} tiles, ${total} states`;
+    timer = setInterval(advance, seconds * 1000);
     return `started: ${tiles.length} tiles, ${total} states, ${total * seconds} s`;
   }
+  let advance = () => {};
 
   function stop(done) {
     if (timer) clearInterval(timer);
@@ -115,7 +120,7 @@
   }
 
   globalThis.CCStreetProbe = {
-    start, stop,
+    start, stop, next: () => { advance(); return state; },
     info: () => JSON.stringify({ state, lastError, w: window.innerWidth, h: window.innerHeight, cands: CANDS, tiles, pos }),
   };
   return "CCStreetProbe ready";

@@ -13,7 +13,9 @@
 //     --seconds 8        per state (models need a moment to load)
 //     --radius R         scoring window in pixels (default 120 close, 46 wide)
 //     --out DIR          default CivStreetShots/probe-<cands>-<save>
+//     --fast             screenshots drive the probe (shot when the picture settles; untested)
 //     --dry              print the plan only
+// Writes a journal to CivStreetShots/runs; a game crash restarts the game and repeats the passes from the save.
 // Writes <out>/result.json ({"x,y": [best, ratio, [distance per candidate]]}) and prints how often each candidate won.
 import fs from "node:fs";
 import path from "node:path";
@@ -45,25 +47,35 @@ async function main() {
   C.log(`probe ${saveName} with ${candsFile}${vanilla ? " (vanilla)" : ""}, views ${viewsSpec}, ${seconds} s per state, radius ${radius} -> ${OUT}`);
   if (flag("dry")) return;
   fs.mkdirSync(OUT, { recursive: true });
-  await C.withSetup(vanilla, async () => {
-    await C.restartGame();
-    await C.load(saveName);
-    const info = JSON.parse(await prepare());
-    C.log("views", info.views, "candidates", info.n, info.labels ? info.labels.join(", ") : "");
-    // pass 1: the engine's own picture, one state per view
-    await C.js(`(globalThis.CCProbeNoClip = true, globalThis.CCProbeBaseOnly = true, 'engine pass')`);
-    C.log(await C.jsFile(path.join(C.GAME, "street-probe.js")));
-    const eng = await C.capture(path.join(OUT, "engine"), info.views, () => C.js(`CCStreetProbe.start(-1, _views, ${seconds})`));
-    // pass 2: city tiles clipped, each candidate alone
-    await C.js(`(globalThis.CCProbeNoClip = false, globalThis.CCProbeBaseOnly = false, 'candidate pass')`);
-    C.log(await C.jsFile(path.join(C.GAME, "street-probe.js")));
-    const per = info.n + 1;
-    const cand = await C.capture(path.join(OUT, "candidates"), info.views * per, () => C.js(`CCStreetProbe.start(-1, _views, ${seconds})`));
-    const pack = path.join(OUT, "pack.txt");
-    fs.writeFileSync(pack, await C.js(`CCTable.pack()`, 60000));
-    const result = path.join(OUT, "result.json");
-    C.log((await C.run(C.PY, [path.join(C.ANALYSIS, "house_score.py"), eng, cand, pack, String(radius), String(per), result, "1"])).trim());
-    fs.writeFileSync(path.join(OUT, "info.json"), JSON.stringify({ save: saveName, cands: candsFile, vanilla, ...info, radius, seconds }, null, 1));
-  });
+  const shoot = (dir, states) => (flag("fast") ? C.captureFast : C.capture)(dir, states, () => C.js(`CCStreetProbe.start(-1, _views, ${seconds})`));
+  await C.journalStart(`probe-${path.basename(candsFile, ".js")}`, process.argv.slice(2));
+  try {
+    await C.withSetup(vanilla, async () => {
+      await C.restartGame();
+      // A crash restarts the game and repeats the passes from the save (they don't change the game).
+      await C.withRecovery("probe", async () => {
+        await C.load(saveName);
+        const info = JSON.parse(await prepare());
+        C.log("views", info.views, "candidates", info.n, info.labels ? info.labels.join(", ") : "");
+        C.journalNote(`views ${info.views}, candidates ${info.n}`);
+        // pass 1: the engine's own picture, one state per view
+        await C.js(`(globalThis.CCProbeNoClip = true, globalThis.CCProbeBaseOnly = true, 'engine pass')`);
+        C.log(await C.jsFile(path.join(C.GAME, "street-probe.js")));
+        const eng = await shoot(path.join(OUT, "engine"), info.views);
+        // pass 2: city tiles clipped, each candidate alone
+        await C.js(`(globalThis.CCProbeNoClip = false, globalThis.CCProbeBaseOnly = false, 'candidate pass')`);
+        C.log(await C.jsFile(path.join(C.GAME, "street-probe.js")));
+        const per = info.n + 1;
+        const cand = await shoot(path.join(OUT, "candidates"), info.views * per);
+        const pack = path.join(OUT, "pack.txt");
+        fs.writeFileSync(pack, await C.js(`CCTable.pack()`, 60000));
+        const result = path.join(OUT, "result.json");
+        const line = (await C.run(C.PY, [path.join(C.ANALYSIS, "house_score.py"), eng, cand, pack, String(radius), String(per), result, "1"])).trim();
+        C.log(line); C.journalResult("score", line);
+        fs.writeFileSync(path.join(OUT, "info.json"), JSON.stringify({ save: saveName, cands: candsFile, vanilla, ...info, radius, seconds }, null, 1));
+      }, async () => {});
+    });
+    C.journalEnd("done");
+  } catch (e) { C.journalEnd("failed: " + e.message); throw e; }
 }
 main().catch((e) => { console.error("FAILED:", e.message); process.exitCode = 1; });

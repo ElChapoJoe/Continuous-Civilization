@@ -167,6 +167,99 @@ export async function capture(dir, states, begin) {
   return dir;
 }
 
+// ---- crash recovery
+/** True while the game process exists. */
+export async function gameRunning() {
+  const out = await run("tasklist", ["/FI", "IMAGENAME eq Civ7_Win64_DX12_FinalRelease.exe", "/NH"]).catch(() => "");
+  return /Civ7_Win64/i.test(out);
+}
+/**
+ * Runs step(attempt); if it fails because the game crashed (the process is gone), restarts the game, calls
+ * restore(attempt) (load a checkpoint save) and tries again, up to `tries` times. Other failures are not retried.
+ */
+export async function withRecovery(name, step, restore, tries = 3) {
+  for (let attempt = 0; ; attempt++) {
+    try { return await step(attempt); } catch (e) {
+      const crashed = !(await gameRunning());
+      if (!crashed || attempt + 1 >= tries) throw new Error(`${name}: ${e.message}${crashed ? " (game crashed, out of retries)" : ""}`);
+      log(`${name}: the game crashed (${e.message}); restarting and resuming, try ${attempt + 2} of ${tries}`);
+      journalNote(`crash during ${name}, resumed`);
+      await restartGame();
+      await restore(attempt + 1);
+    }
+  }
+}
+
+// ---- run journal: one JSON file per run in CivStreetShots/runs, plus runs/latest.json while it runs
+const RUNS = path.join(SHOTS, "runs");
+let current = null;
+function writeJournal() {
+  if (!current) return;
+  fs.mkdirSync(RUNS, { recursive: true });
+  fs.writeFileSync(current.file, JSON.stringify(current.data, null, 1));
+  fs.writeFileSync(path.join(RUNS, "latest.json"), JSON.stringify(current.data, null, 1));
+}
+/** Starts the journal of a run: arguments, git commit, start time. */
+export async function journalStart(kind, argv) {
+  const commit = (await run("git", ["-C", REPO, "rev-parse", "--short", "HEAD"]).catch(() => "?")).trim();
+  const dirty = (await run("git", ["-C", REPO, "status", "--porcelain"]).catch(() => "")).trim().split("\n").filter(Boolean).length;
+  const stamp = new Date().toISOString().replace(/[:.]/g, "-").slice(0, 19);
+  current = { file: path.join(RUNS, `${stamp}-${kind}.json`),
+    data: { kind, argv, commit, uncommitted: dirty, start: new Date().toISOString(), status: "running", notes: [], results: {} } };
+  writeJournal();
+  return current.file;
+}
+export function journalNote(text) { if (current) { current.data.notes.push(`${new Date().toTimeString().slice(0, 8)} ${text}`); writeJournal(); } }
+export function journalResult(key, value) { if (current) { current.data.results[key] = value; writeJournal(); } }
+/** Ends the journal: "done" or "failed: <reason>", end time, minutes taken. */
+export function journalEnd(status) {
+  if (!current) return;
+  current.data.status = status; current.data.end = new Date().toISOString();
+  current.data.minutes = Math.round((Date.parse(current.data.end) - Date.parse(current.data.start)) / 60000);
+  writeJournal();
+  log("journal:", current.file, status);
+}
+
+// ---- fast capture: the screenshot side drives the probe (tools/game/capture-server.ps1)
+/**
+ * Like capture(), but the probe waits for each shot: a PowerShell helper samples the screen until the picture
+ * settles (moving water allowed), saves it, and the probe is told to go on (CCStreetProbe.next). Needs the probe
+ * started with globalThis.CCProbeManual = true.
+ */
+export async function captureFast(dir, states, begin, { minMs = 700, maxMs = 9000, still = 1.2 } = {}) {
+  fs.mkdirSync(dir, { recursive: true });
+  const srv = spawn("powershell", ["-ExecutionPolicy", "Bypass", "-File", path.join(GAME, "capture-server.ps1")], { stdio: ["pipe", "pipe", "inherit"] });
+  let buf = "", waiters = [];
+  srv.stdout.on("data", (d) => { buf += d; let i; while ((i = buf.indexOf("\n")) >= 0) { const line = buf.slice(0, i).trim(); buf = buf.slice(i + 1); waiters.shift()?.(line); } });
+  const ask = (cmd) => new Promise((r) => { waiters.push(r); srv.stdin.write(cmd + "\n"); });
+  try {
+    if ((await ask("hello")) !== "ready") throw new Error("capture server did not start");
+    await js(`(globalThis.CCProbeManual = true, 'manual')`);
+    log(await begin());
+    for (let k = 0; k < states; k++) {
+      await until(`(() => { const i = JSON.parse(CCStreetProbe.info()); return i.state === ${k} ? 1 : 0; })()`, `probe state ${k}`, 60000, 150);
+      const t0 = Date.now();
+      let prev = null;
+      while (true) {
+        const sig = (await ask("sample")).split(",").map(Number);
+        if (prev && Date.now() - t0 >= minMs) {
+          let d = 0; for (let j = 0; j < sig.length; j++) d += Math.abs(sig[j] - prev[j]);
+          if (d / sig.length < still || Date.now() - t0 > maxMs) break;
+        }
+        prev = sig;
+        await sleep(250);
+      }
+      await ask(`save ${path.join(dir, "s" + String(k).padStart(2, "0") + ".bmp")}`);
+      await js(`CCStreetProbe.next()`);
+    }
+    await until(`JSON.parse(CCStreetProbe.info()).state === 'done' ? 1 : 0`, "the probe", 60000, 500);
+  } finally {
+    try { srv.stdin.write("quit\n"); } catch { /* gone */ }
+    await js(`(globalThis.CCProbeManual = false, 'timer mode')`).catch(() => {});
+  }
+  return dir;
+}
+
 /** --name value / --flag arguments. */
 export function args(argv = process.argv.slice(2)) {
   const opt = (name, def) => { const i = argv.indexOf("--" + name); return i < 0 ? def : argv[i + 1]; };
