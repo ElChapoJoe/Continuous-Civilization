@@ -24,6 +24,28 @@
       if (usable(x, y) && (GameplayMap.getOwner(x, y) == -1 || GameplayMap.getOwner(x, y) == me())) targets.push([x, y]);
     }
     centres = Players.get(me()).Cities.getCities().map((c) => [c.location.x, c.location.y]);
+    // CCTable.targetFilter(x, y): optional; only those tiles become urban (a gap run for coordinates still missing).
+    // Centres are then picked greedily among the other land tiles, each covering as many uncovered targets as it can.
+    const tf = globalThis.CCTable && CCTable.targetFilter;
+    if (tf) {
+      const land = targets;
+      targets = land.filter((t) => tf(t[0], t[1]));
+      const isT = new Set(targets.map((t) => t[0] + "," + t[1]));
+      const cand = land.filter((t) => !isT.has(t[0] + "," + t[1]));
+      let open = targets.filter((t) => !centres.some((c) => dist(c, t) <= 3));
+      while (open.length) {
+        let best = null, bn = 0;
+        for (const c of cand) {
+          let n = 0;
+          for (const t of open) if (dist(c, t) <= 3) n++;
+          if (n > bn) { bn = n; best = c; }
+        }
+        if (!best) break;
+        centres.push(best);
+        open = open.filter((t) => dist(best, t) > 3);
+      }
+      return JSON.stringify({ targets: targets.length, centres: centres.length, uncovered: open.length });
+    }
     // CCTable.preferCentre(x, y): optional; such tiles are tried as city centres first (a second all-land run puts
     // its centres on coordinates already measured, so the unmeasured ones become urban tiles).
     const pref = globalThis.CCTable && CCTable.preferCentre;
