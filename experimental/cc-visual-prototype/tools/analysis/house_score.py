@@ -1,6 +1,6 @@
 """Score a per-tile candidate probe against the engine's own picture (house layouts, round 63).
 
-  python house_score.py <engine shots> <candidate shots> <pack.txt> <radius_px> <states per view> <out.json>
+  python house_score.py <engine shots> <candidate shots> <pack.txt> <radius_px> <states per view> <out.json> [engine states per view]
 
 Two runs of tools/game/street-probe.js with the same views and globalThis.CCProbeCands: the first with
 CCProbeNoClip (its state 0 of each view is the engine's own picture), the second with the tiles clipped, so state k
@@ -17,6 +17,7 @@ import numpy as np
 
 eng_dir, cand_dir, pack_path, radius, per, out_path = sys.argv[1:7]
 radius, per = int(radius), int(per)
+base_per = int(sys.argv[7]) if len(sys.argv) > 7 else per   # 1 when the engine pass only shot state 0 (probe.mjs)
 
 
 def load(folder, k):
@@ -64,7 +65,7 @@ for t in tiles:
 out = {}
 for v, ts in sorted(by_view.items()):
     try:
-        base = load(eng_dir, v * per)
+        base = load(eng_dir, v * base_per)
         cands = [load(cand_dir, v * per + k) for k in range(1, per)]
     except FileNotFoundError:
         print("view %d incomplete, skipped" % v)

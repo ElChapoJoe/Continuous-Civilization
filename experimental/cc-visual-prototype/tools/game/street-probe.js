@@ -19,7 +19,9 @@
   // angle], ...] with n entries }. State k draws each tile's entry k - 1. With globalThis.CCProbeNoClip the engine's
   // own art stays visible, so the candidate that changes the picture least is the one the engine drew.
   const PER = globalThis.CCProbeCands;
-  if (PER) for (let i = 0; i < PER.n; i++) CANDS.push([-1, i]);
+  // globalThis.CCProbeBaseOnly: only state 0 per view (the engine pass of tools/pipeline/probe.mjs).
+  if (globalThis.CCProbeBaseOnly) { /* CANDS stays [null] */ }
+  else if (PER) for (let i = 0; i < PER.n; i++) CANDS.push([-1, i]);
   else for (let s = 0; s < STREETS.length; s++) for (let a = 0; a < 360; a += 60) CANDS.push([s, a]);
   let lastError = null;
   let timer = null, group = null, marker = null, hidden = [], cam = false, tiles = [], pos = {}, state = -1, views = [];
