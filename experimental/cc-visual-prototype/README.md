@@ -21,7 +21,7 @@ Active again, on the `experiment/visual-overlay` branch. This section is the sho
 
 **Known limits:** the engine's Antiquity ground paint can't be removed, only matched; navigable-river tiles are left to the engine (the clip can't hide their houses); walls and wonders are left to the engine; spline pieces (topiary, fence rails) draw nothing when placed alone (not yet tried: placing their segments one by one, `addModelBetweenPlots`).
 
-**Next, in order:** forest pass of the Standard all-land run (save `CC_AllLand9009_Cities`; the bare-pass shots are in the session's temp folder) and its table; the overlay change tested in game; then the Tiny plan above.
+**Next, in order:** forest pass of the Standard all-land run (save `CC_AllLand9009_Cities`; the bare-pass shots and the exact known-coordinate mask are in `C:\Users\imzth\CivStreetShots`, whose README has the steps) and its table; the overlay change tested in game; then the Tiny plan above.
 
 **Street table tools** (`tools/`): `all-land.js` (whole map turned into land, runbook in its header), `have_mask.py`, `table-map.js`, `street-probe.js`, `capture-states.ps1` (screenshots; nothing may cover the game window), `table_score.py`, `build_street_table.py`; `river/` holds the river courses, the rule search and the river-height test (`river-height.js` dumps terrain heights across river tiles, `river_height.py` checks whether the channel predicts the turn).
 
