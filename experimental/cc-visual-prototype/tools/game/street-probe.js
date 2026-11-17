@@ -68,7 +68,9 @@
     tiles = [];
     for (const d of list) {
       const id = d && d.id;
-      if (!d || (d.type !== DistrictTypes.URBAN && d.type !== DistrictTypes.CITY_CENTER)) continue;
+      // globalThis.CCProbeRural: rural tiles instead (rural improvement probe, tools/game/cands/rural-mod.js).
+      if (globalThis.CCProbeRural ? (!d || d.type !== DistrictTypes.RURAL)
+        : (!d || (d.type !== DistrictTypes.URBAN && d.type !== DistrictTypes.CITY_CENTER))) continue;
       tiles.push({ x: d.location.x, y: d.location.y, did: id.id, centre: d.type === DistrictTypes.CITY_CENTER,
         cons: d.getConstructibleIds().map((c) => c.id) });
     }

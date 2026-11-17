@@ -8,6 +8,7 @@
 //     --cands FILE       debug-console script that sets globalThis.CCProbeCands = { n, labels?, of(tile) } (see
 //                        tools/game/street-probe.js) and does any setup; it can use CCStreetTable and CCTable
 //     --vanilla          park both mods for the run (restored at the end)
+//     --pre A.js,B.js    console scripts to load before the candidate file (e.g. tools/game/rural-map.js)
 //     --views close:12   N close views (camera height 300) spread over the city tiles; "wide" = the whole-map views
 //                        at height 900 (default close:12)
 //     --seconds 8        per state (models need a moment to load)
@@ -32,13 +33,16 @@ const viewsSpec = opt("views", "close:12"), wide = viewsSpec === "wide";
 const radius = Number(opt("radius", wide ? 46 : 120));
 const OUT = opt("out", path.join(C.SHOTS, `probe-${path.basename(candsFile, ".js")}-${saveName}`));
 
-const VIEWS = wide ? `JSON.parse(CCTable.views(900, 16, 6))`
-  : `(() => { const all = JSON.parse(CCTable.views(300, 6, 2)), n = ${Number(viewsSpec.split(":")[1] || 12)}, out = [];
+// A candidate file may set globalThis.CCProbeViews(height, dx, dy) for tiles other than urban ones (rural-mod.js).
+const viewsOf = `(globalThis.CCProbeViews || ((h, dx, dy) => JSON.parse(CCTable.views(h, dx, dy))))`;
+const VIEWS = wide ? `${viewsOf}(900, 16, 6)`
+  : `(() => { const all = ${viewsOf}(300, 6, 2), n = ${Number(viewsSpec.split(":")[1] || 12)}, out = [];
       for (let i = 0; i < all.length && out.length < n; i += Math.max(1, Math.floor(all.length / n))) out.push(all[i]);
       return out; })()`;
 
 async function prepare() {
-  for (const f of [path.join(C.UI, "cc-street-table.js"), path.join(C.GAME, "table-map.js")]) C.log(await C.jsFile(f));
+  const pre = (opt("pre", "") || "").split(",").filter(Boolean).map((f) => path.resolve(f));
+  for (const f of [path.join(C.UI, "cc-street-table.js"), path.join(C.GAME, "table-map.js"), ...pre]) C.log(await C.jsFile(f));
   C.log(await C.jsFile(path.resolve(candsFile)));
   return await C.js(`(globalThis._views = ${VIEWS}, JSON.stringify({ views: _views.length, n: CCProbeCands.n, labels: CCProbeCands.labels || null }))`);
 }
