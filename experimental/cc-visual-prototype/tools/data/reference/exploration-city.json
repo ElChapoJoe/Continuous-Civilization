@@ -1,0 +1,413 @@
+{
+"map": {
+"seed": 265426227,
+"w": 60,
+"h": 38,
+"script": "{base-standard}maps/continents-voronoi.js"
+},
+"cities": [
+{
+"x": 24,
+"y": 25,
+"capital": true,
+"name": "LOC_CITY_NAME_SPAIN1",
+"plots": [
+{
+"x": 24,
+"y": 25,
+"district": "DISTRICT_CITY_CENTER",
+"items": [
+{
+"type": "BUILDING_PALACE",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 25,
+"y": 26,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_AMPHITHEATER",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_ARENA",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 23,
+"y": 25,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_SAW_PIT",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_BRICKYARD",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 25,
+"y": 24,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_FISHING_QUAY",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 24,
+"y": 24,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_GRANARY",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_SHIPYARD",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 25,
+"y": 25,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_MINE_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 24,
+"y": 26,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_ACADEMY",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 22,
+"y": 25,
+"district": null,
+"items": []
+},
+{
+"x": 23,
+"y": 24,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_FISHING_BOAT",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 23,
+"y": 26,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_FARM",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 24,
+"y": 23,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_LIGHTHOUSE",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 23,
+"y": 23,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_FISHING_BOAT_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 24,
+"y": 27,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_BANK",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_GUILDHALL",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 23,
+"y": 27,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_CAMP",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 25,
+"y": 27,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_BLACKSMITH",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 26,
+"y": 26,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_TEMPLE",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 26,
+"y": 28,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_HOSPITAL",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 26,
+"y": 27,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_KILN",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_PAVILION",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 25,
+"y": 28,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_ARMORER",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 25,
+"y": 23,
+"district": null,
+"items": []
+},
+{
+"x": 26,
+"y": 24,
+"district": null,
+"items": []
+},
+{
+"x": 25,
+"y": 22,
+"district": null,
+"items": []
+},
+{
+"x": 24,
+"y": 22,
+"district": null,
+"items": []
+},
+{
+"x": 26,
+"y": 25,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_FISHING_BOAT_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 24,
+"y": 28,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_WOODCUTTER_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 22,
+"y": 27,
+"district": null,
+"items": []
+},
+{
+"x": 23,
+"y": 28,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_MENAGERIE",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_DUNGEON",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 27,
+"y": 26,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_FISHING_BOAT_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 27,
+"y": 24,
+"district": null,
+"items": []
+},
+{
+"x": 27,
+"y": 25,
+"district": null,
+"items": []
+},
+{
+"x": 22,
+"y": 23,
+"district": null,
+"items": []
+},
+{
+"x": 23,
+"y": 22,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_MONUMENT",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 22,
+"y": 26,
+"district": null,
+"items": []
+},
+{
+"x": 22,
+"y": 24,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_CAMP",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 21,
+"y": 25,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_MARKET",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_LIBRARY",
+"cls": "BUILDING",
+"complete": true
+}
+]
+}
+]
+}
+]
+}

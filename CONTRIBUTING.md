@@ -33,6 +33,7 @@ The mod is data and UI only (SQL, XML imports and UI scripts). It ships no game 
   python -I tools/gen_prune_fk.py
   ```
 - Dev loop (run the scripts with `powershell -ExecutionPolicy Bypass -File tools\<script>.ps1`):
+  0. `doctor.ps1`: checks the whole setup in one go (game found, debug ports on, crash reporter, deployed mods, mods left parked by a vanilla test run, Node, Python with numpy, git, GitHub CLI, disk space); exit 1 when something fails. Run it before an unattended run.
   1. `civ-status.ps1`: game running?, UI page (menu or game), a stuck crash reporter, whether the deployed mod matches the project, newest saves and crash dumps.
   2. `deploy.ps1` mirrors `mod/continuous-civ` into the Mods folder and says what the game needs next: a `.modinfo` change (new or removed files) needs a full restart, data changes a new game (game-wide rules only attach in games started after the change), UI-only changes a UI reload.
   3. `restart-civ.ps1` starts or restarts the game and waits for the main menu. Close the game first (`engine.call("exitToDesktop")` on the console) or pass `-Kill`. It stops a leftover `FiraxisCrashReporter.exe`, which otherwise makes Steam think the game is still running and silently refuse to launch it.

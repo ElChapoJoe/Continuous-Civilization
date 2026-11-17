@@ -139,13 +139,13 @@ export async function withSetup(vanilla, fn) {
 }
 
 /** From the main menu: a one-player game (pangaea-voronoi) of that size, Age, civ and seed; waits until it is up. */
-export async function startGame({ size, age, civ, seed, map = "{base-standard}maps/pangaea-voronoi.js" }) {
+export async function startGame({ size, age, civ, seed, gameSeed = seed, map = "{base-standard}maps/pangaea-voronoi.js" }) {
   await js(`(() => {
     GameSetup.setGameParameterValue("Age", "AGE_${age.toUpperCase()}");
     GameSetup.setGameParameterValue("Map", ${JSON.stringify(map)});
     GameSetup.setGameParameterValue("MapSize", "MAPSIZE_${size.toUpperCase()}");
     GameSetup.setGameParameterValue("MapRandomSeed", ${seed});
-    GameSetup.setGameParameterValue("GameRandomSeed", ${seed});
+    GameSetup.setGameParameterValue("GameRandomSeed", ${gameSeed});
     GameSetup.setPlayerParameterValue(0, "PlayerLeader", "LEADER_AUGUSTUS");
     GameSetup.setPlayerParameterValue(0, "PlayerCivilization", ${JSON.stringify(civ)});
     Configuration.editMap().setMaxMajorPlayers(1);
@@ -158,14 +158,16 @@ export async function startGame({ size, age, civ, seed, map = "{base-standard}ma
 }
 
 /** Starts tools/game/capture-states.ps1 for n states, then calls begin(); resolves when the screenshots are taken. */
-export async function capture(dir, states, begin) {
+export async function capture(dir, states, begin, done = `JSON.parse(CCStreetProbe.info()).state === 'done' ? 1 : 0`) {
   const cap = ps(path.join(GAME, "capture-states.ps1"), "-Out", dir, "-States", String(states), "-TimeoutSec", String(states * 10 + 300));
   await sleep(3000);
   log(await begin());
   await cap;
-  await until(`JSON.parse(CCStreetProbe.info()).state === 'done' ? 1 : 0`, "the probe", 600000);
+  await until(done, "the shots", 600000);
   return dir;
 }
+/** Reveals the whole map for player 0 (as the Firaxis tuner's map panel does). */
+export const revealMap = () => js(`(() => { if (typeof Visibility !== 'undefined' && Visibility.revealAllPlots) Visibility.revealAllPlots(0); else WorldBuilder.MapPlots.setAllRevealed(0, true); return 'revealed'; })()`);
 
 // ---- crash recovery
 /** True while the game process exists. */
@@ -258,6 +260,17 @@ export async function captureFast(dir, states, begin, { minMs = 700, maxMs = 900
     await js(`(globalThis.CCProbeManual = false, 'timer mode')`).catch(() => {});
   }
   return dir;
+}
+
+// ---- save library (tools/data/saves.json)
+export const SAVE_LIBRARY = path.join(DATA, "saves.json");
+/** { save, vanilla, about } for a role in tools/data/saves.json; throws if the role or its save file is missing. */
+export function saveFor(role) {
+  const lib = JSON.parse(fs.readFileSync(SAVE_LIBRARY, "utf8"));
+  const s = lib[role];
+  if (!s) throw new Error(`no save role "${role}" (roles: ${Object.keys(lib).filter((k) => !k.startsWith("_")).join(", ")})`);
+  if (!fs.existsSync(path.join(SAVES, s.save + ".Civ7Save"))) throw new Error(`save ${s.save} for "${role}" is missing from ${SAVES}`);
+  return s;
 }
 
 /** --name value / --flag arguments. */
