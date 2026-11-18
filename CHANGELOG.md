@@ -4,6 +4,11 @@ Versions follow `MAJOR.MINOR.PATCH`. The number in brackets is the mod's interna
 
 Saves from one beta version may not load in the next. Start a new game after updating.
 
+## Unreleased
+
+### Added
+- A new-Age scene when you enter your own Exploration or Modern Age, like vanilla's Age transition: your civilization's legacy movie for the Age you leave (chosen by the legacy path you completed last; the generic movie of that path for civilizations without their own), then the "Age begins" banner with your new Age. Skippable; only for you, not the AI; never during autoplay or in multiplayer. If you completed no legacy path of that Age, only the banner shows. The Exploration and Modern movie lists are now loaded, so the end-of-game screen can also show Modern victory movies. Subtitles of the Exploration and Modern movies are English in every language for now. Not yet tested in game.
+
 ## 0.2.1-beta (23) - Ottomans DLC fix
 
 ### Fixed

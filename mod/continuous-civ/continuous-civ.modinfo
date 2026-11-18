@@ -186,6 +186,7 @@
 					<Item>{age-antiquity}data/progression-trees-culture-unique-ex-gameeffects.xml</Item>
 					<Item>{age-exploration}data/diplomacy-actions.xml</Item>
 					<Item>{age-exploration}data/diplomacy-gameeffects.xml</Item>
+					<Item>{age-exploration}data/movies.xml</Item>
 				</UpdateDatabase>
 				<UpdateText>
 					<Item>{age-exploration}text/en_us/TechnologiesText.xml</Item>
@@ -260,6 +261,7 @@
 					<Item>{age-modern}data/diplomacy-actions.xml</Item>
 					<Item>{age-modern}data/diplomacy-gameeffects.xml</Item>
 					<Item>data/2-import/modern-3-restore.sql</Item>
+					<Item>{age-modern}data/movies.xml</Item>
 				</UpdateDatabase>
 				<UpdateText>
 					<Item>text/2-import/modern-1-keep-tooltips.sql</Item>
@@ -612,6 +614,7 @@
 					<Item>ui/cc-triumphs.js</Item>
 					<Item>ui/cc-dedications.js</Item>
 					<Item>ui/cc-dedication-popup.js</Item>
+					<Item>ui/cc-age-scene.js</Item>
 				</UIScripts>
 			</Actions>
 		</ActionGroup>

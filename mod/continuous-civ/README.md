@@ -22,6 +22,14 @@ Map generation, terrain, rivers, graphics and all Antiquity rules are vanilla, e
 - **Science:** the space race. Once you reach 100 Science victory points with an undamaged Launch Pad, a 5-turn countdown starts and you win when it ends (verified; in a 450-turn AI game Mexico won it on turn 399). Launch Rocket requires Trans-Oceanic Flight, Break the Sound Barrier and Launch Satellite (in vanilla it needs the Modern Science legacy path, which cannot complete here).
 - **Domination:** capture every rival's original capital (vanilla's Domination victory; no Age dependence; not yet seen in play).
 
+## New-Age scene
+
+`ui/cc-age-scene.js`: when the local player enters their personal Exploration or Modern Age, vanilla's Age transition
+plays for them: the legacy movie of the Age they leave (`EndGameMovies` by civilization and last completed legacy
+path, else `MOVIE_VICTORY_<AGE>_<CLASS>`), then `age-transition-banner` ("age-start") with the personal Age in its
+text. Queued through `DisplayQueueManager` after the tech popup (priority 8500); not during autoplay or multiplayer.
+Needs `{age-exploration}` and `{age-modern}` `data/movies.xml` (imported; non-English subtitles not imported).
+
 ## Known limitations
 
 - **Culture, Economic and Military victories use fixed targets** (350 Culture, 8,000 Economic, 100 Military points, then a 5-turn countdown; `data/3-merge/76-victories.sql`) instead of vanilla's 25% lead over second place, which the engine only checks inside a real Modern Age.
