@@ -25,9 +25,11 @@ Map generation, terrain, rivers, graphics and all Antiquity rules are vanilla, e
 ## New-Age scene
 
 `ui/cc-age-scene.js`: when the local player enters their personal Exploration or Modern Age, vanilla's Age transition
-plays for them: the legacy movie of the Age they leave (`EndGameMovies` by civilization and last completed legacy
-path, else `MOVIE_VICTORY_<AGE>_<CLASS>`), then `age-transition-banner` ("age-start") with the personal Age in its
+plays for them: the legacy movie of the Age they leave (`EndGameMovies` by civilization and legacy path class: the
+last completed legacy path, else the class with most triggered Triumphs, else the best legacy path score; generic
+`MOVIE_VICTORY_<AGE>_<CLASS>` without a civ movie), then `age-transition-banner` ("age-start") with the personal Age in its
 text. Queued through `DisplayQueueManager` after the tech popup (priority 8500); not during autoplay or multiplayer.
+Other civilizations entering a new personal Age get a short non-blocking notice (`LOC_CC_AGE_NOTICE_*`).
 Needs `{age-exploration}` and `{age-modern}` `data/movies.xml` (imported; non-English subtitles not imported).
 
 ## Known limitations
