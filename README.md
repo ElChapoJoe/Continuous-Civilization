@@ -135,7 +135,7 @@ Thank you for playing! Balance feedback from real games is what this beta needs 
 - **AI civilizations can buy some buildings in towns before their tech** (towns with a building-purchase ability, such as Augustus's or a Factory Town); the purchase screen blocks it for you.
 - **The AI doesn't overbuild.** You can build later-Age buildings over older ones once you're in a later Age, but AI civilizations keep building on new tiles.
 - **No crises** happen.
-- **Not yet included:** Treasure Fleets and Factory resources, some Exploration and Modern wonders that come with DLC civilization packs (wonder packs and four civilization-pack wonders are included), and DLC story events.
+- **Not yet included:** Treasure Fleets and Factory resources, and DLC story events.
 - Full list with details: [Age-gating audit](docs/audit-age-gated-mechanics.md).
 - **Single player only** so far. Multiplayer is untested.
 

@@ -53,13 +53,25 @@ INSERT INTO cc_dlc_wonder_unlocks VALUES
   ('WONDER_RILA_MONASTERY',          'NODE_TECH_EX_HERALDRY',          2),  -- bulgaria
   ('WONDER_SERPENT_MOUND',           'NODE_TECH_EX_ASTRONOMY',         1),  -- shawnee-tecumseh
   ('WONDER_BATTERSEA_POWER_STATION', 'NODE_TECH_MO_ELECTRICITY',       2),  -- great-britain
-  ('WONDER_BOUDHANATH',              'NODE_CIVIC_MO_MAIN_NATIONALISM', 1);  -- nepal
+  ('WONDER_BOUDHANATH',              'NODE_CIVIC_MO_MAIN_NATIONALISM', 1),  -- nepal
+  ('WONDER_THANH_HUE',               'NODE_TECH_EX_CASTLES',           1),  -- dai-viet
+  ('WONDER_GLOBE_THEATRE',           'NODE_CIVIC_EX_MAIN_SOVEREIGNTY', 1),  -- england
+  ('WONDER_BUSEOKSA',                'NODE_CIVIC_EX_MAIN_INSPIRATION', 1),  -- goryeo
+  ('WONDER_REYKHOLT',                'NODE_CIVIC_EX_MAIN_SOCIETY',     2),  -- iceland
+  ('WONDER_HIMEJI_CASTLE',           'NODE_TECH_EX_CASTLES',           1),  -- sengoku
+  ('WONDER_HWASEONG',                'NODE_CIVIC_MO_MAIN_SOCIAL_QUESTION', 2),  -- joseon
+  ('WONDER_SULTANAHMET_CAMII',       'NODE_CIVIC_MO_MAIN_MODERNIZATION', 2),  -- ottomans
+  ('WONDER_ERAM_GARDEN',             'NODE_CIVIC_MO_MAIN_HEGEMONY',    1),  -- qajar
+  ('WONDER_HAVANA_HARBOR',           'NODE_TECH_EX_SHIPBUILDING',      2);  -- pirate-republic
 INSERT OR IGNORE INTO ProgressionTreeNodeUnlocks (ProgressionTreeNodeType, TargetKind, TargetType, UnlockDepth)
   SELECT u.Node, 'KIND_CONSTRUCTIBLE', u.ConstructibleType, u.Depth
   FROM cc_dlc_wonder_unlocks u
   WHERE u.ConstructibleType IN (SELECT ConstructibleType FROM Constructibles)
     AND u.Node IN (SELECT ProgressionTreeNodeType FROM ProgressionTreeNodes)
-    AND u.ConstructibleType NOT IN (SELECT TargetType FROM ProgressionTreeNodeUnlocks);
+    -- Only skip when this node already unlocks it: the civ's own civic tree (imported earlier) also unlocks the
+    -- wonder for that civ, and must not stop the unlock everyone else gets.
+    AND NOT EXISTS (SELECT 1 FROM ProgressionTreeNodeUnlocks x
+                    WHERE x.TargetType = u.ConstructibleType AND x.ProgressionTreeNodeType = u.Node);
 
 INSERT OR IGNORE INTO ProgressionTreeNodeUnlocks (ProgressionTreeNodeType, TargetKind, TargetType, UnlockDepth)
   SELECT g.Node, 'KIND_CONSTRUCTIBLE', g.ConstructibleType, 1
