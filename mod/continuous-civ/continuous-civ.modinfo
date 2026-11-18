@@ -612,6 +612,7 @@
 					<Item>ui/cc-triumphs.js</Item>
 					<Item>ui/cc-dedications.js</Item>
 					<Item>ui/cc-dedication-popup.js</Item>
+					<Item>ui/cc-age-scene.js</Item>
 				</UIScripts>
 			</Actions>
 		</ActionGroup>

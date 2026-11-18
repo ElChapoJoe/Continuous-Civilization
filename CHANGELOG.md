@@ -4,6 +4,11 @@ Versions follow `MAJOR.MINOR.PATCH`. The number in brackets is the mod's interna
 
 Saves from one beta version may not load in the next. Start a new game after updating.
 
+## Unreleased
+
+### Added
+- The "The Exploration Age Has Begun" banner (vanilla's Age change banner) when you research into your own Exploration or Modern Age, with your Age in it; it shows after the tech-complete popup, once per Age, never during autoplay or in multiplayer. When another civilization enters a new Age, a short notice says so ("An unmet civilization" if you haven't met it). Not yet tested in game.
+
 ## 0.2.1-beta (23) - Ottomans DLC fix
 
 ### Fixed
