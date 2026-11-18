@@ -67,6 +67,7 @@ FOOD, GOLD, ...) lets a town buy every building of that tag, locked or not; `ui/
 player only. Data fix in the style of `81-age-scaled-bonuses.sql`: per-Age copies of each tag (`CC_<TAG>_AQ/EX/MO` by
 the building's original Age), the original modifier switched to the Antiquity tag, and two copies for the Exploration
 and Modern tags switched on by personal Age. Used by leader traits (Augustus; owner = player, works like 81) and by
-town-focus projects (`ProjectModifiers`, COLLECTION_OWNER: owner = the city). Open question for a game test: does
-`REQUIREMENT_PLAYER_HAS_COMPLETED_PROGRESSION_TREE_NODE` (inside the personal-Age sets) test the city's owner when the
-modifier belongs to a city? Vanilla never uses it that way. Also in DLC civ traits (Carthage, England, Gaul, Joseon).
+town-focus projects (`ProjectModifiers`, COLLECTION_OWNER: owner = the city). Also in DLC civ traits (Carthage,
+England, Gaul, Joseon). Answered in game (2026-11-18, `tests/cc-probes.js` cityOwnerAge, and by hand): a personal-Age
+set used as the owner requirement of a city-owned modifier tests the city's player. `CC_TEST_CITY_OWNER_EX`, attached
+to all 6 civs' cities, was active only in the city of the player in Exploration. So the data fix can be built.

@@ -70,7 +70,9 @@ everyone. Effort is a rough guess.
 ## Could not decide without playing
 
 1. **How `ScaleByGameAge` scales** (#2): by the global Age (assumed) or the player's, and by how much. Read a leader
-   tooltip (Isabella, Hatshepsut) for a player in personal Modern.
+   tooltip (Isabella, Hatshepsut) for a player in personal Modern. Partly answered (2026-11-18, `tests/cc-probes.js`):
+   the personal-Age copies of `81-age-scaled-bonuses.sql` switch on when the player enters Exploration (3 to 5 for
+   Rome in the player's active modifier list); the size of the amounts is still unchecked.
 2. **Ocean attrition for embarked units**, answered: the engine default is `PLOT_WATER_DAMAGE_BASE` 0 / `_RAND` 20
    (Antiquity and Modern); Exploration sets 11 / 10 (`age-exploration/data/gameplay-systems.xml:19-20`). Since 0.2.0
    `72-exploration-rules.sql` uses Exploration's values game-wide (only players in Exploration or later reach Ocean);
@@ -81,19 +83,23 @@ everyone. Effort is a rough guess.
    Treasure Fleet system.
 5. **Railroads.** `ROUTE_RAILROAD` has no Age prerequisite (`age-modern/data/routes.xml`), but the Resources
    screen hides "rail connected" outside Modern (`commerce-screen-model.js:487`). Check that Rail Stations build
-   rail and connect cities.
-6. **Ideology choice.** The three ideology trees are re-tagged to Antiquity (`25-civic-tree`), but picking one has never been
-   tried (`docs/phase3-test-results.md:53`).
+   rail and connect cities. Partly answered (2026-11-18, probe railStations): a Rail Station placed in a one-city
+   game made 4 railroad plots (0 before); connecting two cities is still untested.
+6. **Ideology choice**, answered (2026-11-18, probe ideology): with Political Theory and then Democracy granted, the
+   player's ideology is IDEOLOGY_DEMOCRACY. The trees are re-tagged to Antiquity (`25-civic-tree`).
 7. **Rewritten Age conditions on subjects without an owner** (unowned plots, independents, game-wide modifiers):
    what `REQUIREMENT_REQUIREMENTSET_IS_MET` on a per-player set returns there.
-8. **AI overseas settling** (#11) now that the Distant Lands are open.
+8. **AI overseas settling** (#11) now that the Distant Lands are open. First data (2026-11-18 balance run, 205 turns,
+   small map, 6 civs): one overseas city in total (Hawai'i), so AIs do settle overseas, but rarely.
 9. **Celebration frequency late game** (#9): the Antiquity default of `GOLDEN_AGE_HAPPINESS_CURVE_*` is compiled
    into the engine, so whether celebrations get more or less frequent is unknown.
 10. **`AgeConstructibleDefaultYields` / `AgeConstructibleDefaultMaintenances`** (Exploration 2, Modern 3, none
     for Antiquity; `age-exploration/data/constructibles.xml` near line 435): what they change for later-Age
     buildings in an Antiquity game.
 11. **`Ages.NumDefenders`** (0 / 6 / 9): meaning unknown, probably Age-transition defenders.
-12. **Founding a religion as a human** through the notification (#3), never exercised.
+12. **Founding a religion as a human** through the notification (#3). Partly answered (2026-11-18, probe
+    foundReligion): with Piety and a Temple, `canCreateReligion` turns true and the `FOUND_RELIGION` request (the one
+    the belief picker sends) founds it. The notification and picker screens themselves are still unexercised.
 
 ## Suggested follow-up for the tooling
 
