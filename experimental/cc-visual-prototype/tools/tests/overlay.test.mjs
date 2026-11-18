@@ -129,7 +129,7 @@ const m = O.tile(24, 27), ms = S.lookupAge(2, 24, 27, false);
 const mstreet = m && m.find((p) => /Road/.test(p[0]));
 expect(mstreet && mstreet[0] === "LAYOUT_CTY_MOD_Section_AB_Road" && mstreet[3] === ms.angle, `Modern street turn from the Modern layer (${ms?.angle})`);
 const farm = O.tile(22, 25);
-expect(farm && farm.some((p) => p[0] === "BIN_IMP_MOD_Farm_B"), "Modern farm drawn");
+expect(farm && farm.some((p) => p[0] === "BIN_IMP_MOD_Farm_A"), "Modern farm drawn");
 console.log("overlay-tests.js (Modern):", g.CCOverlayTests.run());
 expect(g.CCOverlayTests.failures().length === 0, "overlay-tests.js rules (Modern)");
 

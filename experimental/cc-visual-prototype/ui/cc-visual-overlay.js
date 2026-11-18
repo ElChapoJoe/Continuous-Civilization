@@ -103,7 +103,9 @@
   // Rural improvements with their own Modern art (from the game's bins: BIN_IMP_Farms, BIN_IMP_WoodCutters,
   // BIN_IMP_ClayPits, BIN_IMP_Mine_MOD pick these by [AGE:AGE_MODERN]). Exploration has no farm or woodcutter
   // variant and falls back to the Antiquity mine and clay pit, so only Modern rural tiles are redrawn.
-  // Farms: the engine's variant B matches the reference farm's house, tractor and shed placement.
+  // Farms: the engine picks a variant per tile; the rural probe of a vanilla Modern game (2026-11-18, 392 farms,
+  // tools/pipeline/rural.mjs) read A on 338, B on 24, C on 30, all with clear margins, so we draw A. The farm's turn
+  // is spread over all six and doesn't follow the Modern street-turn table: no rule yet, so it stays at 0.
   // Camps and quarries have whole Modern models (camps also an Exploration one). Pastures and plantations
   // pick only their buildings by Age (the animals and crops come from resource bins), and the game ignores an
   // Age passed in selectionScriptParams, so they are rebuilt from parts: the resource bin plus the Modern
@@ -114,7 +116,7 @@
       IMPROVEMENT_CAMP: [["IMP_EXP_CAMP", 0, 0]],
     },
     2: {
-      IMPROVEMENT_FARM: [["BIN_IMP_MOD_Farm_B", 0, 0]],
+      IMPROVEMENT_FARM: [["BIN_IMP_MOD_Farm_A", 0, 0]],
       IMPROVEMENT_WOODCUTTER: [["IMP_MOD_WoodCutter", 0, 0]],
       IMPROVEMENT_WOODCUTTER_RESOURCE: [["IMP_MOD_WoodCutter", 0, 0]],
       IMPROVEMENT_CLAY_PIT: [["BIN_IMP_MOD_Claypit_Base", 0, 0]],
