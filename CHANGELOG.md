@@ -7,7 +7,7 @@ Saves from one beta version may not load in the next. Start a new game after upd
 ## Unreleased
 
 ### Added
-- A new-Age scene when you enter your own Exploration or Modern Age, like vanilla's Age transition: your civilization's legacy movie for the Age you leave, then the "Age begins" banner with your new Age. The movie follows the legacy path you completed last in that Age; without one, the kind of Triumph you earned most (Culture, Economic, Military or Science), then your best legacy path score; civilizations without their own movie get the generic one. Skippable; never during autoplay or in multiplayer. When another civilization enters a new Age, a short notice says so ("An unmet civilization" if you haven't met it). The Exploration and Modern movie lists are now loaded, so the end-of-game screen can also show Modern victory movies. Subtitles of the Exploration and Modern movies are English in every language for now. Not yet tested in game.
+- The "The Exploration Age Has Begun" banner (vanilla's Age change banner) when you research into your own Exploration or Modern Age, with your Age in it; it shows after the tech-complete popup, once per Age, never during autoplay or in multiplayer. When another civilization enters a new Age, a short notice says so ("An unmet civilization" if you haven't met it). Not yet tested in game.
 
 ## 0.2.1-beta (23) - Ottomans DLC fix
 

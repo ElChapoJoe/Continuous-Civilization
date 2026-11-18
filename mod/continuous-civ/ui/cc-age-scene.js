@@ -1,23 +1,17 @@
-// Continuous Civilization - the "new Age" scene, per player.
-// In vanilla, when an Age ends everyone sees their civilization's legacy movie for that Age (chosen by the legacy
-// path they completed last), then the "<Age> begins" banner. Here the game Age never changes, so nobody saw either.
-// This plays the same scene for the local player when they enter their personal Exploration or Modern Age:
-//   1. the legacy movie of the Age they leave: their civilization's own (EndGameMovies: CivilizationType +
-//      LastCompletedLegacyPath), else the generic movie of that legacy path (MOVIE_VICTORY_<AGE>_<CLASS>); none when
-//      they completed no legacy path of that Age, or the movie isn't in the database;
-//   2. vanilla's age-transition-banner ("age-start"), with the personal Age in its text (it reads the game Age).
-// Shown through vanilla's display queue (after the tech-complete popup, priority 8500), skippable like any movie,
-// never during autoplay. Only the local human player gets the scene; when another civilization enters a new personal
-// Age, a short notice shows instead ("unmet civilization" if not met). The Exploration and Modern movie rows
-// come from {age-exploration}/{age-modern} data/movies.xml (imported in the .modinfo). Personal Age uses the root
-// techs of data/3-merge/70-personal-age.sql, like ui/cc-triumphs.js.
+// Continuous Civilization - the "new Age" banner, per player.
+// In vanilla, when the Age changes everyone sees the "The <Age> Age Has Begun" banner (age-transition-banner,
+// "age-start"). Here the game Age never changes, so nobody saw it. This shows that banner to the local player when
+// they research into their personal Exploration or Modern Age, with their Age in the text (the banner itself reads the
+// game Age, always Antiquity here). Shown through vanilla's display queue, after the tech-complete popup (priority
+// 8500); never during autoplay or multiplayer; once per Age (not again after a load). When another civilization
+// enters a new personal Age, a short notice shows instead ("An unmet civilization" if not met). Personal Age uses the
+// root techs of data/3-merge/70-personal-age.sql, like ui/cc-triumphs.js.
 import ContextManager from '/core/ui/context-manager/context-manager.js';
 import { DisplayHandlerBase } from '/core/ui/context-manager/display-handler.js';
 import { DisplayQueueManager } from '/core/ui/context-manager/display-queue-manager.js';
 
 const AGES = ["AGE_ANTIQUITY", "AGE_EXPLORATION", "AGE_MODERN"];
 const CATEGORY = "CCAgeScene";
-const SCREEN = "cc-age-scene";
 
 function rootHashes(setId) {
   const out = [];
@@ -38,99 +32,6 @@ function personalAge(playerId) {
   const has = (h) => { try { return techs.isNodeUnlocked(h); } catch (e) { return false; } };
   return roots[2].some(has) ? 2 : roots[1].some(has) ? 1 : 0;
 }
-
-// Legacy path classes that have movies, and the Triumph subtypes that count for them.
-const CLASS_OF_SUBTYPE = { LEGACY_CULTURAL: "CULTURE", LEGACY_ECONOMIC: "ECONOMIC", LEGACY_MILITARISTIC: "MILITARY", LEGACY_SCIENTIFIC: "SCIENCE" };
-
-/**
- * The legacy path class (CULTURE, ECONOMIC, MILITARY, SCIENCE) that sums up a player's `endedAge` (0/1), or null:
- *   1. the legacy path of that Age they completed last (what vanilla's Age-end movie uses);
- *   2. else the class with the most Triumphs they triggered in that Age (1.5's Legacies table);
- *   3. else the legacy path of that Age with the highest score.
- */
-export function legacyClass(playerId, endedAge) {
-  const player = Players.get(playerId);
-  if (!player) return null;
-  const ageType = AGES[endedAge];
-  const ageOf = (def) => def?.Age ?? def?.AgeType;
-  const cls = (def) => (def?.LegacyPathClassType || "").replace("LEGACY_PATH_CLASS_", "") || null;
-  let last = null;
-  try {
-    for (const p of player.LegacyPaths?.getCompletedLegacyPaths?.() ?? []) {
-      const def = GameInfo.LegacyPaths.lookup(p);
-      if (def && ageOf(def) === ageType) last = def;
-    }
-  } catch (e) { /* no legacy paths in this version */ }
-  if (last && cls(last)) return { cls: cls(last), path: last.LegacyPathType, how: "completed" };
-  const counts = {};
-  try {
-    for (const t of GameInfo.Legacies ?? []) {
-      const c = CLASS_OF_SUBTYPE[t.LegacySubtype];
-      if (c && t.Age === ageType && player.Legacies?.isTriggered?.(t.LegacyType)) counts[c] = (counts[c] || 0) + 1;
-    }
-  } catch (e) { /* no Triumphs in this version */ }
-  const best = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
-  if (best) return { cls: best[0], path: null, how: "triumphs" };
-  let top = null, topScore = 0;
-  for (const def of GameInfo.LegacyPaths ?? []) {
-    if (ageOf(def) !== ageType || !cls(def)) continue;
-    let score = 0;
-    try { score = player.LegacyPaths?.getScore?.(def.LegacyPathType) ?? 0; } catch (e) { /* none */ }
-    if (score > topScore) { top = def; topScore = score; }
-  }
-  return top ? { cls: cls(top), path: top.LegacyPathType, how: "score" } : null;
-}
-
-/** The legacy movie for leaving `endedAge` (0/1): the civilization's own for that class, else the generic one. */
-export function chooseLegacyMovie(playerId, endedAge) {
-  const lc = legacyClass(playerId, endedAge);
-  if (!lc) return null;
-  const ageType = AGES[endedAge];
-  const civ = GameInfo.Civilizations.lookup(Players.get(playerId).civilizationType)?.CivilizationType;
-  const exists = (type) => GameInfo.Movies.some((m) => m.MovieType === type);
-  const pathsOfClass = new Set(GameInfo.LegacyPaths.filter((d) => (d.Age ?? d.AgeType) === ageType && d.LegacyPathClassType === "LEGACY_PATH_CLASS_" + lc.cls).map((d) => d.LegacyPathType));
-  if (lc.path) pathsOfClass.add(lc.path);
-  const own = GameInfo.EndGameMovies
-    .filter((m) => m.CivilizationType === civ && pathsOfClass.has(m.LastCompletedLegacyPath) && !m.DefeatType && !m.VictoryType && exists(m.MovieType))
-    .sort((a, b) => b.Priority - a.Priority)[0];
-  if (own) return own.MovieType;
-  const generic = `MOVIE_VICTORY_${ageType.replace("AGE_", "")}_${lc.cls}`;
-  return exists(generic) ? generic : null;
-}
-
-// ---- the movie screen
-class CCAgeScene extends Component {
-  movie = null;
-  inputListener = this.onEngineInput.bind(this);
-  onAttach() {
-    super.onAttach();
-    this.Root.addEventListener("engine-input", this.inputListener);
-    const movieId = this.Root.getAttribute("data-movie-id");
-    this.movie = document.createElement("fxs-movie");
-    this.movie.classList.add("absolute", "inset-0");
-    this.movie.addEventListener("movie-ended", () => this.Root.dispatchEvent(new CustomEvent("cc-age-scene-done")));
-    this.Root.appendChild(this.movie);
-    this.movie.setAttribute("data-movie-id", movieId);
-  }
-  onDetach() {
-    this.Root.removeEventListener("engine-input", this.inputListener);
-    super.onDetach();
-  }
-  onEngineInput(event) {
-    if (event.detail.status !== InputActionStatuses.FINISH) return;
-    const n = event.detail.name;
-    if (n === "accept" || n === "mousebutton-left" || n === "cancel" || n === "keyboard-escape" || n === "sys-menu") {
-      this.movie?.setAttribute("data-movie-id", "");   // ends the movie: fxs-movie dispatches movie-ended
-    }
-    event.stopPropagation();
-    event.preventDefault();
-  }
-}
-Controls.define(SCREEN, {
-  createInstance: CCAgeScene,
-  description: "Continuous Civilization: legacy movie when a player enters a new personal Age",
-  classNames: ["fullscreen", "absolute", "inset-0", "bg-black"],
-});
 
 // ---- the banner: vanilla's, with the personal Age in its text
 function showBanner(newAge, done) {
@@ -167,17 +68,10 @@ function showBanner(newAge, done) {
 class AgeSceneHandler extends DisplayHandlerBase {
   constructor() { super(CATEGORY, 8500); }
   show(request) {
-    const finish = () => DisplayQueueManager.close(request);
-    const banner = () => showBanner(request.newAge, finish);
-    if (!request.movie) { banner(); return; }
-    const screen = ContextManager.push(SCREEN, { singleton: true, createMouseGuard: true, attributes: { "data-movie-id": request.movie } });
-    let ended = false;
-    const end = () => { if (ended) return; ended = true; try { ContextManager.pop(SCREEN); } catch (e) { /* gone */ } banner(); };
-    screen?.addEventListener?.("cc-age-scene-done", end);
-    setTimeout(end, 180000);   // safety net: no movie is that long
+    showBanner(request.newAge, () => DisplayQueueManager.close(request));
   }
   hide() {
-    if (ContextManager.hasInstanceOf(SCREEN)) ContextManager.pop(SCREEN);
+    if (ContextManager.hasInstanceOf("age-transition-banner")) ContextManager.pop("age-transition-banner");
   }
 }
 const handler = new AgeSceneHandler();
@@ -205,7 +99,7 @@ function rivalText(pid, age) {
   return Locale.stylize("LOC_CC_AGE_NOTICE_RIVAL", who, ageName);
 }
 
-// ---- watching personal Ages: the local player gets the scene, the others a notice
+// ---- watching personal Ages: the local player gets the banner, the others a notice
 const known = new Map();
 let noticeQueue = [];
 function check() {
@@ -218,7 +112,7 @@ function check() {
     known.set(pid, age);
     if (before === undefined || age <= before || quiet) continue;   // first look after a load: nothing to show
     if (pid === localId) {
-      for (let a = before + 1; a <= age; a++) handler.addDisplayRequest({ newAge: a, movie: chooseLegacyMovie(pid, a - 1) });
+      for (let a = before + 1; a <= age; a++) handler.addDisplayRequest({ newAge: a });
     } else {
       noticeQueue.push(rivalText(pid, age));
     }
