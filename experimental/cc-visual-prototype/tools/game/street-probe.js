@@ -23,6 +23,20 @@
   if (globalThis.CCProbeBaseOnly) { /* CANDS stays [null] */ }
   else if (PER) for (let i = 0; i < PER.n; i++) CANDS.push([-1, i]);
   else for (let s = 0; s < STREETS.length; s++) for (let a = 0; a < 360; a += 60) CANDS.push([s, a]);
+  // globalThis.CCProbeClipWindow = [dx, dy]: clip only the tiles within dx columns / dy rows of each view's centre,
+  // re-clipped at every view change. Clipping all 4,384 wooded tiles of the Standard all-land map crashes the game
+  // (2026-11-18; 1,000 are fine); a camera at height 900 sees about 11 columns and 5 rows either way.
+  const CLIPWIN = globalThis.CCProbeClipWindow || null;
+  function clipAround(view) {
+    WorldUI.restoreAllHexHeight();
+    const W = GameplayMap.getGridWidth();
+    const near = tiles.filter((t) => {
+      const dx = Math.abs(t.x - view[0]);
+      return Math.min(dx, W - dx) <= CLIPWIN[0] && Math.abs(t.y - view[1]) <= CLIPWIN[1];
+    });
+    // A restore in the same frame also undoes new clips: clip a moment later.
+    setTimeout(() => { for (const t of near) WorldUI.clipHexHeight({ x: t.x, y: t.y }, 0); }, 700);
+  }
   let lastError = null;
   let timer = null, group = null, marker = null, hidden = [], cam = false, tiles = [], pos = {}, state = -1, views = [];
 
@@ -34,6 +48,7 @@
       const w = WorldUI.getPlotLocation({ x: view[0], y: view[1] }, { x: 0, y: view[2] || 0, z: 0 }, T);
       Camera.pushCamera({ x: w.x, y: w.y - 1, z: w.z + (view[3] || 380) }, { x: w.x, y: w.y, z: w.z });
       cam = true;
+      if (CLIPWIN && !globalThis.CCProbeNoClip) clipAround(view);
     }
     group.clear();
     if (cand && PER) for (const t of tiles) {
@@ -76,7 +91,7 @@
     }
     if (PER) for (const t of tiles) t.cands = t.centre ? null : PER.of(t);
     // Clip a moment later: stop() above restores all clips, and a restore in the same frame also undoes new clips.
-    if (!globalThis.CCProbeNoClip) setTimeout(() => { for (const t of tiles) WorldUI.clipHexHeight({ x: t.x, y: t.y }, 0); }, 700);
+    if (!globalThis.CCProbeNoClip && !CLIPWIN) setTimeout(() => { for (const t of tiles) WorldUI.clipHexHeight({ x: t.x, y: t.y }, 0); }, 700);
     WorldUI.setUnitVisibility(false);
     group = WorldUI.createModelGroup("ccStreetProbe");
     for (const el of document.body.children) { hidden.push([el, el.style.visibility]); el.style.visibility = "hidden"; }
