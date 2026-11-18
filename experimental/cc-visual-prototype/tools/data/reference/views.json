@@ -1,0 +1,5 @@
+{
+ "_note": "Camera views of the vanilla reference shots ([x, y, dy, height]); the overlay's shots must use the same ones. Map: continents-voronoi tiny, map seed 265426227, game seed 265426226.",
+ "exploration": [[24, 23, 0, 300], [24, 25, 0, 300], [24, 27, 0, 300], [24, 25, 0, 600]],
+ "modern": [[17, 26, 0, 300], [18, 28, 0, 300], [17, 30, 0, 300], [17, 28, 0, 600]]
+}

@@ -1,0 +1,462 @@
+{
+"map": {
+"seed": 265426227,
+"w": 60,
+"h": 38,
+"script": "{base-standard}maps/continents-voronoi.js"
+},
+"cities": [
+{
+"x": 17,
+"y": 27,
+"capital": true,
+"name": "LOC_CITY_NAME_MEXICO1",
+"plots": [
+{
+"x": 17,
+"y": 27,
+"district": "DISTRICT_CITY_CENTER",
+"items": [
+{
+"type": "BUILDING_PALACE",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 18,
+"y": 28,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_MINE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 16,
+"y": 27,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_PAVILION",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 18,
+"y": 26,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_STONECUTTER",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_SAWMILL",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 17,
+"y": 26,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_UNIVERSITY",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 18,
+"y": 27,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_GRANARY",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_SAW_PIT",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 17,
+"y": 28,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_FISHING_QUAY",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_GRISTMILL",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 19,
+"y": 28,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_MINE_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 19,
+"y": 26,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_FACTORY",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_RAILYARD",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 19,
+"y": 27,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_SCHOOLHOUSE",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 18,
+"y": 25,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_CAMP",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 17,
+"y": 25,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_FARM",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 16,
+"y": 26,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_PLANTATION",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 16,
+"y": 25,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_FARM",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 15,
+"y": 27,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_LABORATORY",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_OPERA_HOUSE",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 16,
+"y": 28,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_BANK",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 17,
+"y": 29,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_FARM",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 16,
+"y": 29,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_SHIPYARD",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 17,
+"y": 30,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_TEMPLE",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 15,
+"y": 29,
+"district": null,
+"items": []
+},
+{
+"x": 16,
+"y": 30,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_WHARF",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 18,
+"y": 30,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_MUSEUM",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 15,
+"y": 28,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_MINE_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 15,
+"y": 26,
+"district": null,
+"items": []
+},
+{
+"x": 15,
+"y": 25,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_MINE_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 19,
+"y": 24,
+"district": null,
+"items": []
+},
+{
+"x": 18,
+"y": 24,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_WOODCUTTER_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 19,
+"y": 25,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_MINE_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 19,
+"y": 29,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_STOCK_EXCHANGE",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 20,
+"y": 28,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_DEPARTMENT_STORE",
+"cls": "BUILDING",
+"complete": true
+},
+{
+"type": "BUILDING_RADIO_STATION",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 18,
+"y": 29,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_WOODCUTTER_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 19,
+"y": 30,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_TENEMENT",
+"cls": "BUILDING",
+"complete": true
+}
+]
+},
+{
+"x": 17,
+"y": 24,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_QUARRY",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 20,
+"y": 26,
+"district": "DISTRICT_RURAL",
+"items": [
+{
+"type": "IMPROVEMENT_MINE_RESOURCE",
+"cls": "IMPROVEMENT",
+"complete": true
+}
+]
+},
+{
+"x": 14,
+"y": 27,
+"district": null,
+"items": []
+},
+{
+"x": 16,
+"y": 24,
+"district": null,
+"items": []
+},
+{
+"x": 20,
+"y": 27,
+"district": "DISTRICT_URBAN",
+"items": [
+{
+"type": "BUILDING_TENEMENT",
+"cls": "BUILDING",
+"complete": true
+}
+]
+}
+]
+}
+]
+}

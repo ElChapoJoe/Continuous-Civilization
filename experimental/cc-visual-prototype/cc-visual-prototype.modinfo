@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="cc-visual-prototype" version="2" xmlns="ModInfo">
+	<Properties>
+		<Name>Continuous Civilization - Visual Prototype (Experimental)</Name>
+		<Description>EXPERIMENTAL, display only. Rebuilds the city tiles of each player in a later personal Age from the game's own models: that Age's streets, the buildings actually on the tile in the owner's regional style, and that Age's houses. Requires Continuous Civilization.</Description>
+		<Authors>ElChapoJoe</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
+	</Properties>
+	<Dependencies>
+		<Mod id="continuous-civ" title="Continuous Civilization"/>
+	</Dependencies>
+	<ActionCriteria>
+		<Criteria id="always">
+			<AlwaysMet></AlwaysMet>
+		</Criteria>
+	</ActionCriteria>
+	<ActionGroups>
+		<ActionGroup id="cc-visual-prototype-ui" scope="game" criteria="always">
+			<Actions>
+				<UIScripts>
+					<Item>ui/cc-building-art.js</Item>
+					<Item>ui/cc-layout-slots.js</Item>
+					<Item>ui/cc-street-table.js</Item>
+					<Item>ui/cc-visual-overlay.js</Item>
+				</UIScripts>
+			</Actions>
+		</ActionGroup>
+	</ActionGroups>
+</Mod>

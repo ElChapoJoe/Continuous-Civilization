@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Mod id="cc-remap-test" version="1" xmlns="ModInfo">
+	<Properties>
+		<Name>Continuous Civilization - Remap Test (Experimental)</Name>
+		<Description>EXPERIMENT, display only. Adds visual remaps that swap the Antiquity city layout art bins for the Modern ones, to test whether the engine can draw later-Age cities itself.</Description>
+		<Authors>ElChapoJoe</Authors>
+		<AffectsSavedGames>0</AffectsSavedGames>
+	</Properties>
+	<ActionCriteria>
+		<Criteria id="always">
+			<AlwaysMet></AlwaysMet>
+		</Criteria>
+	</ActionCriteria>
+	<ActionGroups>
+		<ActionGroup id="cc-remap-test-game" scope="game" criteria="always">
+			<Actions>
+				<UpdateVisualRemaps>
+					<Item>data/visual-remaps.xml</Item>
+				</UpdateVisualRemaps>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-remap-test-shell" scope="shell" criteria="always">
+			<Actions>
+				<UpdateVisualRemaps>
+					<Item>data/visual-remaps.xml</Item>
+				</UpdateVisualRemaps>
+			</Actions>
+		</ActionGroup>
+	</ActionGroups>
+</Mod>
