@@ -2,6 +2,8 @@
 // Everything here is a test shortcut; nothing runs unless called. Returns JSON strings so console output is readable.
 //   CCDev.status()                 turn, local player, autoplay, each civ's personal Age and the world Age
 //   CCDev.victory()                victory points per civ, Launch Pads / space projects, victories won
+//   CCDev.balance()                per-civ numbers for balance reports (tools/balance-run.mjs): Age, cities, population,
+//                                  overseas cities, techs, civics, net yields, victory points
 //   CCDev.costs(pid)               a few Influence costs and tech/civic costs for a player (cost-rule checks)
 //   CCDev.load(name[, auto])       load a save by file name (normal folder, or the autosave folder if auto=true)
 //   CCDev.save(name)               save the game under a name (fails while no local player is alive)
@@ -61,6 +63,28 @@
         out.civs[id] = o;
       }
       try { out.won = (Game.VictoryManager.getVictories() || []).map((v) => ({ team: v.team, turn: v.turn, victory: GameInfo.Victories.lookup(v.victory)?.VictoryType })); } catch (e) {}
+      return J(out);
+    },
+    balance() {
+      // One row per living major civ. Every field is guarded: a missing API gives null, not a failed snapshot.
+      const g = (f) => { try { const v = f(); return v == null || Number.isNaN(v) ? null : v; } catch (e) { return null; } };
+      const yields = { sci: "YIELD_SCIENCE", cul: "YIELD_CULTURE", gold: "YIELD_GOLD", prod: "YIELD_PRODUCTION",
+        food: "YIELD_FOOD", infl: "YIELD_DIPLOMACY", happy: "YIELD_HAPPINESS" };
+      const vps = { vpC: "VICTORY_CULTURE_MODERN", vpS: "VICTORY_SCIENCE_MODERN", vpE: "VICTORY_ECONOMIC_MODERN", vpM: "VICTORY_MILITARY_MODERN" };
+      const done = (tree) => g(() => tree.getResearched().filter((h) => (h?.state ?? 5) >= 4).length);
+      const out = { turn: Game.turn, world: JSON.parse(CCDev.status()).world, civs: [] };
+      for (const id of Players.getAliveMajorIds()) {
+        const p = Players.get(id), cities = g(() => p.Cities.getCities()) || [];
+        const o = { id, civ: civName(id), age: ageOf(id), cities: cities.length,
+          pop: g(() => cities.reduce((n, c) => n + (c.population || 0), 0)),
+          techs: done(p.Techs), civics: done(p.Culture), units: g(() => p.Units.getUnits().length),
+          // Settled across the Ocean: cities in the player's Distant Lands, and how many continents hold a city.
+          overseas: g(() => cities.filter((c) => p.isDistantLands(c.location)).length),
+          continents: g(() => new Set(cities.map((c) => GameplayMap.getContinentType(c.location.x, c.location.y))).size) };
+        for (const [k, t] of Object.entries(yields)) o[k] = g(() => Math.round(p.Stats.getNetYield(YieldTypes[t])));
+        for (const [k, t] of Object.entries(vps)) o[k] = g(() => p.Victories.getPointsForVictoryType(GameInfo.Victories.lookup(t).$hash));
+        out.civs.push(o);
+      }
       return J(out);
     },
     costs(pid = GameContext.localPlayerID) {

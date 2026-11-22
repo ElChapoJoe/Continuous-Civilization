@@ -16,6 +16,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # the CHANGELOG reminder compares with the pull request's base
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
@@ -24,3 +26,15 @@ jobs:
           node-version: "22"
       - name: Check the mod
         run: python -I tools/check_mod.py --ci
+      - name: CHANGELOG reminder
+        # A pull request that changes the mod itself should say so in CHANGELOG.md. A warning, not a failure: tooling
+        # or docs-only changes inside mod/ (its README) don't need an entry.
+        if: github.event_name == 'pull_request'
+        run: |
+          base="${{ github.event.pull_request.base.sha }}"
+          changed=$(git diff --name-only "$base"...HEAD)
+          if echo "$changed" | grep -q '^mod/continuous-civ/' && ! echo "$changed" | grep -q '^CHANGELOG.md$'; then
+            echo "::warning title=CHANGELOG::This pull request changes mod/continuous-civ but not CHANGELOG.md. Add an entry if players will notice the change."
+          else
+            echo "CHANGELOG ok (no mod change, or an entry was added)."
+          fi
