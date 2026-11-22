@@ -1,6 +1,7 @@
 -- Continuous Civilization - the mod's own strings (en_US): government chooser (ui/cc-governments.js), per-Age combat
 -- preview lines (72/74 rules), Culture victory wonder lines (80-triumphs), building over older buildings
--- (ui/cc-overbuild.js) and the Dedications tree and popup (83-dedications, ui/cc-dedication*.js).
+-- (ui/cc-overbuild.js), the Dedications tree and popup (83-dedications, ui/cc-dedication*.js) and the notice when
+-- another civilization enters a new personal Age (ui/cc-age-scene.js).
 INSERT OR REPLACE INTO LocalizedText (Language, Tag, Text) VALUES
   ('en_US', 'LOC_CC_CHANGE_GOVERNMENT', 'Change Government'),
   ('en_US', 'LOC_CC_EX_EMBARKED_STRENGTH_PREVIEW', '+15 Embarked (Exploration Age)'),
@@ -21,4 +22,6 @@ INSERT OR REPLACE INTO LocalizedText (Language, Tag, Text) VALUES
   ('en_US', 'LOC_CC_DEDICATION_POPUP_FROM', 'From {1_Name: upper}'),
   ('en_US', 'LOC_CC_DEDICATION_POPUP_CONFIRM', 'Confirm'),
   ('en_US', 'LOC_CC_DEDICATION_POPUP_CONFIRM_NONE', 'Select a Dedication'),
-  ('en_US', 'LOC_CC_DEDICATION_POPUP_LATER', 'Later');
+  ('en_US', 'LOC_CC_DEDICATION_POPUP_LATER', 'Later'),
+  ('en_US', 'LOC_CC_AGE_NOTICE_RIVAL', '{1_Civ} has entered the {2_Age} Age.'),
+  ('en_US', 'LOC_CC_AGE_NOTICE_UNMET', 'An unmet civilization');
