@@ -9,6 +9,10 @@ Saves from one beta version may not load in the next. Start a new game after upd
 ### Added
 - The "The Exploration Age Has Begun" banner (vanilla's Age change banner) when you research into your own Exploration or Modern Age, with your Age in it; it shows after the tech-complete popup, once per Age, never during autoplay or in multiplayer. When another civilization enters a new Age, a short notice says so ("An unmet civilization" if you haven't met it). Not yet tested in game.
 
+### Fixed
+- Fleet Commanders, Squadron Commanders and Carrier Commanders could not be built, even after their techs. The Antiquity rules this mod keeps loaded remove the Squadron, Carrier and Aerodrome Commanders and allow the Fleet Commander only to Yi Sun-sin. They are back with vanilla's unlocks: Fleet Commander at Astronomy (Yi Sun-sin still from Sailing), Squadron Commander at Flight, Carrier Commander at Mobilization, and the Aerodrome Commander with its Airfield. (Reported on the Workshop.)
+- The Economic victory target now follows the game speed. It was 8,000 at every speed, tuned on Online, so on slower speeds an AI could win long before the game's late Ages (reported on Epic: about turn 350). Economic points come in at the same rate per turn whatever the speed, so the target scales with the length of the game: Online 8,000, Quick 10,700, Standard 16,000, Epic 24,000, Marathon 48,000. Culture and Military are unchanged: their points come from what you build and hold, not from turns passing. Tested in game: 16,000 on Standard. Only in games started on this version. (Reported on the Workshop.)
+
 ## 0.2.1-beta (23) - Ottomans DLC fix
 
 ### Fixed
