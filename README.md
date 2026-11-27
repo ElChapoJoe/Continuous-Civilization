@@ -101,7 +101,7 @@ The **Distant Lands** across the Ocean are open from the start: you can meet the
 |---|---|
 | 🚀 **Science** | 100 Science victory points and an undamaged Launch Pad, then a 5-turn countdown |
 | 🎭 **Culture** | 350 Culture victory points, then a 5-turn countdown |
-| 💰 **Economic** | 8,000 Economic victory points, then a 5-turn countdown |
+| 💰 **Economic** | 16,000 Economic victory points on Standard speed (8,000 Online, 10,700 Quick, 24,000 Epic, 48,000 Marathon), then a 5-turn countdown |
 | ⚔️ **Military** | 100 Military victory points (from the settlements you hold, more for conquered ones and capitals), then a 5-turn countdown |
 | 🗡️ **Domination** | Capture every rival's original capital |
 

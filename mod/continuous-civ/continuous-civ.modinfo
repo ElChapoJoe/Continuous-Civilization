@@ -40,6 +40,38 @@
 			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
 			<ModInUse>great-britain</ModInUse>
 		</Criteria>
+		<Criteria id="antiquity-speed-quick">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ConfigurationValueMatches>
+				<Group>Game</Group>
+				<ConfigurationId>SpeedTypeName</ConfigurationId>
+				<Value>GAMESPEED_QUICK</Value>
+			</ConfigurationValueMatches>
+		</Criteria>
+		<Criteria id="antiquity-speed-standard">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ConfigurationValueMatches>
+				<Group>Game</Group>
+				<ConfigurationId>SpeedTypeName</ConfigurationId>
+				<Value>GAMESPEED_STANDARD</Value>
+			</ConfigurationValueMatches>
+		</Criteria>
+		<Criteria id="antiquity-speed-epic">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ConfigurationValueMatches>
+				<Group>Game</Group>
+				<ConfigurationId>SpeedTypeName</ConfigurationId>
+				<Value>GAMESPEED_EPIC</Value>
+			</ConfigurationValueMatches>
+		</Criteria>
+		<Criteria id="antiquity-speed-marathon">
+			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
+			<ConfigurationValueMatches>
+				<Group>Game</Group>
+				<ConfigurationId>SpeedTypeName</ConfigurationId>
+				<Value>GAMESPEED_MARATHON</Value>
+			</ConfigurationValueMatches>
+		</Criteria>
 		<Criteria id="antiquity-with-nepal">
 			<AgeInUse>AGE_ANTIQUITY</AgeInUse>
 			<ModInUse>nepal</ModInUse>
@@ -614,6 +646,39 @@
 					<Item>ui/cc-dedication-popup.js</Item>
 					<Item>ui/cc-age-scene.js</Item>
 				</UIScripts>
+			</Actions>
+		</ActionGroup>
+		<!-- 4. Economic victory target by game speed (tuned on Online; data/4-speed). -->
+		<ActionGroup id="cc-speed-quick" scope="game" criteria="antiquity-speed-quick">
+			<Properties><LoadOrder>1100</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>data/4-speed/economic-target-quick.sql</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-speed-standard" scope="game" criteria="antiquity-speed-standard">
+			<Properties><LoadOrder>1100</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>data/4-speed/economic-target-standard.sql</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-speed-epic" scope="game" criteria="antiquity-speed-epic">
+			<Properties><LoadOrder>1100</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>data/4-speed/economic-target-epic.sql</Item>
+				</UpdateDatabase>
+			</Actions>
+		</ActionGroup>
+		<ActionGroup id="cc-speed-marathon" scope="game" criteria="antiquity-speed-marathon">
+			<Properties><LoadOrder>1100</LoadOrder></Properties>
+			<Actions>
+				<UpdateDatabase>
+					<Item>data/4-speed/economic-target-marathon.sql</Item>
+				</UpdateDatabase>
 			</Actions>
 		</ActionGroup>
 	</ActionGroups>
